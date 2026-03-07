@@ -1,4 +1,10 @@
 import Sidebar from "@/components/admin/Sidebar";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "R. K. Life Science | Admin Dashboard",
+  description: "Wholesale distributor for nutraceutical products",
+};
 
 export default function AdminLayout({
  children

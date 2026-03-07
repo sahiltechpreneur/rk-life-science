@@ -16,7 +16,7 @@ export default function Footer() {
           <div>
 
             <h2 className="text-xl font-bold text-primary">
-              RK Life Science
+              R. K. Life Science
             </h2>
 
             <p className="text-gray-600 mt-3">
@@ -54,15 +54,15 @@ export default function Footer() {
             </h3>
 
             <p className="text-gray-600">
-              Kathmandu, Nepal
+              Shankhamul, Kathmandu, Nepal, 44600
             </p>
 
             <p className="text-gray-600">
-              Phone: +977-9800000000
+              Phone: +977-9768771762
             </p>
 
             <p className="text-gray-600">
-              Email: info@rklifescience.com
+              Email: info.rklifescience2080@gmail.com
             </p>
 
           </div>
@@ -71,7 +71,7 @@ export default function Footer() {
 
         <div className="text-center pb-6 text-gray-500">
 
-          © {new Date().getFullYear()} RK Life Science
+          © {new Date().getFullYear()} R. K. Life Science by Sahil Gupta
 
         </div>
 

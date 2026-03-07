@@ -19,7 +19,7 @@ export default function ProductCard({ id, name, image, description, price }: Pro
         <h3 className="text-lg font-semibold mt-2 cursor-pointer">{name}</h3>
       </Link>
       <p className="text-gray-600 mt-1">{description}</p>
-      <p className="text-primary font-bold mt-2">Rs. {price}</p>
+      <p className="text-primary font-bold mt-2">NPR {price}</p>
       <div className="mt-4">
         <Button text="Add to Cart" />
       </div>

@@ -16,14 +16,11 @@ export default function Navbar() {
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
           <Link href="/" className="text-2xl font-bold text-primary">
-            RK Life Science
+            R. K. Life Science
           </Link>
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-6">
-            <Link href="/" className="hover:text-primary">
-              Home
-            </Link>
             <Link href="/product" className="hover:text-primary">
               Products
             </Link>
@@ -69,7 +66,6 @@ export default function Navbar() {
         {/* Mobile Menu */}
         {menuOpen && (
           <div className="md:hidden flex flex-col gap-4 pb-4 border-t pt-4">
-            <Link href="/" onClick={() => setMenuOpen(false)}>Home</Link>
             <Link href="/product" onClick={() => setMenuOpen(false)}>Products</Link>
             <Link href="/about" onClick={() => setMenuOpen(false)}>About</Link>
             <Link href="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>

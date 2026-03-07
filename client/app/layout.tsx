@@ -6,7 +6,7 @@ import { AuthProvider } from "@/context/AuthContext";
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "R.K Life Science",
+  title: "R. K. Life Science",
   description: "Wholesale distributor for nutraceutical products",
 };
 
