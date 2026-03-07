@@ -22,23 +22,23 @@ export default function Sidebar(){
 
   <nav className="flex flex-col gap-4">
 
-   <Link href="/dashboard">
+   <Link href="/admin/dashboard">
    Dashboard
    </Link>
 
-   <Link href="/products">
+   <Link href="/admin/products">
    Products
    </Link>
 
-   <Link href="/orders">
+   <Link href="/admin/orders">
    Orders
    </Link>
 
-   <Link href="/users">
+   <Link href="/admin/users">
    Users
    </Link>
 
-   <Link href="/reports">
+   <Link href="/admin/reports">
    Reports
    </Link>
 
