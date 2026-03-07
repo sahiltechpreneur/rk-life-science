@@ -2,7 +2,7 @@ const pool = require("../config/db")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 
-const JWT_SECRET = "your_secret_key"
+const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"
 
 // Register
 exports.register = async (req,res)=>{

@@ -1,13 +1,14 @@
 "use client"
 
-import { useParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useParams, useRouter } from "next/navigation"
+import { useEffect, useState, useContext } from "react"
 
 import Container from "@/components/ui/Container"
 import Button from "@/components/ui/Button"
 import SimilarProducts from "@/components/user/SimilarProducts"
 
 import { useCart } from "@/context/CartContext"
+import { AuthContext } from "@/context/AuthContext"
 
 type Product = {
   id: number
@@ -25,6 +26,8 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null)
 
   const { addToCart } = useCart()
+  const { user } = useContext(AuthContext)
+  const router = useRouter()
 
   useEffect(() => {
 
@@ -46,7 +49,7 @@ export default function ProductDetailPage() {
 
         <div>
           <img
-            src={`http://localhost:5000/uploads/${product.image}`}
+            src={product.image?.startsWith("http") ? product.image : `http://localhost:5000/uploads/${product.image}`}
             alt={product.name}
             className="w-full h-96 object-cover rounded"
           />
@@ -70,13 +73,21 @@ export default function ProductDetailPage() {
 
             <Button
               text="Add to Cart"
-              onClick={() => addToCart({
-                id: product.id,
-                name: product.name,
-                image: product.image,
-                price: product.price,
-                quantity: 1
-              })}
+              onClick={() => {
+                if (!user) {
+                  alert("Please login to add products to the cart.")
+                  router.push("/auth/login")
+                  return
+                }
+                addToCart({
+                  id: product.id,
+                  name: product.name,
+                  image: product.image,
+                  price: product.price,
+                  quantity: 1
+                })
+                alert(`${product.name} has been added to your cart!`)
+              }}
             />
 
           </div>

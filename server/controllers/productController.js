@@ -37,7 +37,7 @@ exports.createProduct = async (req, res) => {
 
   const { name, description, price, stock, category_id } = req.body
 
-  const image = req.file ? req.file.filename : null
+  const image = req.file ? req.file.path : null
 
   const result = await pool.query(
    `INSERT INTO products
@@ -65,7 +65,7 @@ exports.updateProduct = async (req, res) => {
 
     const { name, description, price, stock, category_id } = req.body
 
-    const image = req.file ? req.file.filename : null
+    const image = req.file ? req.file.path : null
 
     try {
 

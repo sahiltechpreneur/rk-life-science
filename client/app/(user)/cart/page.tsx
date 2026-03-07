@@ -3,6 +3,7 @@
 import Container from "@/components/ui/Container"
 import CartItem from "@/components/user/CartItem"
 import Button from "@/components/ui/Button"
+import ProtectedRoute from "@/components/auth/ProtectedRoute"
 
 import { useCart } from "@/context/CartContext"
 import Link from "next/link"
@@ -25,8 +26,8 @@ export default function CartPage() {
   }
 
   return (
-
-    <Container>
+    <ProtectedRoute>
+      <Container>
 
       <div className="py-20">
 
@@ -49,7 +50,7 @@ export default function CartPage() {
                   key={p.id}
                   id={p.id}
                   name={p.name}
-                  image={`http://localhost:5000/uploads/${p.image}`}
+                  image={p.image?.startsWith("http") ? p.image : `http://localhost:5000/uploads/${p.image}`}
                   price={p.price}
                   quantity={p.quantity}
                   onQuantityChange={handleQuantityChange}
@@ -78,5 +79,6 @@ export default function CartPage() {
       </div>
 
     </Container>
+    </ProtectedRoute>
   )
 }

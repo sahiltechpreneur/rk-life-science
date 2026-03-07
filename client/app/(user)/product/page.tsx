@@ -81,7 +81,7 @@ export default function ProductPage() {
               key={p.id}
               id={p.id}
               name={p.name}
-              image={`http://localhost:5000/uploads/${p.image}`}
+              image={p.image?.startsWith("http") ? p.image : `http://localhost:5000/uploads/${p.image}`}
               description={p.description}
               price={p.price}
             />

@@ -1,19 +1,23 @@
-const multer = require("multer")
-const path = require("path")
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("cloudinary").v2;
+require("dotenv").config(); // Ensure env variables are loaded
 
-const storage = multer.diskStorage({
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
- destination: (req,file,cb)=>{
-  cb(null,"uploads/")
- },
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "rk-life-science/products", // Customize folder name
+    allowed_formats: ["jpg", "png", "jpeg", "webp", "pdf", "doc", "docx"],
+  },
+});
 
- filename:(req,file,cb)=>{
-  const uniqueName = Date.now() + path.extname(file.originalname)
-  cb(null,uniqueName)
- }
+const upload = multer({ storage });
 
-})
-
-const upload = multer({ storage })
-
-module.exports = upload
+module.exports = upload;
