@@ -1,10 +1,9 @@
 "use client"
 
 import { useContext, useState } from "react"
-import { AuthContext } from "@/context/AuthContext"
 import API from "@/lib/api"
 import { useRouter } from "next/navigation"
-
+import { AuthContext } from "@/context/AuthContext"
 export default function LoginPage() {
 
     const { login } = useContext(AuthContext)

@@ -1,5 +1,4 @@
 import Container from "@/components/ui/Container"
-import Image from "next/image"
 import { FaFacebook, FaInstagram, FaLinkedin, FaGithub } from "react-icons/fa"
 
 export default function AboutPage() {
@@ -37,7 +36,7 @@ export default function AboutPage() {
           <h2 className="text-2xl font-bold text-primary mb-8">Developer</h2>
           <div className="flex flex-col md:flex-row items-center justify-center gap-8">
 
-            <Image src="/images/sahil.jpg" alt="Sahil Gupta" className="w-48 h-48 object-cover rounded-full border-4 border-primary" />
+            <img src="/images/sahil.jpg" alt="Sahil Gupta" className="w-48 h-48 object-cover rounded-full border-4 border-primary" />
 
             <div className="space-y-4 text-left">
               <h3 className="text-xl font-semibold text-darkGreen">Sahil Gupta</h3>

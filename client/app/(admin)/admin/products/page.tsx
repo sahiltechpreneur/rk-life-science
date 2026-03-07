@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import API from "@/lib/api"
-import Image from "next/image"
 
 export default function ProductsPage() {
     const [products, setProducts] = useState<any[]>([])
@@ -134,7 +133,7 @@ export default function ProductsPage() {
             <div className="grid grid-cols-3 gap-6">
                 {products.map((p: any) => (
                     <div key={p.id} className="border p-4 rounded space-y-2">
-                        <Image src={`http://localhost:5000/uploads/${p.image}`} className="h-40 w-full object-cover" alt={p.name} />
+                        <img src={`http://localhost:5000/uploads/${p.image}`} className="h-40 w-full object-cover" alt={p.name} />
                         <h3 className="font-bold">{p.name}</h3>
                         <p>NPR {p.price}</p>
                         <div className="flex gap-2">

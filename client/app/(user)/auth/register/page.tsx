@@ -1,84 +1,60 @@
 "use client"
 
 import { useState } from "react"
-import API from "@/lib/api"
+import { useRouter } from "next/navigation"
+import Container from "@/components/ui/Container"
+import Button from "@/components/ui/Button"
+import { useAuth } from "@/context/AuthContext"
 
-export default function RegisterPage() {
+export default function RegisterPage(){
 
-    const [form, setForm] = useState({
-        fname: "",
-        lname: "",
-        email: "",
-        phone: "",
-        password: "",
-        confirmPassword: ""
-    })
+ const router = useRouter()
+ const {login} = useAuth()
+ const [form,setForm] = useState({
+  fname:"",lname:"",email:"",phone:"",password:"",confirm:""
+ })
+ const [error,setError] = useState("")
 
-    const handleChange = (e: any) => {
-        console.log("Typing in:", e.target.name, "Value:", e.target.value); // Add this line
-        setForm({ ...form, [e.target.name]: e.target.value })
-    }
+ const handleChange = (e:any)=> setForm({...form,[e.target.name]:e.target.value})
 
-    const handleSubmit = async (e: any) => {
-        e.preventDefault()
+ const handleSubmit = async()=>{
 
-        const phoneRegex = /^(98|97)[0-9]{8}$/
+  if(form.password!==form.confirm){
+   setError("Passwords do not match")
+   return
+  }
 
-        if (!phoneRegex.test(form.phone.trim())) {
-            alert("Phone must start with 98 or 97")
-            return
-        }
+  if(!/^9[87]\d{8}$/.test(form.phone)){
+   setError("Phone must start with 98 or 97 and 10 digits")
+   return
+  }
 
-        if (form.password !== form.confirmPassword) {
-            alert("Passwords do not match")
-            return
-        }
+  const res = await fetch("http://localhost:5000/api/auth/register",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify(form)
+  })
 
-        try {
+  const data = await res.json()
+  if(data.success){
+   login({user:data.user,token:"dummy_token"})
+   router.push("/")
+  }else setError(data.error)
+ }
 
-            await API.post("/auth/register", {
-                fname: form.fname,
-                lname: form.lname,
-                email: form.email,
-                phone: form.phone,
-                password: form.password
-            })
-
-            alert("Account created successfully")
-
-        } catch (err) {
-            alert("Registration failed")
-        }
-
-    }
-
-    return (
-
-        <div className="flex justify-center items-center min-h-screen">
-
-            <form
-                onSubmit={handleSubmit}
-                className="w-full max-w-md space-y-4 border p-8 rounded-lg"
-            >
-
-                <h1 className="text-2xl font-bold text-center">
-                    Create Account
-                </h1>
-
-                <input name="fname" placeholder="First Name" className="w-full border p-2" value={form.fname} onChange={handleChange} />
-                <input name="lname" placeholder="Last Name" className="w-full border p-2" value={form.lname} onChange={handleChange} />
-                <input name="email" placeholder="Email" className="w-full border p-2" value={form.email} onChange={handleChange} />
-                <input name="phone" placeholder="Phone" className="w-full border p-2" value={form.phone} onChange={handleChange} />
-                <input type="password" name="password" placeholder="Password" className="w-full border p-2" value={form.password} onChange={handleChange} />
-                <input type="password" name="confirmPassword" placeholder="Confirm Password" className="w-full border p-2" value={form.confirmPassword} onChange={handleChange} />
-
-                <button className="bg-green-600 text-white w-full p-2 rounded">
-                    Register
-                </button>
-
-            </form>
-
-        </div>
-
-    )
+ return(
+  <Container>
+   <div className="py-24 max-w-md mx-auto">
+    <h1 className="text-3xl font-bold mb-6">Register</h1>
+    <input name="fname" placeholder="First Name" onChange={handleChange} className="border p-3 w-full mb-2"/>
+    <input name="lname" placeholder="Last Name" onChange={handleChange} className="border p-3 w-full mb-2"/>
+    <input name="email" placeholder="Email" onChange={handleChange} className="border p-3 w-full mb-2"/>
+    <input name="phone" placeholder="Phone" onChange={handleChange} className="border p-3 w-full mb-2"/>
+    <input name="password" placeholder="Password" type="password" onChange={handleChange} className="border p-3 w-full mb-2"/>
+    <input name="confirm" placeholder="Confirm Password" type="password" onChange={handleChange} className="border p-3 w-full mb-4"/>
+    <Button text="Register" onClick={handleSubmit}/>
+    {error && <p className="text-red-500 mt-2">{error}</p>}
+   </div>
+  </Container>
+ )
 }
