@@ -1,57 +1,118 @@
 const pool = require("../config/db")
 
-exports.getProducts = async(req,res)=>{
+exports.getProducts = async (req, res) => {
 
- try{
+    try {
 
-  const result = await pool.query(
-   "SELECT * FROM products ORDER BY id DESC"
-  )
+        const page = req.query.page || 1
+        const limit = 6
+        const offset = (page - 1) * limit
 
-  res.json(result.rows)
+        const search = req.query.search || ""
 
- }catch(err){
-  res.status(500).json({error:err.message})
- }
+        const result = await pool.query(
+            `
+ SELECT * FROM products
+ WHERE name ILIKE $1
+ ORDER BY id DESC
+ LIMIT $2 OFFSET $3
+ `,
+            [`%${search}%`, limit, offset]
+        )
+
+        res.json(result.rows)
+
+    } catch (err) {
+
+        res.status(500).json({ error: err.message })
+
+    }
 
 }
 
 
-exports.createProduct = async(req,res)=>{
+exports.createProduct = async (req, res) => {
 
- const {name,description,price,stock,image} = req.body
+ try {
 
- try{
+  const { name, description, price, stock, category_id } = req.body
+
+  const image = req.file ? req.file.filename : null
 
   const result = await pool.query(
-   "INSERT INTO products(name,description,price,stock,image) VALUES($1,$2,$3,$4,$5) RETURNING *",
-   [name,description,price,stock,image]
+   `INSERT INTO products
+   (name, description, price, stock, image, category_id)
+   VALUES ($1,$2,$3,$4,$5,$6)
+   RETURNING *`,
+   [name, description, price, stock, image, category_id || null]
   )
 
   res.json(result.rows[0])
 
- }catch(err){
-  res.status(500).json({error:err.message})
+ } catch (err) {
+
+  console.error(err)
+
+  res.status(500).json({ error: err.message })
+
  }
 
 }
 
+exports.updateProduct = async (req, res) => {
 
-exports.deleteProduct = async(req,res)=>{
+    const { id } = req.params
 
- const {id} = req.params
+    const { name, description, price, stock, category_id } = req.body
 
- try{
+    const image = req.file ? req.file.filename : null
 
-  await pool.query(
-   "DELETE FROM products WHERE id=$1",
-   [id]
-  )
+    try {
 
-  res.json({message:"Product deleted"})
+        await pool.query(
 
- }catch(err){
-  res.status(500).json({error:err.message})
- }
+            `
+ UPDATE products
+ SET
+ name=$1,
+ description=$2,
+ price=$3,
+ stock=$4,
+ category_id=$5,
+ image=COALESCE($6,image)
+ WHERE id=$7
+ `,
+
+            [name, description, price, stock, category_id, image, id]
+
+        )
+
+        res.json({ message: "Product updated" })
+
+    } catch (err) {
+
+        res.status(500).json({ error: err.message })
+
+    }
+
+}
+
+
+exports.deleteProduct = async (req, res) => {
+
+    const { id } = req.params
+
+    try {
+
+        await pool.query(
+            "DELETE FROM products WHERE id=$1",
+            [id]
+        )
+
+        res.json({ message: "Product deleted" })
+
+    } catch (err) {
+        res.status(500).json({ error: err.message })
+    }
 
 }
