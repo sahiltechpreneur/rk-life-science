@@ -5,6 +5,7 @@ require("dotenv").config()
 const authRoutes = require("./routes/authRoutes")
 const userRoutes = require("./routes/userRoutes")
 const productRoutes = require("./routes/productRoutes")
+const orderRoutes = require("./routes/orderRoutes")
 
 const app = express()
 
@@ -15,6 +16,7 @@ app.use("/uploads",express.static("uploads"))
 app.use("/api/auth", authRoutes)
 app.use("/api/user",userRoutes)
 app.use("/api/products",productRoutes)
+app.use("/api/orders", orderRoutes)
 
 app.get("/", (req,res)=>{
   res.send("RK Life Science API running")

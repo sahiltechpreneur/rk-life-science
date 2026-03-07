@@ -1,5 +1,6 @@
 import Footer from "@/components/user/Footer"
 import Navbar from "@/components/user/Navbar"
+import { CartProvider } from "@/context/CartContext"
 
 
 export default function UserLayout({
@@ -13,7 +14,9 @@ export default function UserLayout({
             <Navbar />
 
             <main className="flex-grow">
-                {children}
+                <CartProvider>
+                    {children}
+                </CartProvider>
             </main>
 
             <Footer />
