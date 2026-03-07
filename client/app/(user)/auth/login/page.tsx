@@ -1,14 +1,35 @@
 "use client"
 
-import { useState } from "react"
+import { useContext, useState } from "react"
+import { AuthContext } from "@/context/AuthContext"
+import API from "@/lib/api"
+import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
 
+    const { login } = useContext(AuthContext)
+    const router = useRouter()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault()
+
+        try {
+
+            const res = await API.post("/auth/login", {
+                email,
+                password
+            })
+
+            login(res.data.token)
+
+            router.push("/profile")
+
+        } catch (err) {
+            alert("Invalid login credentials")
+        }
+
         console.log(email, password)
     }
 
