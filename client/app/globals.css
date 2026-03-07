@@ -14,3 +14,29 @@ html {
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Add to your globals.css */
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+/* For better responsive images */
+@media (max-width: 768px) {
+  .hero-image-container {
+    height: 300px;
+  }
+}
