@@ -1,5 +1,5 @@
-import Sidebar from "@/components/admin/Sidebar";
 import { Metadata } from "next";
+import AdminClientWrapper from "@/components/admin/AdminClientWrapper";
 
 export const metadata: Metadata = {
   title: "R. K. Life Science | Admin Dashboard",
@@ -7,20 +7,9 @@ export const metadata: Metadata = {
 };
 
 export default function AdminLayout({
- children
-}:{children:React.ReactNode}){
-
- return(
-
-  <div className="flex">
-
-   <Sidebar/>
-
-   <main className="ml-64 w-full p-8 bg-gray-50 min-h-screen">
-    {children}
-   </main>
-
-  </div>
-
- )
+  children
+}: {
+  children: React.ReactNode;
+}) {
+  return <AdminClientWrapper>{children}</AdminClientWrapper>;
 }
