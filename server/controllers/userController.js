@@ -84,3 +84,14 @@ exports.uploadProfileImage = async(req,res)=>{
   }
 
 }
+
+exports.getAllUsers = async(req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT id, fname, lname, email, phone, role, TO_CHAR(created_at, 'Mon DD, YYYY') as join_date FROM users ORDER BY created_at DESC"
+    )
+    res.json(result.rows)
+  } catch(err) {
+    res.status(500).json({error: err.message})
+  }
+}

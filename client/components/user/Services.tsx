@@ -1,58 +1,70 @@
-import { FaTruck, FaShieldAlt, FaHeadset } from "react-icons/fa"
+import { FiTruck, FiShield, FiHeart, FiAward } from "react-icons/fi"
 
 export default function Services() {
   const services = [
     { 
       title: "Fast Delivery", 
-      desc: "Quick delivery across Nepal",
-      icon: <FaTruck className="text-4xl text-primary" />
+      desc: "Quick, reliable delivery across Nepal with real-time tracking.",
+      icon: <FiTruck className="w-8 h-8" />,
+      color: "from-blue-500 to-indigo-500",
+      bgClass: "bg-blue-50"
     },
     { 
-      title: "Quality Products", 
-      desc: "100% genuine nutraceuticals",
-      icon: <FaShieldAlt className="text-4xl text-primary" />
+      title: "Certified Quality", 
+      desc: "100% genuine nutraceuticals sourced directly from verified manufacturers.",
+      icon: <FiShield className="w-8 h-8" />,
+      color: "from-emerald-500 to-teal-500",
+      bgClass: "bg-emerald-50"
     },
     { 
-      title: "Best Support", 
-      desc: "Customer-friendly support",
-      icon: <FaHeadset className="text-4xl text-primary" />
+      title: "Extensive Support", 
+      desc: "Dedicated healthcare professionals available for your inquiries.",
+      icon: <FiHeart className="w-8 h-8" />,
+      color: "from-amber-500 to-orange-500",
+      bgClass: "bg-amber-50"
+    },
+    { 
+        title: "Industry Leading", 
+        desc: "Trusted by over 500+ pharmacies and hospitals nationwide.",
+        icon: <FiAward className="w-8 h-8" />,
+        color: "from-purple-500 to-pink-500",
+        bgClass: "bg-purple-50"
     }
   ]
 
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-primary mb-12 relative inline-block">
-          Our Services
-          <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-20 h-1 bg-secondary rounded-full"></span>
-        </h2>
+    <section className="py-24 bg-gray-50 relative overflow-hidden">
+      <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-emerald-100/50 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {services.map((service) => (
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+        <div className="text-center mb-16">
+          <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-3">Why Choose Us</h2>
+          <h3 className="text-3xl sm:text-4xl font-black text-gray-900">
+            Uncompromising <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">Excellence</span>
+          </h3>
+          <p className="mt-4 text-gray-500 max-w-2xl mx-auto font-medium">We pride ourselves on providing the highest quality healthcare products combined with unparalleled service.</p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {services.map((service, idx) => (
             <div 
               key={service.title} 
-              className="group p-8 border-2 border-gray-100 rounded-2xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2 hover:border-primary/20 bg-white"
+              className="group bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 relative overflow-hidden"
             >
-              <div className="flex flex-col items-center">
-                {/* Icon Container */}
-                <div className="mb-4 p-4 bg-primary/5 rounded-full group-hover:bg-primary/10 transition-colors duration-300">
-                  <div className="text-primary group-hover:scale-110 transition-transform duration-300">
-                    {service.icon}
-                  </div>
+              <div className={`absolute top-0 right-0 w-32 h-32 ${service.bgClass} rounded-full translate-x-16 -translate-y-16 group-hover:scale-150 transition-transform duration-700 ease-in-out`}></div>
+              
+              <div className="relative z-10">
+                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-tr ${service.color} flex items-center justify-center text-white mb-6 shadow-lg transform group-hover:rotate-6 transition-transform duration-300`}>
+                  {service.icon}
                 </div>
                 
-                {/* Title */}
-                <h3 className="text-xl font-bold text-darkGreen mb-2 group-hover:text-primary transition-colors">
+                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-gray-900 group-hover:to-gray-600 transition-colors">
                   {service.title}
                 </h3>
                 
-                {/* Description */}
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-gray-500 leading-relaxed font-medium">
                   {service.desc}
                 </p>
-
-                {/* Decorative Line */}
-                <div className="mt-4 w-12 h-0.5 bg-primary/30 rounded-full group-hover:w-16 group-hover:bg-primary transition-all duration-300"></div>
               </div>
             </div>
           ))}

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import ProductCard from "./ProductCard"
+import { FiTrendingUp } from "react-icons/fi"
 
 type Product = {
   id: number
@@ -37,31 +38,36 @@ export default function SimilarProducts() {
     fetchSimilar()
   }, [id])
 
+  if (loading || products.length === 0) {
+      // Don't render Section if no products or if loading for cleaner UI 
+      return null;
+  }
+
   return (
-    <section className="py-12 mt-12 border-t">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-2xl font-bold text-primary mb-8">You may also like</h2>
-        
-        {loading ? (
-          <div className="flex justify-center items-center h-32">
-            <p className="text-gray-500 animate-pulse">Finding similar products...</p>
+    <section className="pt-20">
+      <div className="flex items-center justify-between mb-10">
+          <div>
+              <h2 className="text-3xl font-black text-gray-900 mb-2 flex items-center gap-3">
+                  You May Also Like
+                  <span className="bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+                      <FiTrendingUp /> Trending
+                  </span>
+              </h2>
+              <p className="text-gray-500 font-medium">Customers who viewed this item also bought</p>
           </div>
-        ) : products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((p) => (
-              <ProductCard
-                key={p.id}
-                id={p.id}
-                name={p.name}
-                image={p.image?.startsWith("http") ? p.image : `http://localhost:5000/uploads/${p.image}`}
-                description={p.description?.substring(0, 60) + "..."}
-                price={p.price}
-              />
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-500">No similar products available at this time.</p>
-        )}
+      </div>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 pb-10">
+        {products.map((p) => (
+          <ProductCard
+            key={p.id}
+            id={p.id}
+            name={p.name}
+            image={p.image?.startsWith("http") ? p.image : `http://localhost:5000/uploads/${p.image}`}
+            description={p.description?.substring(0, 60) + "..."}
+            price={p.price}
+          />
+        ))}
       </div>
     </section>
   )

@@ -1,116 +1,103 @@
 import Image from "next/image"
-import Button from "@/components/ui/Button"
-import { FaArrowRight, FaPhone } from "react-icons/fa"
+import Link from "next/link"
+import { FiArrowRight, FiPhone, FiCheckCircle, FiStar, FiShield } from "react-icons/fi"
 
 export default function Hero() {
   return (
-    <section className="bg-gradient-to-br from-lightGreen to-green-50 py-16 md:py-24 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+    <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-gray-50">
+      {/* Background Decor */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-100/40 via-white to-white"></div>
+      <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-emerald-200/40 rounded-full blur-3xl -z-10 mix-blend-multiply"></div>
+      <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-96 h-96 bg-blue-200/40 rounded-full blur-3xl -z-10 mix-blend-multiply"></div>
+
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           
           {/* Left Content */}
-          <div className="text-center md:text-left">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-darkGreen leading-tight">
-              Welcome to{' '}
-              <span className="block text-primary mt-2">
-                R.K Life Science
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 text-sm font-bold mb-6">
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              Premium Healthcare Solutions
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900 leading-[1.1] tracking-tight mb-6">
+              Next-Generation <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">
+                Nutraceuticals
               </span>
             </h1>
 
-            <p className="mt-6 text-gray-700 text-lg md:text-xl max-w-2xl mx-auto md:mx-0">
-              Wholesale distributor of multivitamins, tablets, capsules and non-medicinal products. 
-              Quality healthcare solutions for your business needs.
+            <p className="text-lg sm:text-xl text-gray-600 mb-10 leading-relaxed font-medium">
+              Wholesale distributor of premium multivitamins, tablets, capsules and non-medicinal products. Empowering your health and business.
             </p>
 
-            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-              <Button 
-                text="Explore Products" 
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link 
                 href="/product"
-                icon={<FaArrowRight />}
-                iconPosition="right"
-                size="lg"
-              />
-              <Button 
-                text="Contact Us" 
+                className="group inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-200 bg-gray-900 border border-transparent rounded-2xl hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 shadow-xl hover:shadow-2xl hover:-translate-y-1"
+              >
+                Explore Products
+                <FiArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link 
                 href="/contact"
-                variant="outline"
-                icon={<FaPhone />}
-                iconPosition="left"
-                size="lg"
-              />
+                className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-gray-700 transition-all duration-200 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 shadow-sm hover:shadow-md"
+              >
+                <FiPhone className="w-5 h-5 mr-2 text-gray-400" />
+                Contact Sales
+              </Link>
             </div>
 
-            {/* Trust Badges */}
-            <div className="mt-12 flex flex-wrap gap-8 justify-center md:justify-start">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-primary rounded-full"></div>
-                <span className="text-sm text-gray-600">100% Authentic</span>
+            <div className="mt-12 flex items-center gap-8 border-t border-gray-200 pt-8">
+              <div className="flex flex-col gap-1">
+                <span className="text-3xl font-black text-gray-900">&gt;50</span>
+                <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">Products</span>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-primary rounded-full"></div>
-                <span className="text-sm text-gray-600">VAT/PAN Nepal Delivery</span>
+              <div className="w-px h-12 bg-gray-200"></div>
+              <div className="flex flex-col gap-1">
+                <span className="text-3xl font-black text-gray-900">100%</span>
+                <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">Authentic</span>
+              </div>
+              <div className="w-px h-12 bg-gray-200 hidden sm:block"></div>
+              <div className="flex flex-col gap-1 hidden sm:block">
+                <div className="flex text-amber-500 mb-1">
+                  {[...Array(5)].map((_, i) => <FiStar key={i} className="w-5 h-5 fill-current" />)}
+                </div>
+                <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">5.0 Reviews</span>
               </div>
             </div>
           </div>
 
           {/* Right Image */}
-          <div className="relative hidden md:block">
-            <div className="relative w-full h-[500px]">
-              {/* Main Image */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent rounded-2xl">
-                <Image
-                  src="/images/hero.jpg"
-                  alt="R.K Life Science Products - Multivitamins, Tablets, and Capsules"
-                  fill
-                  className="object-cover rounded-2xl shadow-2xl"
-                  priority
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-              </div>
-
-              {/* Floating Card 1 */}
-              <div className="absolute -left-6 top-1/4 bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg animate-float">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <span className="text-primary font-bold">50+</span>
+          <div className="relative lg:ml-auto w-full max-w-lg xl:max-w-xl">
+            <div className="relative w-full aspect-square rounded-[3rem] overflow-hidden bg-gray-100 shadow-2xl">
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent z-10"></div>
+              <Image
+                src="/images/hero.jpg"
+                alt="R.K Life Science Products"
+                fill
+                className="object-cover"
+                priority
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+              
+              <div className="absolute bottom-8 left-8 right-8 z-20 flex justify-between items-end">
+                <div className="bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-xl flex items-center gap-4 animate-[bounce_3s_infinite]">
+                  <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
+                    <FiShield className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-800">Products</p>
-                    <p className="text-xs text-gray-600">Available</p>
+                    <p className="font-bold text-gray-900">Certified Quality</p>
+                    <p className="text-xs text-gray-500 font-medium">GMP & WHO Standards</p>
                   </div>
                 </div>
               </div>
-
-              {/* Floating Card 2 */}
-              <div className="absolute -right-6 bottom-1/4 bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg animate-float animation-delay-2000">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center">
-                    <span className="text-secondary font-bold">3+</span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-800">Years</p>
-                    <p className="text-xs text-gray-600">Experience</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Decorative Elements */}
-              <div className="absolute -z-10 -top-6 -right-6 w-24 h-24 bg-primary/10 rounded-full blur-2xl"></div>
-              <div className="absolute -z-10 -bottom-6 -left-6 w-32 h-32 bg-secondary/10 rounded-full blur-2xl"></div>
             </div>
           </div>
 
-          {/* Mobile Image */}
-          <div className="md:hidden relative h-[300px] w-full mt-8">
-            <Image
-              src="/images/hero.jpg"
-              alt="R.K Life Science Products"
-              fill
-              className="object-cover rounded-2xl shadow-lg"
-              priority
-              sizes="100vw"
-            />
-          </div>
         </div>
       </div>
     </section>
