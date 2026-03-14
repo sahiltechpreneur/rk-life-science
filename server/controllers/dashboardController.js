@@ -1,9 +1,7 @@
 const pool = require("../config/db")
 
 exports.getDashboardStats = async (req, res) => {
-
     try {
-
         // total orders
         const orders = await pool.query(
             "SELECT COUNT(*) FROM orders"
@@ -21,25 +19,35 @@ exports.getDashboardStats = async (req, res) => {
 
         // recent orders
         const recentOrders = await pool.query(
-            `SELECT id,customer_name,total,status
-     FROM orders
-     ORDER BY created_at DESC
-     LIMIT 5`
+            `SELECT id, customer_name, total, status, TO_CHAR(created_at, 'Mon DD, YYYY') as created_at
+             FROM orders
+             ORDER BY created_at DESC
+             LIMIT 5`
+        )
+
+        // weekly revenue aggregation
+        const weeklyRevenue = await pool.query(
+            `SELECT 
+                TO_CHAR(DATE_TRUNC('week', created_at), 'Mon DD') as week,
+                SUM(total) as revenue,
+                MIN(DATE_TRUNC('week', created_at)) as week_start
+             FROM orders
+             WHERE created_at >= NOW() - INTERVAL '6 weeks'
+             GROUP BY DATE_TRUNC('week', created_at)
+             ORDER BY week_start`
         )
 
         res.json({
-            totalOrders: orders.rows[0].count,
-            totalRevenue: revenue.rows[0].sum || 0,
-            totalProducts: products.rows[0].count,
-            recentOrders: recentOrders.rows
+            totalOrders: parseInt(orders.rows[0].count),
+            totalRevenue: parseInt(revenue.rows[0].sum || 0),
+            totalProducts: parseInt(products.rows[0].count),
+            recentOrders: recentOrders.rows,
+            weeklyRevenue: weeklyRevenue.rows
         })
 
     } catch (err) {
-
         res.status(500).json({
             error: err.message
         })
-
     }
-
 }

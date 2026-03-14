@@ -21,30 +21,40 @@ ChartJS.register(
     Legend
 )
 
-export default function RevenueChart() {
+interface RevenueChartProps {
+    labels: string[];
+    dataset: number[];
+}
+
+export default function RevenueChart({ labels, dataset }: RevenueChartProps) {
 
     const data = {
-        labels: [
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun"
-        ],
+        labels: labels,
         datasets: [
             {
-                label: "Revenue",
-                data: [12000, 19000, 8000, 15000, 22000, 30000],
-                backgroundColor: "#22c55e"
+                label: "Revenue (Rs)",
+                data: dataset,
+                backgroundColor: "#22c55e",
+                borderRadius: 4
             }
         ]
     }
 
     return (
 
-        <div className="bg-white p-6 rounded shadow">
+        <div className="bg-white p-6 rounded shadow relative w-full h-full">
 
             <h3 className="text-lg font-bold mb-4">
                 Revenue Analytics
             </h3>
 
-            <Bar data={data} />
+            <Bar 
+                data={data} 
+                options={{
+                    responsive: true,
+                    maintainAspectRatio: false
+                }}
+            />
 
         </div>
 

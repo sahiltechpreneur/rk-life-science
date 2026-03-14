@@ -32,6 +32,9 @@ export default function DashboardPage() {
         </div>
     )
 
+    const chartLabels = stats.weeklyRevenue?.map((m: any) => m.week) || []
+    const chartData = stats.weeklyRevenue?.map((m: any) => parseFloat(m.revenue)) || []
+
     return (
         <div className="space-y-8 max-w-7xl mx-auto">
 
@@ -85,8 +88,14 @@ export default function DashboardPage() {
             {/* Chart Area */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                  <h2 className="text-xl font-bold text-gray-800 mb-6">Revenue Overview</h2>
-                <div className="h-80 w-full">
-                    <RevenueChart />
+                <div className="h-80 w-full mb-8">
+                    {chartLabels.length > 0 ? (
+                        <RevenueChart labels={chartLabels} dataset={chartData} />
+                    ) : (
+                        <div className="h-full flex items-center justify-center text-gray-400">
+                            No revenue data available for the last 6 weeks.
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -102,6 +111,7 @@ export default function DashboardPage() {
                             <tr>
                                 <th className="px-6 py-4">Order ID</th>
                                 <th className="px-6 py-4">Customer</th>
+                                <th className="px-6 py-4">Date</th>
                                 <th className="px-6 py-4">Amount</th>
                                 <th className="px-6 py-4">Status</th>
                             </tr>
@@ -112,6 +122,7 @@ export default function DashboardPage() {
                                     <tr key={o.id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4 font-medium text-gray-900">#{o.id}</td>
                                         <td className="px-6 py-4">{o.customer_name}</td>
+                                        <td className="px-6 py-4 text-gray-500">{o.created_at || "N/A"}</td>
                                         <td className="px-6 py-4 font-medium text-gray-900">Rs {o.total.toLocaleString()}</td>
                                         <td className="px-6 py-4">
                                             <span className={`px-3 py-1 text-xs font-medium rounded-full ${
@@ -126,7 +137,7 @@ export default function DashboardPage() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                                    <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
                                         No recent orders found.
                                     </td>
                                 </tr>

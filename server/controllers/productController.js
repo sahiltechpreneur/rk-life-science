@@ -35,16 +35,16 @@ exports.createProduct = async (req, res) => {
 
  try {
 
-  const { name, description, price, stock, category_id } = req.body
+  const { name, description, price, stock } = req.body
 
   const image = req.file ? req.file.path : null
 
   const result = await pool.query(
    `INSERT INTO products
-   (name, description, price, stock, image, category_id)
-   VALUES ($1,$2,$3,$4,$5,$6)
+   (name, description, price, stock, image)
+   VALUES ($1,$2,$3,$4,$5)
    RETURNING *`,
-   [name, description, price, stock, image, category_id || null]
+   [name, description, price, stock, image]
   )
 
   res.json(result.rows[0])
@@ -63,7 +63,7 @@ exports.updateProduct = async (req, res) => {
 
     const { id } = req.params
 
-    const { name, description, price, stock, category_id } = req.body
+    const { name, description, price, stock } = req.body
 
     const image = req.file ? req.file.path : null
 
@@ -78,12 +78,11 @@ exports.updateProduct = async (req, res) => {
  description=$2,
  price=$3,
  stock=$4,
- category_id=$5,
- image=COALESCE($6,image)
- WHERE id=$7
+ image=COALESCE($5,image)
+ WHERE id=$6
  `,
 
-            [name, description, price, stock, category_id, image, id]
+            [name, description, price, stock, image, id]
 
         )
 
