@@ -3,6 +3,7 @@ import "./globals.css";
 import { Outfit } from "next/font/google"
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
+import { NotificationProvider } from "@/context/NotificationContext";
 
 const outfit = Outfit({ subsets: ["latin"] })
 
@@ -22,11 +23,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={outfit.className}>
         <AuthProvider>
-          <CartProvider>
-            <SocketProvider>
-              {children}
-            </SocketProvider>
-          </CartProvider>
+          <NotificationProvider>
+            <CartProvider>
+              <SocketProvider>
+                {children}
+              </SocketProvider>
+            </CartProvider>
+          </NotificationProvider>
         </AuthProvider>
       </body>
     </html>

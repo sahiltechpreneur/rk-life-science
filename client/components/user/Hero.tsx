@@ -4,7 +4,7 @@ import { FiArrowRight, FiPhone, FiCheckCircle, FiStar, FiShield } from "react-ic
 
 export default function Hero() {
   return (
-    <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-gray-50">
+    <section className="relative pt-20 pb-20 lg:pt-32 lg:pb-32 overflow-hidden bg-gray-50">
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-100/40 via-white to-white"></div>
       <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-emerald-200/40 rounded-full blur-3xl -z-10 mix-blend-multiply"></div>

@@ -6,6 +6,7 @@ import Container from "@/components/ui/Container"
 import SimilarProducts from "@/components/user/SimilarProducts"
 import { useCart } from "@/context/CartContext"
 import { AuthContext } from "@/context/AuthContext"
+import { useNotification } from "@/context/NotificationContext"
 import { FiShoppingCart, FiShield, FiTruck, FiBox, FiCheckCircle } from "react-icons/fi"
 
 type Product = {
@@ -24,6 +25,7 @@ export default function ProductDetailPage() {
   
   const { addToCart } = useCart()
   const { user } = useContext(AuthContext)
+  const { showNotification } = useNotification()
   const router = useRouter()
 
   useEffect(() => {
@@ -64,7 +66,7 @@ export default function ProductDetailPage() {
 
   const handleAddToCart = () => {
     if (!user) {
-        alert("Please login to add products to the cart.")
+        showNotification("Please login to add products to the cart.", "warning")
         router.push("/auth/login")
         return
     }
@@ -75,7 +77,7 @@ export default function ProductDetailPage() {
         price: product.price,
         quantity: 1
     })
-    alert(`${product.name} has been added to your cart!`)
+    showNotification(`${product.name} has been added to your cart!`, "success")
   }
 
   return (

@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react"
 import API from "@/lib/api"
+import { useNotification } from "@/context/NotificationContext"
 import { FiSearch, FiUser, FiMail, FiPhone, FiCalendar, FiShield, FiSlash, FiTrash2, FiCheckCircle } from "react-icons/fi"
 
 export default function AdminUsersPage() {
     const [users, setUsers] = useState<any[]>([])
     const [search, setSearch] = useState("")
     const [isLoading, setIsLoading] = useState(true)
+    const { showNotification } = useNotification()
 
     useEffect(() => {
         fetchUsers()
@@ -29,9 +31,10 @@ export default function AdminUsersPage() {
         if (!confirm(`Are you sure you want to ${isBlocked ? 'unblock' : 'block'} this user?`)) return
         try {
             await API.put(`/auth/users/${id}/block`, { is_blocked: !isBlocked })
+            showNotification(`User ${!isBlocked ? 'blocked' : 'unblocked'} successfully`, "success")
             fetchUsers()
         } catch (error) {
-            alert("Failed to update user status")
+            showNotification("Failed to update user status", "error")
         }
     }
 
@@ -39,9 +42,10 @@ export default function AdminUsersPage() {
         if (!confirm("Are you sure you want to PERMANENTLY delete this user? This action cannot be undone.")) return
         try {
             await API.delete(`/auth/users/${id}`)
+            showNotification("User deleted permanently", "success")
             fetchUsers()
         } catch (error) {
-            alert("Failed to delete user")
+            showNotification("Failed to delete user", "error")
         }
     }
 

@@ -3,10 +3,17 @@ const crypto = require("crypto")
 const { sendEmail } = require("../utils/mailer")
 const { getEmailTemplate } = require("../utils/emailTemplates")
 
+/**
+ * orderController.js
+ * Manages all order-related operations including creation, 
+ * payment integration (eSewa/Khalti), status updates, and email notifications.
+ */
+
+/**
+ * Creates a new order and initiates payment gateway if necessary.
+ */
 exports.createOrder = async (req, res) => {
-
     try {
-
         const {
             customer_name,
             email,
@@ -14,29 +21,31 @@ exports.createOrder = async (req, res) => {
             address,
             city,
             total,
+            shipping_charge = 0,
             items,
             payment_method = 'COD'
         } = req.body
 
+        // Initial payment status based on method
         const payment_status = (payment_method === 'eSewa' || payment_method === 'Khalti') ? 'Pending' : 'Unpaid';
 
-        // create order
+        // 1. Insert Core Order Data
         const orderResult = await pool.query(
             `INSERT INTO orders
-   (customer_name,email,phone,address,city,total,payment_method,payment_status)
-   VALUES($1,$2,$3,$4,$5,$6,$7,$8)
-   RETURNING id`,
-            [customer_name, email, phone, address, city, total, payment_method, payment_status]
+            (customer_name, email, phone, address, city, total, payment_method, payment_status, shipping_charge)
+            VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            RETURNING id`,
+            [customer_name, email, phone, address, city, total, payment_method, payment_status, shipping_charge]
         )
 
         const orderId = orderResult.rows[0].id
 
-        // insert order items
+        // 2. Insert Line Items
         for (const item of items) {
             await pool.query(
                 `INSERT INTO order_items
-                (order_id,product_id,name,price,quantity,image_url)
-                VALUES($1,$2,$3,$4,$5,$6)`,
+                (order_id, product_id, name, price, quantity, image_url)
+                VALUES($1, $2, $3, $4, $5, $6)`,
                 [
                     orderId,
                     item.id,
@@ -48,10 +57,11 @@ exports.createOrder = async (req, res) => {
             )
         }
 
+        // 3. Handle eSewa Payment Integration
         if (payment_method === 'eSewa') {
             const transaction_uuid = `${orderId}-${Date.now()}`;
             const signatureString = `total_amount=${total},transaction_uuid=${transaction_uuid},product_code=EPAYTEST`;
-            const secretKey = "8gBm/:&EnhH.1/q";
+            const secretKey = process.env.ESEWA_SECRET_KEY || "8gBm/:&EnhH.1/q";
             const hash = crypto.createHmac('sha256', secretKey).update(signatureString).digest('base64');
 
             return res.json({
@@ -66,14 +76,15 @@ exports.createOrder = async (req, res) => {
                     product_code: "EPAYTEST",
                     product_service_charge: "0",
                     product_delivery_charge: "0",
-                    success_url: "http://localhost:3000/checkout/success",
-                    failure_url: "http://localhost:3000/checkout/failure",
+                    success_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/checkout/success`,
+                    failure_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/checkout/failure`,
                     signed_field_names: "total_amount,transaction_uuid,product_code",
                     signature: hash
                 }
             })
         }
 
+        // 4. Handle Khalti Payment Integration
         if (payment_method === 'Khalti') {
             const purchase_order_id = String(orderId);
             const purchase_order_name = `Order #${orderId}`;
@@ -81,8 +92,8 @@ exports.createOrder = async (req, res) => {
 
             try {
                 const payload = {
-                    return_url: "http://localhost:3000/checkout/khalti",
-                    website_url: "http://localhost:3000",
+                    return_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/checkout/khalti`,
+                    website_url: process.env.FRONTEND_URL || "http://localhost:3000",
                     amount: amountInPaisa,
                     purchase_order_id: purchase_order_id,
                     purchase_order_name: purchase_order_name,
@@ -93,9 +104,7 @@ exports.createOrder = async (req, res) => {
                     }
                 };
 
-                console.log("Initiating Khalti with payload:", payload);
-
-                // Khalti Sandbox Endpoint
+                // Khalti Sandbox/Production Endpoint
                 const khaltiResponse = await fetch("https://dev.khalti.com/api/v2/epayment/initiate/", {
                     method: 'POST',
                     headers: {
@@ -106,37 +115,34 @@ exports.createOrder = async (req, res) => {
                 });
 
                 const khaltiData = await khaltiResponse.json();
-                console.log("Khalti Response:", khaltiData);
 
                 if (khaltiResponse.ok && khaltiData.payment_url) {
                     return res.json({
                         success: true,
                         orderId,
                         payment_method: 'Khalti',
-                        payment_url: khaltiData.payment_url // Frontend redirects here
+                        payment_url: khaltiData.payment_url
                     });
                 } else {
-                    console.error("Khalti Error Response:", khaltiData);
                     return res.status(400).json({ 
                         success: false, 
                         error: "Khalti Setup Failed", 
-                        message: khaltiData.message || "Failed to initiate Khalti payment",
-                        details: khaltiData 
+                        message: khaltiData.message || "Failed to initiate Khalti payment"
                     });
                 }
 
             } catch (error) {
-                console.error("Khalti Fetch Exception:", error);
                 return res.status(500).json({ error: "Khalti request failed", message: error.message });
             }
         }
 
+        // 5. Emit Socket Event for Real-time Admin Notification
         const io = req.app.get('io')
         if (io) {
             io.emit('new_order', { orderId, customer_name, total })
         }
 
-        // Send Order Confirmation Email
+        // 6. Send Order Confirmation Email
         const itemsHtml = items.map(item => `
             <tr>
                 <td>${item.name}</td>
@@ -181,108 +187,114 @@ exports.createOrder = async (req, res) => {
         })
 
     } catch (err) {
-
         res.status(500).json({
             error: err.message
         })
-
     }
-
 }
 
+/**
+ * Retrieves all orders for the admin dashboard.
+ */
 exports.getOrders = async (req, res) => {
-
     try {
-
         const result = await pool.query(
-            `SELECT * FROM orders
-    ORDER BY created_at DESC`
+            `SELECT * FROM orders ORDER BY created_at DESC`
         )
-
         res.json(result.rows)
-
     } catch (err) {
-
         res.status(500).json({ error: err.message })
-
     }
-
 }
 
+/**
+ * Retrieves detailed information for a single order.
+ */
 exports.getOrderDetails = async (req, res) => {
-
     try {
-
         const { id } = req.params
-
-        const order = await pool.query(
-            `SELECT * FROM orders WHERE id=$1`,
-            [id]
-        )
-
-        const items = await pool.query(
-            `SELECT * FROM order_items WHERE order_id=$1`,
-            [id]
-        )
+        const order = await pool.query(`SELECT * FROM orders WHERE id=$1`, [id])
+        const items = await pool.query(`SELECT * FROM order_items WHERE order_id=$1`, [id])
 
         res.json({
             order: order.rows[0],
             items: items.rows
         })
-
     } catch (err) {
-
         res.status(500).json({ error: err.message })
-
     }
-
 }
 
+/**
+ * Updates the status of an order.
+ * Automatically marks as 'Paid' if the status is set to 'Delivered'.
+ */
 exports.updateOrderStatus = async (req, res) => {
-
     try {
-
         const { id } = req.params
         const { status } = req.body
 
-        await pool.query(
-            `UPDATE orders
-    SET status=$1
-    WHERE id=$2`,
-            [status, id]
-        )
+        let query = `UPDATE orders SET status=$1 WHERE id=$2`
+        let params = [status, id]
+
+        // Custom business logic: Delivery implies payment completion for most models
+        if (status === 'Delivered') {
+            query = `UPDATE orders SET status=$1, payment_status='Paid' WHERE id=$2`
+        }
+
+        await pool.query(query, params)
+
+        // 1. Fetch current order info to get customer email
+        const orderResult = await pool.query("SELECT * FROM orders WHERE id=$1", [id]);
+        const order = orderResult.rows[0];
+
+        // 2. Send Delivery Confirmation Email if applicable
+        if (status === 'Delivered') {
+            const deliveredEmailContent = getEmailTemplate(
+                "Order Delivered",
+                `<p>Dear ${order.customer_name},</p>
+                 <p>Great news! Your order <b>#${id}</b> has been successfully delivered.</p>
+                 <p>We hope you enjoy your purchase from R.K. Life Science. Thank you for choosing us for your healthcare needs!</p>
+                 <p>If you have any questions or feedback, feel free to reply to this email.</p>`
+            );
+            await sendEmail(order.email, `Order Delivered - #${id}`, deliveredEmailContent);
+        }
 
         const io = req.app.get('io')
         if (io) {
             io.emit('order_status_updated', { orderId: id, status })
         }
 
-        res.json({
-            success: true,
-            message: "Order status updated"
-        })
-
+        res.json({ success: true, message: "Order status updated" })
     } catch (err) {
-
         res.status(500).json({ error: err.message })
-
     }
-
 }
 
+/**
+ * Cancels a pending order.
+ */
 exports.cancelOrder = async (req, res) => {
     try {
         const { id } = req.params;
         
-        // check if order exists and is pending
         const orderResult = await pool.query("SELECT * FROM orders WHERE id=$1", [id]);
         if (orderResult.rows.length === 0) return res.status(404).json({ error: "Order not found" });
 
         const order = orderResult.rows[0];
         if (order.status !== 'Pending') return res.status(400).json({ error: "Only pending orders can be cancelled" });
 
-        // Update status
         await pool.query("UPDATE orders SET status='Cancelled' WHERE id=$1", [id]);
+
+        // Send Cancellation Email
+        const cancellationEmailContent = getEmailTemplate(
+            "Order Cancelled",
+            `<p>Dear ${order.customer_name},</p>
+             <p>As requested, your order <b>#${id}</b> has been cancelled.</p>
+             <p>If this was a mistake or you have any concerns, please contact our support team immediately.</p>
+             <p>We hope to serve you again in the future.</p>`
+        );
+        await sendEmail(order.email, `Order Cancelled - #${id}`, cancellationEmailContent);
 
         const io = req.app.get('io')
         if (io) {

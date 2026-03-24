@@ -4,6 +4,7 @@ import { useEffect, useState, useContext } from "react"
 import API from "@/lib/api"
 import ProtectedRoute from "@/components/auth/ProtectedRoute"
 import { AuthContext } from "@/context/AuthContext"
+import { useNotification } from "@/context/NotificationContext"
 import { FiUser, FiMail, FiPhone, FiEdit2, FiCamera, FiPackage, FiLogOut, FiTrash2, FiClock, FiCheckCircle, FiTruck, FiShoppingBag } from "react-icons/fi"
 import Link from "next/link"
 
@@ -26,6 +27,7 @@ type User = {
 
 export default function ProfilePage() {
     const { user: authUser, loading, login, logout } = useContext(AuthContext)
+    const { showNotification } = useNotification()
     const [user, setUser] = useState<User | null>(null)
     const [uploadingImage, setUploadingImage] = useState(false)
     const [isSaving, setIsSaving] = useState(false)
@@ -46,7 +48,7 @@ export default function ProfilePage() {
                 logout() // Token invalid or user deleted
                 window.location.href = "/"
             } else {
-                alert("Failed to load profile. Please try again.")
+                showNotification("Failed to load profile.", "error")
             }
         }
     }
@@ -63,10 +65,10 @@ export default function ProfilePage() {
             await API.put("/user/profile", user, {
                 headers: { Authorization: `Bearer ${authUser.token}` }
             })
-            alert("Profile updated successfully")
+            showNotification("Profile updated successfully", "success")
         } catch (err) {
             console.error(err)
-            alert("Failed to update profile")
+            showNotification("Failed to update profile", "error")
         } finally {
             setIsSaving(false)
         }
@@ -92,10 +94,10 @@ export default function ProfilePage() {
             setUser({ ...user, image: newImageUrl })
             login(authUser.token, { ...authUser, image: newImageUrl })
             
-            alert("Profile image updated successfully!")
+            showNotification("Profile image updated successfully!", "success")
         } catch (err) {
             console.error(err)
-            alert("Failed to upload profile image")
+            showNotification("Failed to upload profile image", "error")
         } finally {
             setUploadingImage(false)
         }
@@ -114,7 +116,7 @@ export default function ProfilePage() {
             window.location.href = "/" 
         } catch (err) {
             console.error(err)
-            alert("Failed to delete account")
+            showNotification("Failed to delete account", "error")
         }
     }
 
@@ -126,11 +128,11 @@ export default function ProfilePage() {
             await API.put(`/orders/${orderId}/cancel`, {}, {
                 headers: { Authorization: `Bearer ${authUser.token}` }
             })
-            alert("Order cancelled successfully")
+            showNotification("Order cancelled successfully", "success")
             fetchProfile(authUser.token) // Refresh data
         } catch (err: any) {
             console.error(err)
-            alert(err.response?.data?.error || "Failed to cancel order")
+            showNotification(err.response?.data?.error || "Failed to cancel order", "error")
         }
     }
 

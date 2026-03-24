@@ -5,6 +5,7 @@ import { useContext } from "react"
 import { AuthContext } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { useCart } from "@/context/CartContext"
+import { useNotification } from "@/context/NotificationContext"
 import { FiShoppingCart, FiEye, FiBox } from "react-icons/fi"
 
 type Props = {
@@ -18,18 +19,18 @@ type Props = {
 export default function ProductCard({ id, name, image, description, price }: Props) {
   const { user } = useContext(AuthContext)
   const { addToCart } = useCart()
+  const { showNotification } = useNotification()
   const router = useRouter()
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault() // prevent navigating to product detail
     if (!user) {
-        // Optional: show a nice toast instead of alert in the future
-      alert("Please login to add products to your cart.")
+      showNotification("Please login to add products to your cart.", "warning")
       router.push("/auth/login")
       return
     }
     addToCart({ id, name, image, price, quantity: 1 })
-    alert(`${name} has been added to your cart!`)
+    showNotification(`${name} has been added to your cart!`, "success")
   }
 
   return (

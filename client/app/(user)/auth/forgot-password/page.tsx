@@ -3,10 +3,12 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { useNotification } from "@/context/NotificationContext"
 import { FiMail, FiLock, FiArrowRight, FiCheckCircle } from "react-icons/fi"
 
 export default function ForgotPasswordPage() {
     const router = useRouter()
+    const { showNotification } = useNotification()
     const [form, setForm] = useState({
         email: "", newPassword: "", confirmPassword: ""
     })
@@ -77,7 +79,7 @@ export default function ForgotPasswordPage() {
             })
             const data = await res.json()
             if (data.success) {
-                alert("Password reset successfully! You can now log in.")
+                showNotification("Password reset successfully! You can now log in.", "success")
                 router.push("/auth/login")
             } else {
                 setError(data.error || "Failed to reset password. Invalid OTP.")

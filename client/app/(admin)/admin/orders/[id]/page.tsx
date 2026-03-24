@@ -5,16 +5,26 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { FiArrowLeft, FiUser, FiMapPin, FiMail, FiPhone, FiCreditCard, FiClock, FiCheckCircle, FiTruck, FiPackage, FiXCircle, FiSettings, FiShoppingCart } from "react-icons/fi"
 
+/**
+ * OrderDetailsPage Component (Admin)
+ * This page allows administrators to view the full details of a specific order,
+ * including customer info, shipping details, and items purchased.
+ * It also provides functionality to update the order's status (e.g., Shipped, Delivered).
+ */
 export default function OrderDetailsPage() {
     const params = useParams()
     const { id } = params
     const [order, setOrder] = useState<any>(null)
     const [isUpdating, setIsUpdating] = useState(false)
 
+    // Fetch order data on component mount or when ID changes
     useEffect(() => {
         fetchOrder()
     }, [id])
 
+    /**
+     * Fetches order and order items from the backend API
+     */
     const fetchOrder = async () => {
         try {
             const res = await fetch(`http://localhost:5000/api/orders/${id}`)
@@ -25,6 +35,10 @@ export default function OrderDetailsPage() {
         }
     }
 
+    /**
+     * Updates the order status in the database
+     * Note: Setting status to 'Delivered' automatically marks the order as 'Paid' in the backend.
+     */
     const updateStatus = async (status: string) => {
         setIsUpdating(true)
         try {
@@ -33,7 +47,7 @@ export default function OrderDetailsPage() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status })
             })
-            // Refresh order data
+            // Refresh order data to show updated status and payment status if applicable
             await fetchOrder()
         } catch (error) {
             console.error("Failed to update status", error)
@@ -49,6 +63,9 @@ export default function OrderDetailsPage() {
         </div>
     )
 
+    /**
+     * Returns the appropriate icon based on order status
+     */
     const getStatusIcon = (status: string) => {
         switch(status.toLowerCase()) {
             case 'pending': return <FiClock className="w-5 h-5" />
@@ -60,6 +77,9 @@ export default function OrderDetailsPage() {
         }
     }
 
+    /**
+     * Returns the tailwind style classes for status badges
+     */
     const getStatusStyle = (status: string) => {
         switch(status.toLowerCase()) {
             case 'pending': return 'bg-amber-50 text-amber-600 border-amber-200'
@@ -97,7 +117,7 @@ export default function OrderDetailsPage() {
                     </div>
                 </div>
 
-                {/* Status Updater */}
+                {/* Status Updater Dropdown */}
                 <div className="flex items-center gap-3 bg-white p-2 rounded-xl border border-gray-200 shadow-sm relative z-10">
                     <div className="pl-3 text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
                         <FiSettings className="w-4 h-4" /> 
@@ -191,7 +211,7 @@ export default function OrderDetailsPage() {
 
                 {/* Right Column - Order Items & Payment Summary */}
                 <div className="lg:col-span-2 space-y-8">
-                    {/* Order Items */}
+                    {/* Order Items Table */}
                     <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
                         <div className="flex items-center justify-between mb-8">
                             <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
@@ -239,7 +259,7 @@ export default function OrderDetailsPage() {
                         </div>
                     </div>
 
-                    {/* Payment Summary */}
+                    {/* Financial Summary */}
                     <div className="bg-gray-900 rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden text-white">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full translate-x-32 -translate-y-32"></div>
                         <div className="absolute bottom-0 left-0 w-40 h-40 bg-amber-500/10 rounded-full -translate-x-20 translate-y-20"></div>
@@ -252,11 +272,13 @@ export default function OrderDetailsPage() {
                         <div className="space-y-4 relative z-10 border-b border-gray-700 pb-6 mb-6">
                             <div className="flex justify-between items-center text-gray-300">
                                 <span className="font-medium">Subtotal</span>
-                                <span className="font-bold text-white">NPR {order.order.total.toLocaleString()}</span>
+                                <span className="font-bold text-white">NPR {(order.order.total - (order.order.shipping_charge || 0)).toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between items-center text-gray-300">
                                 <span className="font-medium">Shipping</span>
-                                <span className="font-bold text-emerald-400">Free</span>
+                                <span className={Number(order.order.shipping_charge) === 0 ? "font-bold text-emerald-400" : "font-bold text-white"}>
+                                    {Number(order.order.shipping_charge) === 0 ? "Free" : `NPR ${Number(order.order.shipping_charge).toLocaleString()}`}
+                                </span>
                             </div>
                             <div className="flex justify-between items-center text-gray-300">
                                 <span className="font-medium">Tax</span>
@@ -266,7 +288,7 @@ export default function OrderDetailsPage() {
 
                         <div className="flex justify-between items-end relative z-10">
                             <div>
-                                <p className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Total Amount</p>
+                                <p className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Grand Total</p>
                                 <p className="text-4xl font-black text-white">NPR {Number(order.order.total).toLocaleString()}</p>
                             </div>
                             <span className={`px-4 py-2 border rounded-xl font-bold text-sm tracking-wide ${
