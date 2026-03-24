@@ -21,6 +21,13 @@ export default function LoginPage() {
         setError("")
         setIsLoading(true)
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(email)) {
+            setError("Please enter a valid email address.")
+            setIsLoading(false)
+            return
+        }
+
         try {
             const res = await API.post("/auth/login", {
                 email,

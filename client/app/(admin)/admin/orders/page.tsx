@@ -6,6 +6,7 @@ import { FiSearch, FiFileText, FiDownload, FiEye, FiClock, FiCheckCircle, FiTruc
 import * as XLSX from "xlsx"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
+import { useSocket } from "@/context/SocketContext"
 
 type Order = {
     id: number
@@ -22,9 +23,21 @@ export default function AdminOrdersPage() {
     const [endDate, setEndDate] = useState("")
     const [isLoading, setIsLoading] = useState(true)
 
+    const { socket } = useSocket()
+
     useEffect(() => {
         fetchOrders()
     }, [])
+
+    useEffect(() => {
+        if (!socket) return
+        socket.on('new_order', fetchOrders)
+        socket.on('order_status_updated', fetchOrders)
+        return () => {
+            socket.off('new_order', fetchOrders)
+            socket.off('order_status_updated', fetchOrders)
+        }
+    }, [socket])
 
     const fetchOrders = async () => {
         setIsLoading(true)
@@ -87,7 +100,7 @@ export default function AdminOrdersPage() {
         const dataToExport = filteredOrders.map(o => ({
             "Order ID": o.id,
             "Customer Name": o.customer_name,
-            "Total Amount (Rs)": o.total,
+            "Total Amount (NPR)": o.total,
             "Date": new Date(o.created_at).toLocaleDateString(),
             "Status": o.status
         }))
@@ -107,7 +120,7 @@ export default function AdminOrdersPage() {
         doc.setFontSize(11)
         doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30)
 
-        const tableColumn = ["Order ID", "Customer Name", "Total (Rs)", "Date", "Status"]
+        const tableColumn = ["Order ID", "Customer Name", "Total (NPR)", "Date", "Status"]
         const tableRows = filteredOrders.map(o => [
             `#${o.id}`,
             o.customer_name,
@@ -256,7 +269,7 @@ export default function AdminOrdersPage() {
                                             {new Date(o.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                                         </td>
                                         <td className="px-6 py-5 text-right font-black text-gray-900">
-                                            Rs {o.total.toLocaleString()}
+                                            NPR {o.total.toLocaleString()}
                                         </td>
                                         <td className="px-6 py-5">
                                             <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border ${getStatusStyle(o.status)}`}>

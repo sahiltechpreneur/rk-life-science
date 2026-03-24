@@ -21,6 +21,23 @@ export default function RegisterPage() {
         e.preventDefault()
         setError("")
         
+        const nameRegex = /^[A-Za-z]+$/
+        if (!nameRegex.test(form.fname) || !nameRegex.test(form.lname)) {
+            setError("Names must contain only letters.")
+            return
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(form.email)) {
+            setError("Please enter a valid email address.")
+            return
+        }
+
+        if (form.password.length < 6) {
+            setError("Password must be at least 6 characters long.")
+            return
+        }
+
         if (form.password !== form.confirm) {
             setError("Passwords do not match.")
             return

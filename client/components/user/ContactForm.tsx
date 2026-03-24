@@ -17,8 +17,19 @@ export default function ContactForm() {
     e.preventDefault()
 
     // Validation
-    if(!form.name || !form.email || !form.feedback) {
+    if(!form.name.trim() || !form.email.trim() || !form.feedback.trim()) {
       setError("All fields are required")
+      return
+    }
+
+    const nameRegex = /^[A-Za-z\s]+$/
+    if(!nameRegex.test(form.name)) {
+      setError("Name must contain only letters and spaces.")
+      return
+    }
+
+    if(form.feedback.trim().length < 10) {
+      setError("Feedback must be at least 10 characters long.")
       return
     }
 

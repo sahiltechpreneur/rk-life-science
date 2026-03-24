@@ -8,8 +8,6 @@ export default function Footer() {
 
   return (
     <footer className="bg-gray-900 text-white mt-20 pt-20 pb-10 border-t border-gray-800 relative overflow-hidden">
-      {/* Decorative Blob */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
       <Container className="relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">

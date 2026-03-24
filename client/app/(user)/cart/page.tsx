@@ -80,7 +80,7 @@ export default function CartPage() {
                             <div className="space-y-4 mb-6">
                                 <div className="flex justify-between text-gray-600 font-medium">
                                     <span>Subtotal ({cart.length} items)</span>
-                                    <span className="text-gray-900 font-bold">Rs {subtotal.toLocaleString()}</span>
+                                    <span className="text-gray-900 font-bold">NPR {subtotal.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between text-gray-600 font-medium">
                                     <span>Shipping</span>
@@ -92,7 +92,7 @@ export default function CartPage() {
                                 <div className="flex justify-between items-end">
                                     <span className="text-gray-900 font-bold">Total Amount</span>
                                     <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">
-                                        Rs {subtotal.toLocaleString()}
+                                        NPR {subtotal.toLocaleString()}
                                     </span>
                                 </div>
                                 <p className="text-xs text-gray-400 font-medium mt-2 text-right">Taxes applied at checkout</p>

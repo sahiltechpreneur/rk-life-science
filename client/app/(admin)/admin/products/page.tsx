@@ -191,8 +191,8 @@ export default function ProductsPage() {
                             
                             <div className="flex items-center justify-between mt-auto pt-4 px-2 border-t border-gray-50">
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Price (Rs)</span>
-                                    <span className="font-black text-gray-900">Rs {Number(p.price).toLocaleString()}</span>
+                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Price (NPR)</span>
+                                    <span className="font-black text-gray-900">NPR {Number(p.price).toLocaleString()}</span>
                                 </div>
                                 <div className="flex flex-col items-end">
                                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Stock</span>
@@ -263,7 +263,7 @@ export default function ProductsPage() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <label className="text-sm font-bold text-gray-700 flex items-center gap-2"><FiDollarSign className="text-emerald-500" /> Price (Rs)</label>
+                                        <label className="text-sm font-bold text-gray-700 flex items-center gap-2"><FiDollarSign className="text-emerald-500" /> Price (NPR)</label>
                                         <input required type="number" min="0" step="0.01" name="price" value={form.price} onChange={handleChange} className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all font-medium placeholder:text-gray-400" placeholder="0.00" />
                                     </div>
 

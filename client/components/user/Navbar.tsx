@@ -44,7 +44,7 @@ export default function Navbar() {
   }, [])
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/80 backdrop-blur-xl shadow-sm border-b border-gray-100 py-3' : 'bg-transparent py-5'}`}>
+    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-sm border-b border-gray-200 py-3' : 'bg-transparent py-5'}`}>
       <Container>
         <div className="flex items-center justify-between">
           
@@ -67,7 +67,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-8 bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-full px-8 py-3">
+          <div className="hidden md:flex items-center gap-8 bg-white border border-gray-200 shadow-sm rounded-full px-8 py-3">
             <Link href="/product" className="text-gray-600 hover:text-emerald-600 font-bold transition-colors text-sm">
               Products
             </Link>
@@ -143,7 +143,7 @@ export default function Navbar() {
         {menuOpen && (
           <div 
             ref={menuRef}
-            className="md:hidden absolute top-full left-0 w-full bg-white/90 backdrop-blur-2xl border-b border-gray-100 shadow-2xl py-6 px-6 flex flex-col gap-4 origin-top animate-slideDown"
+            className="md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-xl py-6 px-6 flex flex-col gap-4 origin-top transition-all"
           >
             <div className="flex flex-col gap-2">
                 <Link href="/product" onClick={() => setMenuOpen(false)} className="text-gray-900 font-bold text-lg hover:text-emerald-600 p-2 rounded-xl hover:bg-emerald-50 transition-colors">Products</Link>

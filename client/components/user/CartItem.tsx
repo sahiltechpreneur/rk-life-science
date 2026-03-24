@@ -38,7 +38,7 @@ export default function CartItem({ id, name, image, price, quantity, onQuantityC
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div>
                 <h3 className="text-lg font-black text-gray-900 line-clamp-2 mb-2 group-hover:text-emerald-600 transition-colors">{name}</h3>
-                <p className="text-emerald-600 font-bold">Rs {Number(price).toLocaleString()}</p>
+                <p className="text-emerald-600 font-bold">NPR {Number(price).toLocaleString()}</p>
             </div>
             
             <button 
@@ -70,7 +70,7 @@ export default function CartItem({ id, name, image, price, quantity, onQuantityC
 
           <div className="flex flex-col items-end">
               <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">Item Subtotal</span>
-              <p className="font-black text-gray-900">Rs {(price * qty).toLocaleString()}</p>
+              <p className="font-black text-gray-900">NPR {(price * qty).toLocaleString()}</p>
           </div>
         </div>
       </div>

@@ -43,6 +43,11 @@ exports.createOrder = async (req, res) => {
 
         }
 
+        const io = req.app.get('io')
+        if (io) {
+            io.emit('new_order', { orderId, customer_name, total })
+        }
+
         res.json({
             success: true,
             orderId
@@ -119,6 +124,11 @@ exports.updateOrderStatus = async (req, res) => {
     WHERE id=$2`,
             [status, id]
         )
+
+        const io = req.app.get('io')
+        if (io) {
+            io.emit('order_status_updated', { orderId: id, status })
+        }
 
         res.json({
             success: true,

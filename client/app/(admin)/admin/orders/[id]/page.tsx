@@ -216,7 +216,7 @@ export default function OrderDetailsPage() {
                                         </div>
                                         <div>
                                             <h3 className="font-bold text-gray-900 text-lg">{item.name}</h3>
-                                            <p className="text-sm text-gray-500 mt-1 font-medium text-emerald-600">Rs {Number(item.price).toLocaleString()} <span className="text-gray-400 font-normal">per unit</span></p>
+                                            <p className="text-sm text-gray-500 mt-1 font-medium text-emerald-600">NPR {Number(item.price).toLocaleString()} <span className="text-gray-400 font-normal">per unit</span></p>
                                         </div>
                                     </div>
                                     
@@ -227,7 +227,7 @@ export default function OrderDetailsPage() {
                                         </div>
                                         <div className="text-right">
                                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Subtotal</p>
-                                            <p className="font-black text-gray-900 text-lg">Rs {(item.price * item.quantity).toLocaleString()}</p>
+                                            <p className="font-black text-gray-900 text-lg">NPR {(item.price * item.quantity).toLocaleString()}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -248,7 +248,7 @@ export default function OrderDetailsPage() {
                         <div className="space-y-4 relative z-10 border-b border-gray-700 pb-6 mb-6">
                             <div className="flex justify-between items-center text-gray-300">
                                 <span className="font-medium">Subtotal</span>
-                                <span className="font-bold text-white">Rs {order.order.total.toLocaleString()}</span>
+                                <span className="font-bold text-white">NPR {order.order.total.toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between items-center text-gray-300">
                                 <span className="font-medium">Shipping</span>
@@ -256,14 +256,14 @@ export default function OrderDetailsPage() {
                             </div>
                             <div className="flex justify-between items-center text-gray-300">
                                 <span className="font-medium">Tax</span>
-                                <span className="font-bold text-white">Rs 0.00</span>
+                                <span className="font-bold text-white">NPR 0.00</span>
                             </div>
                         </div>
 
                         <div className="flex justify-between items-end relative z-10">
                             <div>
                                 <p className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Total Amount</p>
-                                <p className="text-4xl font-black text-white">Rs {Number(order.order.total).toLocaleString()}</p>
+                                <p className="text-4xl font-black text-white">NPR {Number(order.order.total).toLocaleString()}</p>
                             </div>
                             <span className="px-4 py-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-xl font-bold text-sm tracking-wide">
                                 PAID

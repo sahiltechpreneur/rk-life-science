@@ -32,7 +32,7 @@ export default function RevenueChart({ labels, dataset }: RevenueChartProps) {
         labels: labels,
         datasets: [
             {
-                label: "Revenue (Rs)",
+                label: "Revenue (NPR)",
                 data: dataset,
                 backgroundColor: "#22c55e",
                 borderRadius: 4

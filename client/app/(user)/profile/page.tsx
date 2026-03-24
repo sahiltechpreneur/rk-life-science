@@ -282,7 +282,7 @@ export default function ProfilePage() {
                                                 
                                                 <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t border-gray-100 sm:border-0 pt-4 sm:pt-0">
                                                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider sm:mb-1">Amount Total</span>
-                                                    <span className="font-black text-gray-900 text-lg">Rs {Number(order.total).toLocaleString()}</span>
+                                                    <span className="font-black text-gray-900 text-lg">NPR {Number(order.total).toLocaleString()}</span>
                                                 </div>
                                             </div>
                                         ))}

@@ -113,7 +113,7 @@ export default function ProductDetailPage() {
                         </h1>
                         <div className="flex items-end gap-3 mb-8">
                             <span className="text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">
-                                Rs {Number(product.price).toLocaleString()}
+                                NPR {Number(product.price).toLocaleString()}
                             </span>
                         </div>
                     </div>

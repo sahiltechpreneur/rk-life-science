@@ -11,6 +11,8 @@ export const metadata: Metadata = {
   description: "Wholesale distributor for nutraceutical products",
 };
 
+import { SocketProvider } from "@/context/SocketContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -21,7 +23,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <CartProvider>
-        {children}
+            <SocketProvider>
+              {children}
+            </SocketProvider>
           </CartProvider>
         </AuthProvider>
       </body>

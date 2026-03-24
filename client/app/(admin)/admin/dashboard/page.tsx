@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import RevenueChart from "@/components/admin/RevenueChart"
 import { FaMoneyBillWave, FaShoppingCart, FaBoxOpen } from "react-icons/fa"
+import { useSocket } from "@/context/SocketContext"
 
 type Order = {
     id: number
@@ -16,13 +17,28 @@ export default function DashboardPage() {
 
     const [stats, setStats] = useState<any>(null)
 
-    useEffect(() => {
-        // Fetch dashboard statistics from backend
+    const fetchStats = () => {
         fetch("http://localhost:5000/api/dashboard")
             .then(res => res.json())
             .then(data => setStats(data))
             .catch(err => console.error("Error fetching dashboard stats", err))
+    }
+
+    useEffect(() => {
+        fetchStats()
     }, [])
+
+    const { socket } = useSocket()
+
+    useEffect(() => {
+        if (!socket) return
+        socket.on('new_order', fetchStats)
+        socket.on('order_status_updated', fetchStats)
+        return () => {
+            socket.off('new_order', fetchStats)
+            socket.off('order_status_updated', fetchStats)
+        }
+    }, [socket])
 
     if (!stats) return (
         <div className="flex justify-center items-center h-[80vh] space-x-2 animate-pulse">
@@ -57,7 +73,7 @@ export default function DashboardPage() {
                     </div>
                     <div>
                         <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Total Revenue</p>
-                        <h3 className="text-3xl font-bold text-gray-900">Rs {stats.totalRevenue.toLocaleString()}</h3>
+                        <h3 className="text-3xl font-bold text-gray-900">NPR {stats.totalRevenue.toLocaleString()}</h3>
                     </div>
                 </div>
 
@@ -123,7 +139,7 @@ export default function DashboardPage() {
                                         <td className="px-6 py-4 font-medium text-gray-900">#{o.id}</td>
                                         <td className="px-6 py-4">{o.customer_name}</td>
                                         <td className="px-6 py-4 text-gray-500">{o.created_at || "N/A"}</td>
-                                        <td className="px-6 py-4 font-medium text-gray-900">Rs {o.total.toLocaleString()}</td>
+                                        <td className="px-6 py-4 font-medium text-gray-900">NPR {o.total.toLocaleString()}</td>
                                         <td className="px-6 py-4">
                                             <span className={`px-3 py-1 text-xs font-medium rounded-full ${
                                                 o.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :

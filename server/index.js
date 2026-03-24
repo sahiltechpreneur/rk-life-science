@@ -1,5 +1,7 @@
 const express = require("express")
 const cors = require("cors")
+const http = require("http")
+const { Server } = require("socket.io")
 require("dotenv").config()
 
 const authRoutes = require("./routes/authRoutes")
@@ -9,6 +11,10 @@ const orderRoutes = require("./routes/orderRoutes")
 const dashboardRoutes = require("./routes/dashboardRoutes")
 
 const app = express()
+const server = http.createServer(app)
+const io = new Server(server, { cors: { origin: "*" } })
+
+app.set('io', io)
 
 app.use(cors())
 app.use(express.json())
@@ -26,6 +32,6 @@ app.get("/", (req,res)=>{
 
 const PORT = 5000
 
-app.listen(PORT,()=>{
+server.listen(PORT,()=>{
   console.log(`Server running on port ${PORT}`)
 })

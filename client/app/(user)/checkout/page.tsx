@@ -36,6 +36,23 @@ export default function CheckoutPage(){
       return router.push('/cart')
   }
 
+  const nameRegex = /^[A-Za-z\s]+$/
+  if (!nameRegex.test(form.customer_name)) {
+      alert("Name must contain only letters and spaces.")
+      return
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(form.email)) {
+      alert("Please enter a valid email address.")
+      return
+  }
+
+  if (!/^9[87]\d{8}$/.test(form.phone)) {
+      alert("Phone must start with 98 or 97 and be exactly 10 digits long.")
+      return
+  }
+
   setIsSubmitting(true)
   try {
       const res = await fetch(
@@ -204,7 +221,7 @@ export default function CheckoutPage(){
                                     <p className="text-xs text-gray-400 font-medium">Qty: {item.quantity}</p>
                                 </div>
                             </div>
-                            <span className="font-bold text-emerald-400 text-sm whitespace-nowrap">Rs {(item.price * item.quantity).toLocaleString()}</span>
+                            <span className="font-bold text-emerald-400 text-sm whitespace-nowrap">NPR {(item.price * item.quantity).toLocaleString()}</span>
                         </div>
                     ))}
                 </div>
@@ -212,7 +229,7 @@ export default function CheckoutPage(){
                 <div className="space-y-4 mb-8 relative z-10">
                     <div className="flex justify-between text-gray-400 font-medium">
                         <span>Subtotal</span>
-                        <span className="text-white font-bold">Rs {total.toLocaleString()}</span>
+                        <span className="text-white font-bold">NPR {total.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-gray-400 font-medium">
                         <span>Shipping</span>
@@ -220,7 +237,7 @@ export default function CheckoutPage(){
                     </div>
                     <div className="flex justify-between items-end border-t border-gray-800 pt-6 mt-6">
                         <span className="text-lg font-bold">Total</span>
-                        <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">Rs {total.toLocaleString()}</span>
+                        <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">NPR {total.toLocaleString()}</span>
                     </div>
                 </div>
 
