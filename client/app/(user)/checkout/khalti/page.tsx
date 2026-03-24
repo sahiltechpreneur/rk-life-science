@@ -21,7 +21,7 @@ function KhaltiCallbackContent() {
                 // https://a.khalti.com/api/v2/epayment/lookup/ with the pidx to verify payment mathematically.
                 // For this demo, we trust the callback status and update our local database.
 
-                fetch(`http://localhost:5000/api/orders/${orderId}/status`, {
+                fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/status`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status: 'Processing' }) // Or 'Paid'

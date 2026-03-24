@@ -23,7 +23,7 @@ function SuccessContent() {
 
                 // Option: Securely send decodedData to backend to verify the signature again
                 // For now, we update the status locally to 'Paid' and redirect to the standard order success page
-                fetch(`http://localhost:5000/api/orders/${orderId}/status`, {
+                fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/status`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status: 'Processing' }) // Or 'Paid' depending on your backend enum

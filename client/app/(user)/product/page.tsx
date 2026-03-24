@@ -27,7 +27,7 @@ export default function ProductPage() {
 
   useEffect(() => {
     setIsLoading(true)
-    fetch("http://localhost:5000/api/products")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`)
       .then(res => res.json())
       .then(data => {
         setAllProducts(data)
@@ -146,7 +146,7 @@ export default function ProductPage() {
                                     key={p.id}
                                     id={p.id}
                                     name={p.name}
-                                    image={p.image?.startsWith("http") ? p.image : `http://localhost:5000/uploads/${p.image}`}
+                                    image={p.image?.startsWith("http") ? p.image : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/uploads/${p.image}`}
                                     description={p.description?.substring(0, 80) + "..."}
                                     price={p.price}
                                 />

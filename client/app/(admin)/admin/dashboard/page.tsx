@@ -18,7 +18,7 @@ export default function DashboardPage() {
     const [stats, setStats] = useState<any>(null)
 
     const fetchStats = () => {
-        fetch("http://localhost:5000/api/dashboard")
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`)
             .then(res => res.json())
             .then(data => setStats(data))
             .catch(err => console.error("Error fetching dashboard stats", err))

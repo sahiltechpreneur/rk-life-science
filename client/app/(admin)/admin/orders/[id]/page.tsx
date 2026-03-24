@@ -27,7 +27,7 @@ export default function OrderDetailsPage() {
      */
     const fetchOrder = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/api/orders/${id}`)
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/${id}`)
             const data = await res.json()
             setOrder(data)
         } catch (error) {
@@ -42,7 +42,7 @@ export default function OrderDetailsPage() {
     const updateStatus = async (status: string) => {
         setIsUpdating(true)
         try {
-            await fetch(`http://localhost:5000/api/orders/${id}/status`, {
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/${id}/status`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status })
@@ -230,7 +230,7 @@ export default function OrderDetailsPage() {
                                         <div className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center border border-gray-200 shrink-0 overflow-hidden">
                                             {item.image_url ? (
                                                 <img 
-                                                    src={item.image_url.startsWith("http") ? item.image_url : `http://localhost:5000/uploads/${item.image_url}`} 
+                                                    src={item.image_url.startsWith("http") ? item.image_url : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/uploads/${item.image_url}`} 
                                                     alt={item.name} 
                                                     className="w-full h-full object-cover" 
                                                 />

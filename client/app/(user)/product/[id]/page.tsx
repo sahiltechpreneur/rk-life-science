@@ -30,7 +30,7 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     setIsLoading(true)
-    fetch(`http://localhost:5000/api/products/${id}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`)
       .then(res => res.json())
       .then(data => setProduct(data))
       .catch(err => console.error(err))
@@ -94,7 +94,7 @@ export default function ProductDetailPage() {
                     <div className="aspect-square rounded-3xl overflow-hidden bg-gray-50 border border-gray-100 flex items-center justify-center p-8">
                         {product.image ? (
                             <img
-                                src={product.image?.startsWith("http") ? product.image : `http://localhost:5000/uploads/${product.image}`}
+                                src={product.image?.startsWith("http") ? product.image : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/uploads/${product.image}`}
                                 alt={product.name}
                                 className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                             />

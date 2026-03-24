@@ -74,7 +74,7 @@ export default function OrderSuccessPage() {
                                             <div className="w-16 h-16 rounded-xl bg-gray-50 border border-gray-100 overflow-hidden flex items-center justify-center shadow-sm">
                                                 {item.image_url ? (
                                                     <img 
-                                                       src={item.image_url.startsWith("http") ? item.image_url : `http://localhost:5000/uploads/${item.image_url}`} 
+                                                       src={item.image_url.startsWith("http") ? item.image_url : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/uploads/${item.image_url}`} 
                                                        alt={item.name} 
                                                        className="w-full h-full object-cover" 
                                                     />

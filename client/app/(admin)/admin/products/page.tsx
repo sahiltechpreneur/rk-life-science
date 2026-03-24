@@ -98,7 +98,7 @@ export default function ProductsPage() {
             price: p.price,
             stock: p.stock,
         })
-        setImagePreview(p.image?.startsWith("http") ? p.image : `http://localhost:5000/uploads/${p.image}`)
+        setImagePreview(p.image?.startsWith("http") ? p.image : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/uploads/${p.image}`)
         setIsFormOpen(true)
     }
 
@@ -174,7 +174,7 @@ export default function ProductsPage() {
                             <div className="relative h-56 mb-5 overflow-hidden rounded-2xl bg-gray-50 flex items-center justify-center group-hover:shadow-inner transition-shadow">
                                 {p.image ? (
                                     <img 
-                                        src={p.image.startsWith("http") ? p.image : `http://localhost:5000/uploads/${p.image}`} 
+                                        src={p.image.startsWith("http") ? p.image : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/uploads/${p.image}`} 
                                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" 
                                         alt={p.name} 
                                     />

@@ -23,7 +23,7 @@ export default function SimilarProducts() {
   useEffect(() => {
     const fetchSimilar = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/products")
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`)
         const data: Product[] = await res.json()
         
         // Filter out the current product and grab 3
@@ -63,7 +63,7 @@ export default function SimilarProducts() {
             key={p.id}
             id={p.id}
             name={p.name}
-            image={p.image?.startsWith("http") ? p.image : `http://localhost:5000/uploads/${p.image}`}
+            image={p.image?.startsWith("http") ? p.image : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/uploads/${p.image}`}
             description={p.description?.substring(0, 60) + "..."}
             price={p.price}
           />

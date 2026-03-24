@@ -63,7 +63,7 @@ export default function CartPage() {
                                 key={p.id}
                                 id={p.id}
                                 name={p.name}
-                                image={p.image?.startsWith("http") ? p.image : `http://localhost:5000/uploads/${p.image}`}
+                                image={p.image?.startsWith("http") ? p.image : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/uploads/${p.image}`}
                                 price={p.price}
                                 quantity={p.quantity}
                                 onQuantityChange={handleQuantityChange}

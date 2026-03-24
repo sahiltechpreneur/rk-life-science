@@ -87,7 +87,7 @@ export default function CheckoutPage(){
   try {
       // Create order in the backend database
       const res = await fetch(
-       "http://localhost:5000/api/orders",
+       `${process.env.NEXT_PUBLIC_API_URL}/orders`,
        {
         method:"POST",
         headers:{
@@ -271,7 +271,7 @@ export default function CheckoutPage(){
                             <div className="flex items-center gap-3">
                                 <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center shrink-0 border border-white/10 overflow-hidden">
                                     {item.image ? (
-                                        <img src={item.image.startsWith('http') ? item.image : `http://localhost:5000/uploads/${item.image}`} className="w-full h-full object-cover" alt="" />
+                                        <img src={item.image.startsWith('http') ? item.image : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/uploads/${item.image}`} className="w-full h-full object-cover" alt="" />
                                     ) : (
                                         <FiBox className="w-5 h-5 text-gray-400" />
                                     )}
