@@ -40,8 +40,14 @@ export default function ProfilePage() {
                 headers: { Authorization: `Bearer ${token}` }
             })
             setUser(res.data)
-        } catch (err) {
+        } catch (err: any) {
             console.error(err)
+            if (err.response?.status === 404 || err.response?.status === 401) {
+                logout() // Token invalid or user deleted
+                window.location.href = "/"
+            } else {
+                alert("Failed to load profile. Please try again.")
+            }
         }
     }
 

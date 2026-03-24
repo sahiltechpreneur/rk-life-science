@@ -1,28 +1,29 @@
 const pool = require("../config/db")
 
 exports.getUserProfile = async(req,res)=>{
+  try{
+    const result = await pool.query(
+      "SELECT id,fname,lname,email,phone,image FROM users WHERE id=$1",
+      [req.user.id]
+    )
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({error: "User not found"})
+    }
 
- try{
+    const user = result.rows[0]
+    
+    const ordersResult = await pool.query(
+      "SELECT * FROM orders WHERE email=$1 ORDER BY created_at DESC",
+      [user.email]
+    )
 
-  const result = await pool.query(
-   "SELECT id,fname,lname,email,phone,image FROM users WHERE id=$1",
-   [req.user.id]
-  )
-  const user = result.rows[0]
-  
-  const ordersResult = await pool.query(
-   "SELECT * FROM orders WHERE email=$1 ORDER BY created_at DESC",
-   [user.email]
-  )
+    user.orders = ordersResult.rows
+    res.json(user)
 
-  user.orders = ordersResult.rows
-
-  res.json(user)
-
- }catch(err){
-  res.status(500).json({error:err.message})
- }
-
+  }catch(err){
+    res.status(500).json({error:err.message})
+  }
 }
 
 

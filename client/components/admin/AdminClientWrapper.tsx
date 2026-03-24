@@ -3,6 +3,7 @@
 import Sidebar from "@/components/admin/Sidebar";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { FiMenu, FiX } from "react-icons/fi";
 
 export default function AdminClientWrapper({
   children,
@@ -12,6 +13,8 @@ export default function AdminClientWrapper({
   const pathname = usePathname();
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mobile state
+  const [isCollapsed, setIsCollapsed] = useState(false); // Desktop state
 
   const isLoginPage = pathname === "/admin/login";
 
@@ -53,11 +56,48 @@ export default function AdminClientWrapper({
 
   // Render the secure admin layout
   return (
-    <div className="flex">
-      <Sidebar />
-      <main className="ml-64 w-full p-8 bg-gray-50 min-h-screen">
-        {children}
-      </main>
+    <div className="flex min-h-screen bg-gray-50">
+      {/* Sidebar - Desktop and Mobile Overlay */}
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        setIsOpen={setIsSidebarOpen} 
+        isCollapsed={isCollapsed} 
+        setIsCollapsed={setIsCollapsed} 
+      />
+
+      {/* Main Content Area */}
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${isCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
+        {/* Top Header for Mobile & Quick Actions */}
+        <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 sticky top-0 z-40">
+          <button 
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="p-2 -ml-2 text-gray-500 hover:text-primary md:hidden"
+          >
+            <FiMenu className="w-6 h-6" />
+          </button>
+          
+          <div className="md:hidden font-black text-gray-900 text-lg">RK Admin</div>
+          
+          <div className="flex items-center gap-4">
+            <div className="text-right hidden sm:block">
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Administrator</p>
+              <p className="text-sm font-bold text-gray-900">RK Dashboard</p>
+            </div>
+          </div>
+        </header>
+
+        <main className="p-4 md:p-8">
+          {children}
+        </main>
+      </div>
+      
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-40 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        ></div>
+      )}
     </div>
   );
 }
