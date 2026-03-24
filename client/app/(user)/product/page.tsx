@@ -123,16 +123,17 @@ export default function ProductPage() {
                     </div>
                 ) : currentProducts.length > 0 ? (
                     <>
-                        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {currentProducts.map(p => (
-                            <ProductCard
-                                key={p.id}
-                                id={p.id}
-                                name={p.name}
-                                image={p.image?.startsWith("http") ? p.image : `http://localhost:5000/uploads/${p.image}`}
-                                description={p.description?.substring(0, 60) + "..."}
-                                price={p.price}
-                            />
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                        {currentProducts.map((p, idx) => (
+                            <div key={p.id} className={`${idx % 2 !== 0 ? 'lg:mt-12' : ''}`}>
+                                <ProductCard
+                                    id={p.id}
+                                    name={p.name}
+                                    image={p.image?.startsWith("http") ? p.image : `http://localhost:5000/uploads/${p.image}`}
+                                    description={p.description?.substring(0, 60) + "..."}
+                                    price={p.price}
+                                />
+                            </div>
                         ))}
                         </div>
 

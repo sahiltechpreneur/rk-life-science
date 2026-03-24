@@ -55,11 +55,16 @@ export default function Footer() {
               Useful Links
             </h3>
             <ul className="space-y-4">
-              {['Privacy Policy', 'Terms & Conditions', 'FAQs', 'Shipping & Returns'].map((link) => (
-                <li key={link}>
-                  <Link href="#" className="text-gray-400 font-medium hover:text-emerald-400 flex items-center gap-2 group transition-colors">
-                      <FiArrowRight className="w-3 h-3 text-emerald-500/0 group-hover:text-emerald-500 -ml-5 group-hover:ml-0 transition-all duration-300" />
-                      {link}
+              {[
+                { name: 'Privacy Policy', path: '/privacy' },
+                { name: 'Terms & Conditions', path: '/terms' },
+                { name: 'FAQs', path: '/faq' },
+                { name: 'Shipping & Returns', path: '/shipping' }
+              ].map((link) => (
+                <li key={link.name}>
+                  <Link href={link.path} className="text-gray-400 font-medium hover:text-lightGreen flex items-center gap-2 group transition-colors">
+                      <FiArrowRight className="w-3 h-3 text-secondary/0 group-hover:text-secondary -ml-5 group-hover:ml-0 transition-all duration-300" />
+                      {link.name}
                   </Link>
                 </li>
               ))}
@@ -69,19 +74,18 @@ export default function Footer() {
           {/* Column 3 - Navigation */}
           <div>
             <h3 className="text-white font-black text-lg mb-6 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+              <span className="w-2 h-2 rounded-full bg-secondary inline-block"></span>
               Navigation
             </h3>
             <ul className="space-y-4">
               {[
                 { name: 'About Us', path: '/about' },
                 { name: 'Our Products', path: '/product' },
-                { name: 'Contact Us', path: '/contact' },
-                { name: 'Careers', path: '/careers' }
+                { name: 'Contact Us', path: '/contact' }
               ].map((link) => (
                 <li key={link.name}>
-                  <Link href={link.path} className="text-gray-400 font-medium hover:text-emerald-400 flex items-center gap-2 group transition-colors">
-                      <FiArrowRight className="w-3 h-3 text-emerald-500/0 group-hover:text-emerald-500 -ml-5 group-hover:ml-0 transition-all duration-300" />
+                  <Link href={link.path} className="text-gray-400 font-medium hover:text-lightGreen flex items-center gap-2 group transition-colors">
+                      <FiArrowRight className="w-3 h-3 text-secondary/0 group-hover:text-secondary -ml-5 group-hover:ml-0 transition-all duration-300" />
                       {link.name}
                   </Link>
                 </li>
@@ -92,24 +96,24 @@ export default function Footer() {
           {/* Column 4 - Contact Info */}
           <div>
             <h3 className="text-white font-black text-lg mb-6 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+              <span className="w-2 h-2 rounded-full bg-secondary inline-block"></span>
               Get in Touch
             </h3>
             <ul className="space-y-5">
               <li className="flex items-start gap-4 text-gray-400 font-medium">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0 text-emerald-400">
+                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0 text-secondary">
                     <FiMapPin className="w-5 h-5" />
                 </div>
                 <span className="mt-2">Shankhamul, Kathmandu,<br/>Nepal, 44600</span>
               </li>
               <li className="flex items-center gap-4 text-gray-400 font-medium hover:text-white transition-colors">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0 text-emerald-400">
+                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0 text-secondary">
                     <FiPhone className="w-5 h-5" />
                 </div>
                 <span>+977-9768771762</span>
               </li>
               <li className="flex items-center gap-4 text-gray-400 font-medium hover:text-white transition-colors cursor-pointer">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0 text-emerald-400">
+                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0 text-secondary">
                     <FiMail className="w-5 h-5" />
                 </div>
                 <span>info.rklifescience2080@gmail.com</span>
