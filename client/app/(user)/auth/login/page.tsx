@@ -86,7 +86,7 @@ export default function LoginPage() {
 
                         <div className="relative">
                             <div className="absolute -top-6 right-2">
-                                <a href="#" className="text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors">Forgot password?</a>
+                                <Link href="/auth/forgot-password" className="text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors">Forgot password?</Link>
                             </div>
                             <label className="absolute -top-2 left-4 px-1 bg-white text-[10px] font-bold uppercase tracking-wider text-gray-400">Password</label>
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">

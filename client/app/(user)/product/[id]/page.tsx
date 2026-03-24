@@ -38,7 +38,7 @@ export default function ProductDetailPage() {
   if (isLoading) {
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
-            <div className="w-12 h-12 border-4 border-gray-200 border-t-emerald-500 rounded-full animate-spin mb-4"></div>
+            <div className="w-12 h-12 border-4 border-gray-200 border-t-primary rounded-full animate-spin mb-4"></div>
             <p className="text-gray-500 font-medium">Loading product details...</p>
         </div>
     )
@@ -83,7 +83,7 @@ export default function ProductDetailPage() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-20">
         <div className="bg-white rounded-[2.5rem] p-6 lg:p-12 shadow-sm border border-gray-100 mb-20 relative overflow-hidden">
             {/* Background Decor */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-emerald-50 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-lightGreen to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
 
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 relative z-10">
                 
@@ -105,27 +105,27 @@ export default function ProductDetailPage() {
                 {/* Product Info */}
                 <div className="flex flex-col justify-center">
                     <div className="mb-4">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-100 uppercase tracking-wider mb-4">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-lightGreen text-darkGreen border border-secondary uppercase tracking-wider mb-4">
                             <FiCheckCircle className="w-3.5 h-3.5" /> In Stock
                         </span>
                         <h1 className="text-4xl lg:text-5xl font-black text-gray-900 leading-tight mb-4">
                             {product.name}
                         </h1>
                         <div className="flex items-end gap-3 mb-8">
-                            <span className="text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">
+                            <span className="text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
                                 NPR {Number(product.price).toLocaleString()}
                             </span>
                         </div>
                     </div>
 
-                    <div className="prose prose-emerald mb-10 text-gray-600 font-medium leading-relaxed">
+                    <div className="prose mb-10 text-gray-600 font-medium leading-relaxed">
                         <p>{product.description}</p>
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-4 mb-10 pb-10 border-b border-gray-100">
                         <button
                             onClick={handleAddToCart}
-                            className="flex-1 group relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-300 bg-gray-900 border border-transparent rounded-2xl hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-600 shadow-xl hover:shadow-2xl hover:-translate-y-1"
+                            className="flex-1 group relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-300 bg-gray-900 border border-transparent rounded-2xl hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary shadow-xl hover:shadow-2xl hover:-translate-y-1"
                         >
                             <FiShoppingCart className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" />
                             Add to Cart

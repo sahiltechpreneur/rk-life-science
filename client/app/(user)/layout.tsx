@@ -13,7 +13,7 @@ export default function UserLayout({
 
             <Navbar />
 
-            <main className="flex-grow">
+            <main className="flex-grow pt-24">
                 <CartProvider>
                     {children}
                 </CartProvider>

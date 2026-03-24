@@ -62,13 +62,13 @@ export default function ProductPage() {
     <div className="bg-gray-50 min-h-screen pb-20">
       {/* Header Banner */}
       <div className="bg-gray-900 border-b border-gray-800 text-white py-16 lg:py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/40 via-gray-900 to-gray-900"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/40 via-gray-900 to-gray-900"></div>
         <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 flex flex-col items-center text-center">
             <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20 mb-6 shadow-xl">
-                <FiShoppingBag className="w-8 h-8 text-emerald-400" />
+                <FiShoppingBag className="w-8 h-8 text-lightGreen" />
             </div>
             <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
-                Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">Products</span>
+                Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Products</span>
             </h1>
             <p className="text-gray-400 max-w-2xl text-lg font-medium">Browse our comprehensive catalog of industry-leading healthcare and nutraceutical products.</p>
         </div>
@@ -92,7 +92,7 @@ export default function ProductPage() {
             <div className={`lg:w-1/4 ${showMobileFilters ? 'block' : 'hidden'} lg:block`}>
                 <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 sticky top-24">
                     <h2 className="text-xl font-black text-gray-900 mb-6 flex items-center gap-2">
-                        <FiSliders className="text-emerald-500" /> Refine Search
+                        <FiSliders className="text-primary" /> Refine Search
                     </h2>
                     <Filters onFilterChange={handleFilterChange} />
                 </div>
@@ -155,7 +155,7 @@ export default function ProductPage() {
                         <p className="text-gray-500 max-w-sm">We couldn't find any products matching your current filters. Try adjusting them.</p>
                         <button 
                             onClick={() => handleFilterChange({ price: 'all', rating: 'all' })}
-                            className="mt-6 font-bold text-emerald-600 bg-emerald-50 px-6 py-3 rounded-xl hover:bg-emerald-100 transition-colors"
+                            className="mt-6 font-bold text-darkGreen bg-lightGreen px-6 py-3 rounded-xl hover:bg-secondary hover:text-white transition-colors"
                         >
                             Reset Filters
                         </button>

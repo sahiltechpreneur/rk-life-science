@@ -44,13 +44,13 @@ export default function Navbar() {
   }, [])
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-sm border-b border-gray-200 py-3' : 'bg-transparent py-5'}`}>
+    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md border-b border-lightGreen py-3' : 'bg-transparent py-5'}`}>
       <Container>
         <div className="flex items-center justify-between">
           
           {/* Logo with Image */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 p-0.5 shadow-lg shadow-emerald-500/20 group-hover:shadow-emerald-500/40 transition-all">
+            <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-gradient-to-tr from-primary to-secondary p-0.5 shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-all">
                 <div className="w-full h-full bg-white rounded-[10px] overflow-hidden flex items-center justify-center p-1">
                     <Image
                         src="/images/logo.png" 
@@ -61,20 +61,20 @@ export default function Navbar() {
                     />
                 </div>
             </div>
-            <span className={`text-xl font-black ${scrolled ? 'text-gray-900' : 'text-gray-900'} group-hover:text-emerald-600 transition-colors`}>
+            <span className={`text-xl font-black ${scrolled ? 'text-darkGreen' : 'text-gray-900'} group-hover:text-primary transition-colors`}>
               R. K. Life Science
             </span>
           </Link>
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-8 bg-white border border-gray-200 shadow-sm rounded-full px-8 py-3">
-            <Link href="/product" className="text-gray-600 hover:text-emerald-600 font-bold transition-colors text-sm">
+            <Link href="/product" className="text-gray-600 hover:text-primary font-bold transition-colors text-sm">
               Products
             </Link>
-            <Link href="/about" className="text-gray-600 hover:text-emerald-600 font-bold transition-colors text-sm">
+            <Link href="/about" className="text-gray-600 hover:text-primary font-bold transition-colors text-sm">
               About
             </Link>
-            <Link href="/contact" className="text-gray-600 hover:text-emerald-600 font-bold transition-colors text-sm">
+            <Link href="/contact" className="text-gray-600 hover:text-primary font-bold transition-colors text-sm">
               Contact
             </Link>
           </div>
@@ -82,8 +82,8 @@ export default function Navbar() {
           {/* Desktop Right Side Actions */}
           <div className="hidden md:flex items-center gap-4">
             {/* Cart Button */}
-            <Link href="/cart" className="relative p-2 text-gray-700 hover:text-emerald-600 transition-colors group">
-              <div className="absolute inset-0 bg-emerald-50 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+            <Link href="/cart" className="relative p-2 text-gray-700 hover:text-primary transition-colors group">
+              <div className="absolute inset-0 bg-lightGreen rounded-full scale-0 group-hover:scale-100 transition-transform duration-300"></div>
               <FiShoppingCart className="w-5 h-5 relative z-10" />
               {cart.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 border-2 border-white text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm z-20 transition-transform group-hover:scale-110">
@@ -96,7 +96,7 @@ export default function Navbar() {
             {user ? (
               <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
                 <Link href="/profile" className="flex items-center gap-2 group cursor-pointer">
-                  <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center overflow-hidden border-2 border-transparent group-hover:border-emerald-200 transition-all">
+                  <div className="w-9 h-9 rounded-full bg-lightGreen text-primary flex items-center justify-center overflow-hidden border-2 border-transparent group-hover:border-secondary transition-all">
                     {user.image ? (
                       <img src={user.image} alt={user.name || "Profile"} className="object-cover w-full h-full" />
                     ) : (
@@ -109,13 +109,13 @@ export default function Navbar() {
               <div className="flex pl-4 border-l border-gray-200 gap-3">
                 <Link
                     href="/auth/login"
-                    className="text-gray-600 hover:text-emerald-600 font-bold px-3 py-2 text-sm transition-colors"
+                    className="text-gray-600 hover:text-primary font-bold px-3 py-2 text-sm transition-colors"
                 >
                     Sign In
                 </Link>
                 <Link
                     href="/auth/register"
-                    className="bg-gray-900 text-white px-5 py-2.5 rounded-xl hover:bg-emerald-600 text-sm shadow-xl hover:-translate-y-0.5 transition-all duration-300 font-bold"
+                    className="bg-primary text-white px-5 py-2.5 rounded-xl hover:bg-darkGreen text-sm shadow-xl hover:-translate-y-0.5 transition-all duration-300 font-bold"
                 >
                     Register
                 </Link>
@@ -125,11 +125,11 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden relative p-2 text-gray-700 hover:text-emerald-600 transition-colors group"
+            className="md:hidden relative p-2 text-gray-700 hover:text-primary transition-colors group"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
-            <div className="absolute inset-0 bg-emerald-50 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+            <div className="absolute inset-0 bg-lightGreen rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
             {menuOpen ? <FiX className="w-6 h-6 relative z-10" /> : <FiMenu className="w-6 h-6 relative z-10" />}
             
             {/* Mobile cart badge indication */}
@@ -146,9 +146,9 @@ export default function Navbar() {
             className="md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-xl py-6 px-6 flex flex-col gap-4 origin-top transition-all"
           >
             <div className="flex flex-col gap-2">
-                <Link href="/product" onClick={() => setMenuOpen(false)} className="text-gray-900 font-bold text-lg hover:text-emerald-600 p-2 rounded-xl hover:bg-emerald-50 transition-colors">Products</Link>
-                <Link href="/about" onClick={() => setMenuOpen(false)} className="text-gray-900 font-bold text-lg hover:text-emerald-600 p-2 rounded-xl hover:bg-emerald-50 transition-colors">About</Link>
-                <Link href="/contact" onClick={() => setMenuOpen(false)} className="text-gray-900 font-bold text-lg hover:text-emerald-600 p-2 rounded-xl hover:bg-emerald-50 transition-colors">Contact</Link>
+                <Link href="/product" onClick={() => setMenuOpen(false)} className="text-gray-900 font-bold text-lg hover:text-primary p-2 rounded-xl hover:bg-lightGreen transition-colors">Products</Link>
+                <Link href="/about" onClick={() => setMenuOpen(false)} className="text-gray-900 font-bold text-lg hover:text-primary p-2 rounded-xl hover:bg-lightGreen transition-colors">About</Link>
+                <Link href="/contact" onClick={() => setMenuOpen(false)} className="text-gray-900 font-bold text-lg hover:text-primary p-2 rounded-xl hover:bg-lightGreen transition-colors">Contact</Link>
             </div>
             
             <hr className="border-gray-100 my-2" />
@@ -156,14 +156,14 @@ export default function Navbar() {
             <Link 
               href="/cart" 
               onClick={() => setMenuOpen(false)}
-              className="flex items-center justify-between text-gray-900 font-bold text-lg hover:text-emerald-600 p-2 rounded-xl hover:bg-emerald-50 transition-colors"
+              className="flex items-center justify-between text-gray-900 font-bold text-lg hover:text-primary p-2 rounded-xl hover:bg-lightGreen transition-colors"
             >
               <div className="flex items-center gap-3">
                   <FiShoppingCart className="w-5 h-5" />
                   Cart
               </div>
               {cart.length > 0 && (
-                <span className="bg-emerald-500 text-white text-xs font-bold rounded-full px-2.5 py-1 shadow-sm">
+                <span className="bg-primary text-white text-xs font-bold rounded-full px-2.5 py-1 shadow-sm">
                   {cart.reduce((tot, item) => tot + item.quantity, 0)} items
                 </span>
               )}
@@ -176,7 +176,7 @@ export default function Navbar() {
                   onClick={() => setMenuOpen(false)}
                   className="flex items-center gap-3"
                 >
-                  <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center overflow-hidden border border-emerald-200">
+                  <div className="w-12 h-12 rounded-full bg-lightGreen text-primary flex items-center justify-center overflow-hidden border border-secondary">
                     {user.image ? (
                       <img src={user.image} alt="Profile" className="object-cover w-full h-full" />
                     ) : (
@@ -207,7 +207,7 @@ export default function Navbar() {
                 <Link 
                   href="/auth/register" 
                   onClick={() => setMenuOpen(false)}
-                  className="w-full flex items-center justify-center bg-gray-900 text-white font-bold py-3.5 rounded-xl hover:bg-emerald-600 shadow-xl transition-colors"
+                  className="w-full flex items-center justify-center bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-darkGreen shadow-xl transition-colors"
                 >
                   Register
                 </Link>
