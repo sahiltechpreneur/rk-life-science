@@ -92,6 +92,10 @@ exports.login = async (req,res)=>{
 
   const user = userResult.rows[0]
 
+  if (user.is_blocked) {
+    return res.status(403).json({ error: "Your account has been blocked. Please contact support." })
+  }
+
   const valid = await bcrypt.compare(password,user.password)
 
   if(!valid) return res.status(400).json({error:"Invalid credentials"})
@@ -178,6 +182,39 @@ exports.resetPassword = async (req, res) => {
     await pool.query("DELETE FROM otps WHERE email=$1 AND type='reset'", [email]);
 
     res.json({ success: true, message: "Password updated successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+// Admin: Get all users
+exports.getUsers = async (req, res) => {
+  try {
+    const result = await pool.query("SELECT id, fname, lname, email, phone, role, is_blocked FROM users ORDER BY id DESC");
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+// Admin: Block/Unblock user
+exports.blockUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { is_blocked } = req.body;
+    await pool.query("UPDATE users SET is_blocked=$1 WHERE id=$2", [is_blocked, id]);
+    res.json({ success: true, message: is_blocked ? "User blocked" : "User unblocked" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+// Admin: Delete user
+exports.deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query("DELETE FROM users WHERE id=$1", [id]);
+    res.json({ success: true, message: "User deleted" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -66,7 +66,10 @@ export default function CheckoutPage(){
         body:JSON.stringify({
          ...form,
          total,
-         items:cart,
+         items: cart.map(item => ({
+             ...item,
+             image: item.image // Ensure this field exists in cart items
+         })),
          payment_method: paymentMethod
         })
        }

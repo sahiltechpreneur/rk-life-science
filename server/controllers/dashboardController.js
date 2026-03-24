@@ -7,9 +7,9 @@ exports.getDashboardStats = async (req, res) => {
             "SELECT COUNT(*) FROM orders"
         )
 
-        // total revenue
+        // total revenue (excluding cancelled)
         const revenue = await pool.query(
-            "SELECT SUM(total) FROM orders"
+            "SELECT SUM(total) FROM orders WHERE status != 'Cancelled'"
         )
 
         // total products
@@ -33,6 +33,7 @@ exports.getDashboardStats = async (req, res) => {
                 MIN(DATE_TRUNC('week', created_at)) as week_start
              FROM orders
              WHERE created_at >= NOW() - INTERVAL '6 weeks'
+             AND status != 'Cancelled'
              GROUP BY DATE_TRUNC('week', created_at)
              ORDER BY week_start`
         )

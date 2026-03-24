@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import API from "@/lib/api"
-import { FiSearch, FiUser, FiMail, FiPhone, FiCalendar, FiShield } from "react-icons/fi"
+import { FiSearch, FiUser, FiMail, FiPhone, FiCalendar, FiShield, FiSlash, FiTrash2, FiCheckCircle } from "react-icons/fi"
 
 export default function AdminUsersPage() {
     const [users, setUsers] = useState<any[]>([])
@@ -16,12 +16,32 @@ export default function AdminUsersPage() {
     const fetchUsers = async () => {
         setIsLoading(true)
         try {
-            const res = await API.get(`/user/all`)
+            const res = await API.get(`/auth/users`) // Updated endpoint
             setUsers(res.data)
         } catch (error) {
             console.error("Failed to fetch users", error)
         } finally {
             setIsLoading(false)
+        }
+    }
+
+    const handleBlock = async (id: number, isBlocked: boolean) => {
+        if (!confirm(`Are you sure you want to ${isBlocked ? 'unblock' : 'block'} this user?`)) return
+        try {
+            await API.put(`/auth/users/${id}/block`, { is_blocked: !isBlocked })
+            fetchUsers()
+        } catch (error) {
+            alert("Failed to update user status")
+        }
+    }
+
+    const handleDelete = async (id: number) => {
+        if (!confirm("Are you sure you want to PERMANENTLY delete this user? This action cannot be undone.")) return
+        try {
+            await API.delete(`/auth/users/${id}`)
+            fetchUsers()
+        } catch (error) {
+            alert("Failed to delete user")
         }
     }
 
@@ -65,8 +85,9 @@ export default function AdminUsersPage() {
                             <tr className="bg-gray-50 border-b border-gray-100">
                                 <th className="px-6 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">User</th>
                                 <th className="px-6 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Contact</th>
-                                <th className="px-6 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Role</th>
+                                <th className="px-6 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Role & Status</th>
                                 <th className="px-6 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Joined</th>
+                                <th className="px-6 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
@@ -115,19 +136,52 @@ export default function AdminUsersPage() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-5">
-                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${
-                                                user.role === 'admin' 
-                                                ? 'bg-purple-50 text-purple-700 border-purple-200' 
-                                                : 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                            }`}>
-                                                {user.role === 'admin' && <FiShield className="w-3 h-3" />}
-                                                {user.role}
-                                            </span>
+                                            <div className="flex flex-col gap-2">
+                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border w-fit ${
+                                                    user.role === 'admin' 
+                                                    ? 'bg-purple-50 text-purple-700 border-purple-200' 
+                                                    : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                                }`}>
+                                                    {user.role === 'admin' && <FiShield className="w-3 h-3" />}
+                                                    {user.role}
+                                                </span>
+                                                {user.is_blocked && (
+                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border bg-red-50 text-red-700 border-red-200 w-fit">
+                                                        <FiSlash className="w-3 h-3" /> Blocked
+                                                    </span>
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-5">
                                             <div className="flex items-center gap-2 text-sm font-medium text-gray-600">
                                                 <FiCalendar className="w-4 h-4 text-gray-400" />
-                                                {user.join_date}
+                                                {user.join_date || new Date(user.created_at).toLocaleDateString()}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-5 text-right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                {user.role !== 'admin' && (
+                                                    <>
+                                                        <button 
+                                                            onClick={(e) => { e.stopPropagation(); handleBlock(user.id, user.is_blocked); }}
+                                                            className={`p-2 rounded-lg border transition-all ${
+                                                                user.is_blocked 
+                                                                ? 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-600 hover:text-white' 
+                                                                : 'bg-amber-50 text-amber-600 border-amber-100 hover:bg-amber-600 hover:text-white'
+                                                            }`}
+                                                            title={user.is_blocked ? "Unblock User" : "Block User"}
+                                                        >
+                                                            {user.is_blocked ? <FiCheckCircle className="w-4 h-4" /> : <FiSlash className="w-4 h-4" />}
+                                                        </button>
+                                                        <button 
+                                                            onClick={(e) => { e.stopPropagation(); handleDelete(user.id); }}
+                                                            className="p-2 bg-red-50 text-red-600 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all"
+                                                            title="Delete User"
+                                                        >
+                                                            <FiTrash2 className="w-4 h-4" />
+                                                        </button>
+                                                    </>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>

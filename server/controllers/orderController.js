@@ -18,7 +18,7 @@ exports.createOrder = async (req, res) => {
             payment_method = 'COD'
         } = req.body
 
-        const payment_status = payment_method === 'eSewa' ? 'Pending' : 'Pending';
+        const payment_status = (payment_method === 'eSewa' || payment_method === 'Khalti') ? 'Pending' : 'Unpaid';
 
         // create order
         const orderResult = await pool.query(
@@ -33,20 +33,19 @@ exports.createOrder = async (req, res) => {
 
         // insert order items
         for (const item of items) {
-
             await pool.query(
                 `INSERT INTO order_items
-    (order_id,product_id,name,price,quantity)
-    VALUES($1,$2,$3,$4,$5)`,
+                (order_id,product_id,name,price,quantity,image_url)
+                VALUES($1,$2,$3,$4,$5,$6)`,
                 [
                     orderId,
                     item.id,
                     item.name,
                     item.price,
-                    item.quantity
+                    item.quantity,
+                    item.image || item.image_url
                 ]
             )
-
         }
 
         if (payment_method === 'eSewa') {
@@ -269,4 +268,29 @@ exports.updateOrderStatus = async (req, res) => {
 
     }
 
+}
+
+exports.cancelOrder = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // check if order exists and is pending
+        const orderResult = await pool.query("SELECT * FROM orders WHERE id=$1", [id]);
+        if (orderResult.rows.length === 0) return res.status(404).json({ error: "Order not found" });
+
+        const order = orderResult.rows[0];
+        if (order.status !== 'Pending') return res.status(400).json({ error: "Only pending orders can be cancelled" });
+
+        // Update status
+        await pool.query("UPDATE orders SET status='Cancelled' WHERE id=$1", [id]);
+
+        const io = req.app.get('io')
+        if (io) {
+            io.emit('order_status_updated', { orderId: id, status: 'Cancelled' })
+        }
+
+        res.json({ success: true, message: "Order cancelled successfully" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 }

@@ -112,6 +112,22 @@ export default function ProfilePage() {
         }
     }
 
+    const handleCancelOrder = async (orderId: number) => {
+        if (!authUser?.token) return
+        if (!confirm("Are you sure you want to cancel this order?")) return
+
+        try {
+            await API.put(`/orders/${orderId}/cancel`, {}, {
+                headers: { Authorization: `Bearer ${authUser.token}` }
+            })
+            alert("Order cancelled successfully")
+            fetchProfile(authUser.token) // Refresh data
+        } catch (err: any) {
+            console.error(err)
+            alert(err.response?.data?.error || "Failed to cancel order")
+        }
+    }
+
     const getStatusIcon = (status: string) => {
         switch(status.toLowerCase()) {
             case 'pending': return <FiClock className="w-4 h-4" />
@@ -280,9 +296,20 @@ export default function ProfilePage() {
                                                     </div>
                                                 </div>
                                                 
-                                                <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t border-gray-100 sm:border-0 pt-4 sm:pt-0">
-                                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider sm:mb-1">Amount Total</span>
-                                                    <span className="font-black text-gray-900 text-lg">NPR {Number(order.total).toLocaleString()}</span>
+                                                <div className="flex flex-col sm:flex-row items-center gap-4">
+                                                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t border-gray-100 sm:border-0 pt-4 sm:pt-0">
+                                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider sm:mb-1">Amount Total</span>
+                                                        <span className="font-black text-gray-900 text-lg">NPR {Number(order.total).toLocaleString()}</span>
+                                                    </div>
+                                                    
+                                                    {order.status === 'Pending' && (
+                                                        <button 
+                                                            onClick={() => handleCancelOrder(order.id)}
+                                                            className="text-xs font-bold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg border border-red-100 transition-all flex items-center gap-1.5"
+                                                        >
+                                                            <FiTrash2 className="w-3.5 h-3.5" /> Cancel Order
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         ))}

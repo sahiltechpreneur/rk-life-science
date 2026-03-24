@@ -207,9 +207,13 @@ export default function OrderDetailsPage() {
                             {order.items.map((item: any, idx: number) => (
                                 <div key={item.id} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl transition-colors hover:bg-gray-50 ${idx !== order.items.length - 1 ? 'border-b border-gray-50' : ''}`}>
                                     <div className="flex items-start gap-4">
-                                        <div className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center border border-gray-200 shrink-0">
-                                            {item.image ? (
-                                                <img src={item.image.startsWith("http") ? item.image : `http://localhost:5000/uploads/${item.image}`} alt={item.name} className="w-full h-full object-cover rounded-xl" />
+                                        <div className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center border border-gray-200 shrink-0 overflow-hidden">
+                                            {item.image_url ? (
+                                                <img 
+                                                    src={item.image_url.startsWith("http") ? item.image_url : `http://localhost:5000/uploads/${item.image_url}`} 
+                                                    alt={item.name} 
+                                                    className="w-full h-full object-cover" 
+                                                />
                                             ) : (
                                                 <FiPackage className="w-6 h-6 text-gray-400" />
                                             )}
@@ -265,8 +269,12 @@ export default function OrderDetailsPage() {
                                 <p className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-1">Total Amount</p>
                                 <p className="text-4xl font-black text-white">NPR {Number(order.order.total).toLocaleString()}</p>
                             </div>
-                            <span className="px-4 py-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-xl font-bold text-sm tracking-wide">
-                                PAID
+                            <span className={`px-4 py-2 border rounded-xl font-bold text-sm tracking-wide ${
+                                order.order.payment_status?.toLowerCase() === 'paid'
+                                ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                                : 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                            }`}>
+                                {order.order.payment_status || 'UNPAID'}
                             </span>
                         </div>
                     </div>
