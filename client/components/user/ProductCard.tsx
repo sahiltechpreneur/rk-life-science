@@ -59,18 +59,18 @@ export default function ProductCard({ id, name, image, description, price }: Pro
         </div>
         
         {/* Content */}
-        <div className="flex-1 px-2">
-            <h3 className="font-bold text-gray-900 text-lg sm:text-xl line-clamp-1 mb-1.5 group-hover:text-primary transition-colors">{name}</h3>
-            <p className="text-gray-500 text-sm line-clamp-2 min-h-[40px] mb-5 font-medium">{description}</p>
+        <div className="flex-1 px-2 pt-1">
+            <h3 className="font-semibold text-gray-900 text-lg sm:text-xl line-clamp-1 mb-1.5 group-hover:text-primary transition-colors">{name}</h3>
+            <p className="text-gray-500 text-sm line-clamp-2 min-h-[40px] mb-5 font-normal">{description}</p>
         </div>
         
         {/* Footer */}
         <div className="flex items-center justify-between mt-auto pt-4 px-2 border-t border-gray-50">
             <div className="flex flex-col">
-                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">Price</span>
-                <span className="font-black text-gray-900 text-lg">NPR {Number(price).toLocaleString()}</span>
+                <span className="text-[11px] text-gray-400 font-medium uppercase tracking-wider mb-0.5">Price</span>
+                <span className="font-bold text-gray-900 text-lg">NPR {Number(price).toLocaleString()}</span>
             </div>
-            <div className="flex items-center text-sm font-bold text-primary group-hover:text-white group-hover:bg-primary px-4 py-2 rounded-xl transition-colors">
+            <div className="flex items-center text-sm font-semibold text-primary group-hover:text-white group-hover:bg-primary px-4 py-2 rounded-xl transition-colors">
                 Details <FiEye className="ml-2 w-4 h-4" />
             </div>
         </div>

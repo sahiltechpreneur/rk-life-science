@@ -108,11 +108,11 @@ export default function ProductDetailPage() {
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-lightGreen text-darkGreen border border-secondary uppercase tracking-wider mb-4">
                             <FiCheckCircle className="w-3.5 h-3.5" /> In Stock
                         </span>
-                        <h1 className="text-4xl lg:text-5xl font-black text-gray-900 leading-tight mb-4">
+                        <h1 className="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
                             {product.name}
                         </h1>
                         <div className="flex items-end gap-3 mb-8">
-                            <span className="text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+                            <span className="text-4xl lg:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
                                 NPR {Number(product.price).toLocaleString()}
                             </span>
                         </div>
@@ -139,8 +139,8 @@ export default function ProductDetailPage() {
                                 <FiShield className="w-6 h-6" />
                             </div>
                             <div>
-                                <h4 className="font-bold text-gray-900 mb-1">Authentic</h4>
-                                <p className="text-xs text-gray-500 font-medium">100% Genuine Quality</p>
+                                <h4 className="font-semibold text-gray-900 mb-1">Authentic</h4>
+                                <p className="text-xs text-gray-500 font-normal">100% Genuine Quality</p>
                             </div>
                         </div>
                         <div className="flex items-start gap-4">
@@ -148,8 +148,8 @@ export default function ProductDetailPage() {
                                 <FiTruck className="w-6 h-6" />
                             </div>
                             <div>
-                                <h4 className="font-bold text-gray-900 mb-1">Fast Delivery</h4>
-                                <p className="text-xs text-gray-500 font-medium">Securely Packaged</p>
+                                <h4 className="font-semibold text-gray-900 mb-1">Fast Delivery</h4>
+                                <p className="text-xs text-gray-500 font-normal">Securely Packaged</p>
                             </div>
                         </div>
                     </div>

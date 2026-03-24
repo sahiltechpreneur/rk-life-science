@@ -67,10 +67,10 @@ export default function ProductPage() {
             <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20 mb-6 shadow-xl">
                 <FiShoppingBag className="w-8 h-8 text-lightGreen" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">
                 Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Products</span>
             </h1>
-            <p className="text-gray-400 max-w-2xl text-lg font-medium">Browse our comprehensive catalog of industry-leading healthcare and nutraceutical products.</p>
+            <p className="text-gray-300 max-w-2xl text-lg font-normal">Browse our comprehensive catalog of industry-leading healthcare and nutraceutical products.</p>
         </div>
       </div>
 
@@ -91,7 +91,7 @@ export default function ProductPage() {
             {/* Filters Sidebar */}
             <div className={`lg:w-1/4 ${showMobileFilters ? 'block' : 'hidden'} lg:block`}>
                 <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 sticky top-24">
-                    <h2 className="text-xl font-black text-gray-900 mb-6 flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                         <FiSliders className="text-primary" /> Refine Search
                     </h2>
                     <Filters onFilterChange={handleFilterChange} />
@@ -101,8 +101,8 @@ export default function ProductPage() {
             {/* Product Grid Area */}
             <div className="lg:w-3/4">
                 <div className="flex justify-between items-center mb-6">
-                    <p className="text-sm font-bold text-gray-500">
-                        Showing <span className="text-gray-900 px-2 py-1 bg-white rounded-lg border border-gray-200">{filteredProducts.length}</span> results
+                    <p className="text-sm font-medium text-gray-600">
+                        Showing <span className="text-gray-900 font-semibold px-2 py-1 bg-white rounded-lg border border-gray-200">{filteredProducts.length}</span> results
                     </p>
                 </div>
 
@@ -152,11 +152,11 @@ export default function ProductPage() {
                         <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-5">
                             <FiSearch className="w-8 h-8 text-gray-400" />
                         </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">No products found</h3>
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">No products found</h3>
                         <p className="text-gray-500 max-w-sm">We couldn't find any products matching your current filters. Try adjusting them.</p>
                         <button 
                             onClick={() => handleFilterChange({ price: 'all', rating: 'all' })}
-                            className="mt-6 font-bold text-darkGreen bg-lightGreen px-6 py-3 rounded-xl hover:bg-secondary hover:text-white transition-colors"
+                            className="mt-6 font-semibold text-darkGreen bg-lightGreen px-6 py-3 rounded-xl hover:bg-secondary hover:text-white transition-colors"
                         >
                             Reset Filters
                         </button>

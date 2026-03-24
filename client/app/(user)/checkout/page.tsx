@@ -17,6 +17,7 @@ export default function CheckoutPage(){
   address: "",
   city: ""
  })
+ const [paymentMethod, setPaymentMethod] = useState("COD")
  const [isSubmitting, setIsSubmitting] = useState(false)
 
  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=>{
@@ -65,7 +66,8 @@ export default function CheckoutPage(){
         body:JSON.stringify({
          ...form,
          total,
-         items:cart
+         items:cart,
+         payment_method: paymentMethod
         })
        }
       )
@@ -73,8 +75,28 @@ export default function CheckoutPage(){
       const data = await res.json()
     
       if(data.success){
-       // clearCart(); // Typically cart should clear after successful checkout
-       router.push(`/order-success?order=${data.orderId}`)
+       if (data.payment_method === 'eSewa') {
+           const formParams = data.esewaConfig;
+           const form = document.createElement("form");
+           form.setAttribute("method", "POST");
+           form.setAttribute("action", "https://rc-epay.esewa.com.np/api/epay/main/v2/form");
+           
+           for (const key in formParams) {
+               const hiddenField = document.createElement("input");
+               hiddenField.setAttribute("type", "hidden");
+               hiddenField.setAttribute("name", key);
+               hiddenField.setAttribute("value", formParams[key]);
+               form.appendChild(hiddenField);
+           }
+           document.body.appendChild(form);
+           form.submit();
+       } else if (data.payment_method === 'Khalti') {
+           // Khalti returns a direct payment_url to redirect to
+           window.location.href = data.payment_url;
+       } else {
+           // clearCart();
+           router.push(`/order-success?order=${data.orderId}`)
+       }
       }
   } catch(error) {
       console.error(error)
@@ -241,6 +263,35 @@ export default function CheckoutPage(){
                     </div>
                 </div>
 
+                <div className="space-y-4 mb-8 relative z-10 border-t border-gray-800 pt-6">
+                    <h3 className="font-bold mb-3">Payment Method</h3>
+                    <div className="flex flex-col gap-3">
+                        <label className={`flex items-center gap-3 p-4 rounded-xl cursor-pointer border transition-all ${paymentMethod === 'COD' ? 'bg-primary/20 border-primary' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
+                            <input type="radio" name="paymentMethod" value="COD" checked={paymentMethod === 'COD'} onChange={() => setPaymentMethod('COD')} className="accent-primary w-4 h-4" />
+                            <div className="flex-1">
+                                <span className="font-bold block">Cash on Delivery</span>
+                                <span className="text-xs text-gray-400">Pay when you receive the items</span>
+                            </div>
+                        </label>
+                        <label className={`flex items-center gap-3 p-4 rounded-xl cursor-pointer border transition-all ${paymentMethod === 'eSewa' ? 'bg-[#60bb46]/20 border-[#60bb46]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
+                            <input type="radio" name="paymentMethod" value="eSewa" checked={paymentMethod === 'eSewa'} onChange={() => setPaymentMethod('eSewa')} className="accent-[#60bb46] w-4 h-4" />
+                            <div className="flex-1">
+                                <span className="font-bold block text-[#60bb46]">eSewa Digital Wallet</span>
+                                <span className="text-xs text-gray-400">Secure online payment via eSewa</span>
+                            </div>
+                            <img src="https://esewa.com.np/common/images/esewa_logo.png" alt="eSewa" className="h-6 object-contain bg-white rounded-md p-1" />
+                        </label>
+                        <label className={`flex items-center gap-3 p-4 rounded-xl cursor-pointer border transition-all ${paymentMethod === 'Khalti' ? 'bg-[#5c2d91]/20 border-[#5c2d91]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
+                            <input type="radio" name="paymentMethod" value="Khalti" checked={paymentMethod === 'Khalti'} onChange={() => setPaymentMethod('Khalti')} className="accent-[#5c2d91] w-4 h-4" />
+                            <div className="flex-1">
+                                <span className="font-bold block text-purple-400">Khalti Digital Wallet</span>
+                                <span className="text-xs text-gray-400">Pay securely via Khalti</span>
+                            </div>
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Khalti_Digital_Wallet_Logo.png" alt="Khalti" className="h-6 object-contain bg-white rounded-md p-1" />
+                        </label>
+                    </div>
+                </div>
+
                 <button
                     type="submit"
                     disabled={isSubmitting}
@@ -249,12 +300,12 @@ export default function CheckoutPage(){
                     {isSubmitting ? 'Processing...' : (
                         <>
                             <FiCreditCard className="mr-2 w-5 h-5 text-emerald-600 group-hover:scale-110 transition-transform" />
-                            Place Order (Cash on Delivery)
+                            {paymentMethod === 'eSewa' ? 'Pay with eSewa' : paymentMethod === 'Khalti' ? 'Pay with Khalti' : 'Place Order (COD)'}
                         </>
                     )}
                 </button>
                 <p className="text-center text-xs text-gray-500 font-medium mt-4 relative z-10">
-                    You will pay with cash upon receiving your items.
+                    {paymentMethod === 'eSewa' ? 'You will be redirected securely to eSewa.' : paymentMethod === 'Khalti' ? 'You will be redirected securely to Khalti.' : 'You will pay with cash upon receiving your items.'}
                 </p>
             </div>
 

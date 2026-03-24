@@ -2,6 +2,7 @@ const pool = require("../config/db")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const { sendEmail } = require("../utils/mailer")
+const { getEmailTemplate } = require("../utils/emailTemplates")
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"
 
@@ -23,7 +24,15 @@ exports.sendRegisterOtp = async (req, res) => {
       [email, otp, expiresAt]
     );
 
-    await sendEmail(email, "Your Registration OTP", `<p>Hi ${fname},</p><p>Your OTP for registration is <b>${otp}</b>. It expires in 10 minutes.</p>`);
+    const emailContent = getEmailTemplate(
+      "Welcome to R. K. Life Science",
+      `<p>Hi ${fname},</p>
+       <p>Thank you for choosing R. K. Life Science! To complete your registration and secure your account, please use the following One-Time Password (OTP):</p>
+       <div class="otp">${otp}</div>
+       <p>This code is valid for 10 minutes. If you did not request this code, please ignore this email.</p>`
+    );
+
+    await sendEmail(email, "Your Registration OTP", emailContent);
 
     res.json({ success: true, message: "OTP sent" });
   } catch (err) {
@@ -137,7 +146,15 @@ exports.forgotPassword = async (req, res) => {
       [email, otp, expiresAt]
     );
 
-    await sendEmail(email, "Password Reset OTP", `<p>Your OTP for password reset is <b>${otp}</b>. It expires in 10 minutes.</p>`);
+    const emailContent = getEmailTemplate(
+      "Password Reset Request",
+      `<p>Hello,</p>
+       <p>We received a request to reset your password for your R. K. Life Science account. Please use the following One-Time Password (OTP) to proceed:</p>
+       <div class="otp">${otp}</div>
+       <p>This code is valid for 10 minutes. For security reasons, do not share this code with anyone.</p>`
+    );
+
+    await sendEmail(email, "Password Reset OTP", emailContent);
 
     res.json({ success: true, message: "OTP sent" });
   } catch (err) {
