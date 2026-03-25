@@ -32,11 +32,15 @@ exports.sendRegisterOtp = async (req, res) => {
        <p>This code is valid for 10 minutes. If you did not request this code, please ignore this email.</p>`
     );
 
-    await sendEmail(email, "Your Registration OTP", emailContent);
+    const emailSent = await sendEmail(email, "Your Registration OTP", emailContent);
+    if (!emailSent) {
+      return res.status(500).json({ error: "Failed to send verification email. Please check your email configuration." });
+    }
 
     res.json({ success: true, message: "OTP sent" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Register OTP Error:", err);
+    res.status(500).json({ error: err.message || "An unexpected error occurred while sending OTP." });
   }
 }
 
@@ -158,11 +162,15 @@ exports.forgotPassword = async (req, res) => {
        <p>This code is valid for 10 minutes. For security reasons, do not share this code with anyone.</p>`
     );
 
-    await sendEmail(email, "Password Reset OTP", emailContent);
+    const emailSent = await sendEmail(email, "Password Reset OTP", emailContent);
+    if (!emailSent) {
+      return res.status(500).json({ error: "Failed to send password reset email. Please check your email configuration." });
+    }
 
     res.json({ success: true, message: "OTP sent" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Forgot Password Error:", err);
+    res.status(500).json({ error: err.message || "An unexpected error occurred while sending reset OTP." });
   }
 }
 
