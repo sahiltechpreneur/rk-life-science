@@ -1,13 +1,13 @@
 "use client"
 
 import { useSearchParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import Container from "@/components/ui/Container"
 import API from "@/lib/api"
 import { FiCheckCircle, FiPackage, FiShoppingBag, FiArrowRight, FiHome } from "react-icons/fi"
 import Link from "next/link"
 
-export default function OrderSuccessPage() {
+function OrderSuccessContent() {
     const params = useSearchParams()
     const router = useRouter()
     const orderId = params.get("order")
@@ -16,6 +16,7 @@ export default function OrderSuccessPage() {
 
     useEffect(() => {
         if (orderId) fetchOrderDetails()
+        else setLoading(false)
     }, [orderId])
 
     const fetchOrderDetails = async () => {
@@ -52,7 +53,7 @@ export default function OrderSuccessPage() {
                             
                             <div className="mt-8 inline-flex items-center gap-3 bg-gray-50 px-6 py-3 rounded-2xl border border-gray-100 shadow-sm">
                                 <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Order Number</span>
-                                <span className="text-xl font-black text-emerald-600">#{orderId}</span>
+                                <span className="text-xl font-black text-emerald-600">#{orderId || "N/A"}</span>
                             </div>
                         </div>
                     </div>
@@ -133,3 +134,16 @@ export default function OrderSuccessPage() {
         </div>
     )
 }
+
+export default function OrderSuccessPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-[70vh] flex flex-col items-center justify-center">
+                <div className="w-12 h-12 border-4 border-gray-100 border-t-emerald-500 rounded-full animate-spin mb-4"></div>
+                <p className="text-gray-500 font-medium">Loading...</p>
+            </div>
+        }>
+            <OrderSuccessContent />
+        </Suspense>
+    )
+}
