@@ -1,5 +1,0 @@
-Error creating otps table: The server does not support SSL connections
-Error: The server does not support SSL connections
-    at D:\MyWork\rk-life-science\server\node_modules\pg-pool\index.js:45:11
-    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
-    at async createOtpTable (D:\MyWork\rk-life-science\server\debug_db.js:6:9)
