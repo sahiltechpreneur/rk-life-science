@@ -7,4 +7,13 @@ const pool = new Pool({
    } 
 })
 
+// Diagnostic logging for production debugging
+pool.on('connect', () => {
+    console.log('Database connected successfully');
+});
+
+pool.on('error', (err) => {
+    console.error('Unexpected error on idle database client', err);
+});
+
 module.exports = pool
