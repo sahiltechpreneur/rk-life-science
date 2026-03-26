@@ -6,7 +6,7 @@ const { getEmailTemplate } = require("../utils/emailTemplates")
 /**
  * orderController.js
  * Manages all order-related operations including creation, 
- * payment integration (eSewa/Khalti), status updates, and email notifications.
+ * payment integration (eSewa), status updates, and email notifications.
  */
 
 /**
@@ -27,7 +27,7 @@ exports.createOrder = async (req, res) => {
         } = req.body
 
         // Initial payment status based on method
-        const payment_status = (payment_method === 'eSewa' || payment_method === 'Khalti') ? 'Pending' : 'Unpaid';
+        const payment_status = (payment_method === 'eSewa') ? 'Pending' : 'Unpaid';
 
         // 1. Insert Core Order Data
         const orderResult = await pool.query(
@@ -84,59 +84,7 @@ exports.createOrder = async (req, res) => {
             })
         }
 
-        // 4. Handle Khalti Payment Integration
-        if (payment_method === 'Khalti') {
-            const purchase_order_id = String(orderId);
-            const purchase_order_name = `Order #${orderId}`;
-            const amountInPaisa = Math.round(Number(total) * 100); 
-
-            try {
-                const payload = {
-                    return_url: `${process.env.FRONTEND_URL}/checkout/khalti`,
-                    website_url: process.env.FRONTEND_URL,
-                    amount: amountInPaisa,
-                    purchase_order_id: purchase_order_id,
-                    purchase_order_name: purchase_order_name,
-                    customer_info: {
-                        name: String(customer_name),
-                        email: String(email),
-                        phone: String(phone)
-                    }
-                };
-
-                // Khalti Sandbox/Production Endpoint
-                const khaltiResponse = await fetch("https://dev.khalti.com/api/v2/epayment/initiate/", {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Key ${process.env.KHALTI_SECRET_KEY || '1145ea0490eb414eb02cc724cb116035'}`, 
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                const khaltiData = await khaltiResponse.json();
-
-                if (khaltiResponse.ok && khaltiData.payment_url) {
-                    return res.json({
-                        success: true,
-                        orderId,
-                        payment_method: 'Khalti',
-                        payment_url: khaltiData.payment_url
-                    });
-                } else {
-                    return res.status(400).json({ 
-                        success: false, 
-                        error: "Khalti Setup Failed", 
-                        message: khaltiData.message || "Failed to initiate Khalti payment"
-                    });
-                }
-
-            } catch (error) {
-                return res.status(500).json({ error: "Khalti request failed", message: error.message });
-            }
-        }
-
-        // 5. Emit Socket Event for Real-time Admin Notification
+        // 4. Emit Socket Event for Real-time Admin Notification
         const io = req.app.get('io')
         if (io) {
             io.emit('new_order', { orderId, customer_name, total })

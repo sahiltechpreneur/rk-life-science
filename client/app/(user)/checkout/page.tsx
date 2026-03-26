@@ -126,10 +126,6 @@ export default function CheckoutPage(){
            document.body.appendChild(form);
            form.submit();
        } 
-       // Handle Khalti redirection
-       else if (data.payment_method === 'Khalti') {
-           window.location.href = data.payment_url;
-       } 
        // Handle Cash on Delivery (COD)
        else {
            // Success page handles clearCart() if needed or it can be done here
@@ -326,14 +322,6 @@ export default function CheckoutPage(){
                             </div>
                             <img src="https://esewa.com.np/common/images/esewa_logo.png" alt="eSewa" className="h-6 object-contain bg-white rounded-md p-1" />
                         </label>
-                        <label className={`flex items-center gap-3 p-4 rounded-xl cursor-pointer border transition-all ${paymentMethod === 'Khalti' ? 'bg-[#5c2d91]/20 border-[#5c2d91] shadow-lg shadow-[#5c2d91]/10' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
-                            <input type="radio" name="paymentMethod" value="Khalti" checked={paymentMethod === 'Khalti'} onChange={() => setPaymentMethod('Khalti')} className="accent-[#5c2d91] w-4 h-4" />
-                            <div className="flex-1">
-                                <span className="font-bold block text-purple-400">Khalti Digital Wallet</span>
-                                <span className="text-xs text-gray-400">Pay securely via Khalti</span>
-                            </div>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Khalti_Digital_Wallet_Logo.png" alt="Khalti" className="h-6 object-contain bg-white rounded-md p-1" />
-                        </label>
                     </div>
                 </div>
 
@@ -346,7 +334,7 @@ export default function CheckoutPage(){
                     {isSubmitting ? 'Processing...' : (
                         <>
                             <FiCreditCard className="mr-2 w-5 h-5 text-emerald-600 group-hover:scale-110 transition-transform" />
-                            {paymentMethod === 'eSewa' ? 'Pay with eSewa' : paymentMethod === 'Khalti' ? 'Pay with Khalti' : 'Place Order (COD)'}
+                            {paymentMethod === 'eSewa' ? 'Pay with eSewa' : 'Place Order (COD)'}
                         </>
                     )}
                 </button>

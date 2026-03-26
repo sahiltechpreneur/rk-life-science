@@ -11,7 +11,7 @@ export default function Footer() {
 
       <Container className="relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
-          
+
           {/* Column 1 - Brand Info */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-3 mb-6 group inline-flex">
@@ -27,7 +27,7 @@ export default function Footer() {
                 R. K. Life Science
               </span>
             </Link>
-            
+
             <p className="text-gray-400 font-medium leading-relaxed mb-8">
               Premium wholesale distributor for nutraceutical & non-medicinal products. Empowering health since 2020.
             </p>
@@ -63,8 +63,8 @@ export default function Footer() {
               ].map((link) => (
                 <li key={link.name}>
                   <Link href={link.path} className="text-gray-400 font-medium hover:text-lightGreen flex items-center gap-2 group transition-colors">
-                      <FiArrowRight className="w-3 h-3 text-secondary/0 group-hover:text-secondary -ml-5 group-hover:ml-0 transition-all duration-300" />
-                      {link.name}
+                    <FiArrowRight className="w-3 h-3 text-secondary/0 group-hover:text-secondary -ml-5 group-hover:ml-0 transition-all duration-300" />
+                    {link.name}
                   </Link>
                 </li>
               ))}
@@ -85,8 +85,8 @@ export default function Footer() {
               ].map((link) => (
                 <li key={link.name}>
                   <Link href={link.path} className="text-gray-400 font-medium hover:text-lightGreen flex items-center gap-2 group transition-colors">
-                      <FiArrowRight className="w-3 h-3 text-secondary/0 group-hover:text-secondary -ml-5 group-hover:ml-0 transition-all duration-300" />
-                      {link.name}
+                    <FiArrowRight className="w-3 h-3 text-secondary/0 group-hover:text-secondary -ml-5 group-hover:ml-0 transition-all duration-300" />
+                    {link.name}
                   </Link>
                 </li>
               ))}
@@ -102,19 +102,19 @@ export default function Footer() {
             <ul className="space-y-5">
               <li className="flex items-start gap-4 text-gray-400 font-medium">
                 <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0 text-secondary">
-                    <FiMapPin className="w-5 h-5" />
+                  <FiMapPin className="w-5 h-5" />
                 </div>
-                <span className="mt-2">Shankhamul, Kathmandu,<br/>Nepal, 44600</span>
+                <span className="mt-2">Shankhamul, Kathmandu,<br />Nepal, 44600</span>
               </li>
               <li className="flex items-center gap-4 text-gray-400 font-medium hover:text-white transition-colors">
                 <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0 text-secondary">
-                    <FiPhone className="w-5 h-5" />
+                  <FiPhone className="w-5 h-5" />
                 </div>
                 <span>+977-9768771762</span>
               </li>
               <li className="flex items-center gap-4 text-gray-400 font-medium hover:text-white transition-colors cursor-pointer">
                 <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0 text-secondary">
-                    <FiMail className="w-5 h-5" />
+                  <FiMail className="w-5 h-5" />
                 </div>
                 <span>info.rklifescience2080@gmail.com</span>
               </li>
@@ -125,9 +125,9 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-gray-500 text-sm font-medium text-center md:text-left">
-            © {currentYear} <strong className="text-gray-300">R. K. Life Science</strong>. All rights reserved. 
+            © {currentYear} <strong className="text-gray-300">R. K. Life Science</strong>. All rights reserved.
           </p>
-          
+
           <div className="flex items-center gap-6 px-6 py-3 bg-white/5 rounded-2xl border border-white/5">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Accepted Payments</span>
             <div className="flex gap-4 font-black">

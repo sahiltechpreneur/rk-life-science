@@ -22,7 +22,7 @@ const faqs = [
   },
   {
     question: "What payment methods do you accept online?",
-    answer: "We accept payments via eSewa, Khalti, Fonepay, and direct bank transfers. Cash on Delivery (COD) is also available for verified B2B partners within Kathmandu."
+    answer: "We accept payments via eSewa, Fonepay, and direct bank transfers. Cash on Delivery (COD) is also available for verified B2B partners within Kathmandu."
   }
 ]
 

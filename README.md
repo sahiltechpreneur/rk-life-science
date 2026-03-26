@@ -1,146 +1,97 @@
-# R. K. Life Science Ecommerce System
+# R. K. Life Science - Premium Ecommerce Platform
 
-An advanced **Ecommerce Platform** for **R. K. Life Science**, a wholesale distributor of nutraceutical products (multivitamins, tabs, capsules, and non-medicinal products).  
-This system includes a **user-facing storefront**, **admin panel**, **real-time features**, and **full backend integration** using Next.js, Node.js, PostgreSQL, and Socket.io.
+![R. K. Life Science Logo](/client/public/images/logo.png)
 
----
-
-## 🚀 Features
-
-### User Side
-- **Homepage**: Hero section, services, featured products, newsletter signup  
-- **Product List**: Pagination, filters by price and stars  
-- **Product Details**: Name, image, description, similar products  
-- **Cart & Checkout**: Add/remove products, order placement  
-- **User Profile**: Update info, change password, view order history  
-- **Authentication**: Login, register, forgot password  
-- **Contact & About Pages**: Contact form, company info, developer section  
-
-### Admin Side
-- **Dashboard**: Overview of total products, users, orders, revenue  
-- **Product Management**: Add, edit, delete products, image upload, categories  
-- **Order Management**: View, update order status (pending, dispatched, delivered)  
-- **User Management**: View users, delete suspicious accounts  
-- **Reports**: Export reports in PDF/Excel with date range filters  
-- **Admin Authentication**: Secure login/logout  
-- **Sidebar**: Fixed sidebar with navigation and logout  
-
-### Common Features
-- **Payment Integration**: eSewa, Stripe, Cash on Delivery  
-- **Responsive Design**: Works on desktop, tablet, mobile  
-- **Smooth Scrolling & Hover Effects**  
-- **Form Validation**: Email, phone (10 digits, starts with 98 or 97), password confirmation  
-- **Real-time Updates**: Socket.io for live order notifications (future enhancement)  
-- **Color Scheme**: White and Green theme  
+A state-of-the-art, premium ecommerce solution for **R. K. Life Science**, a leading wholesale distributor of nutraceutical and non-medicinal products. This platform features a high-end **Glassmorphic UI**, a robust **Admin Suite**, and a seamless shopping experience.
 
 ---
 
-## 🗂️ Folder Structure
+## ✨ Key Features
 
-```
+### 💎 Premium User Experience
+- **Modern Glassmorphic Design**: A stunning, high-contrast UI with vibrant gradients, blurred backdrops (Glassmorphism), and smooth micro-animations.
+- **Dynamic Hero Section**: Interactive elements and floating decorative accents for a premium first impression.
+- **Responsive Product Suite**: Unified product cards, advanced sidebar filters, and a streamlined 2-column checkout flow.
+- **Account Management**: Elegant user profile with integrated order history and real-time status tracking.
+- **Multi-Channel Support**: Dedicated FAQ, About, and Contact pages with interactive components.
 
-rk-life-science/
-│
-├── client/                 # Next.js frontend
-│   ├── app/                # Pages & layouts
-│   │   ├── (user)/         # User pages
-│   │   └── (admin)/        # Admin pages (no navbar/footer)
-│   ├── components/         # React components
-│   │   ├── admin/          # Admin sidebar, buttons
-│   │   └── user/           # Navbar, footer, product cards
-│   └── lib/                # API calls, helpers
-│
-├── server/                 # Node.js backend
-│   ├── controllers/        # Route controllers
-│   ├── routes/             # Express routes
-│   ├── middleware/         # Multer, auth, validations
-│   ├── uploads/            # Uploaded product images
-│   └── config/             # DB connection, environment config
-│
-├── docs/                   # Documentation, diagrams
-└── README.md               # Project README
+### 🛠️ Advanced Admin Suite
+- **Intelligent Dashboard**: Real-time business analytics with **Weekly Revenue** tracking and interactive charts.
+- **Streamlined Product Management**: Overhauled product catalog with modal-based entry, image previews, and automated status handling.
+- **Order & Export Engine**: 
+    - Full order lifecycle management (Pending, Dispatched, Delivered).
+    - **Data Exports**: Download order reports in **Excel** or **PDF**.
+    - **Date Range Filters**: Precise reporting based on custom date selections.
+- **User Directory**: Centralized management of registered customers with role-based badges.
 
-````
+### 🏗️ Simplified Architecture
+- **No Categories**: Product management simplified—no more complex category trees to manage.
+- **Payment Flexibility**: Integrated with **eSewa** and **Cash on Delivery (COD)**.
 
 ---
 
-## ⚙️ Tech Stack
+## 🛠️ Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | Next.js, Tailwind CSS, React |
-| Backend | Node.js, Express.js, Socket.io |
-| Database | PostgreSQL (locally hosted) |
-| Payments | eSewa, Stripe, Cash on Delivery |
-| Deployment | (Optional) Vercel / Heroku / DigitalOcean |
+- **Frontend**: Next.js 15+, React, Tailwind CSS, Lucide/React-Icons.
+- **Backend**: Node.js, Express.js.
+- **Database**: PostgreSQL (Primal connection via `pg-pool`).
+- **Real-time**: Socket.io for live order notifications.
+- **Styling**: Vanilla CSS + Tailwind for maximum visual excellence.
 
 ---
 
-## 🔧 Setup Instructions
+## 🚀 Local Development Setup
 
-### 1. Clone the Project
-```bash
-git clone https://github.com/sahiltechpreneur/rk-life-science.git
-cd rk-life-science
-````
+### 1. Prerequisites
+- Node.js (v18+)
+- PostgreSQL installed and running locally.
 
-### 2. Backend Setup
-
+### 2. Backend Configuration
 ```bash
 cd server
 npm install
 ```
-
-* Create `.env` file with:
-
-```
+Create a `.env` file in the `server` directory:
+```env
 PORT=5000
-PGHOST=localhost
-PGUSER=postgres
-PGPASSWORD=<your-db-password>
-PGDATABASE=rk_life_science
-PGPORT=5432
+NODE_ENV=development
+DATABASE_URL=postgresql://postgres:<your_password>@localhost:5432/rk_life_science
+JWT_SECRET=<your_secret_key>
+EMAIL_USER=<your_email>
+EMAIL_PASS=<your_app_password>
+ESEWA_SECRET_KEY=8gBm/:&EnhH.1/q
+FRONTEND_URL=http://localhost:3000
 ```
+*Note: SSL is automatically disabled for local development in `config/db.js`.*
 
-* Start backend:
-
-```bash
-npm run dev
-```
-
-* Ensure **uploads folder exists**:
-
-```bash
-mkdir uploads
-```
-
-### 3. Frontend Setup
-
+### 3. Frontend Configuration
 ```bash
 cd client
 npm install
+```
+Create a `.env.local` file in the `client` directory:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
+
+### 4. Run the Application
+Start the backend:
+```bash
+# In /server
+npm run dev
+```
+Start the frontend:
+```bash
+# In /client
 npm run dev
 ```
 
-* Open in browser: `http://localhost:3000`
-* Admin login: `http://localhost:3000/admin/login`
-
 ---
 
-## 💡 Notes
-
-* Product images are stored in `server/uploads` and served via `/uploads` route.
-* Phone number validation: 10 digits starting with `98` or `97`.
-* Admin sidebar is **fixed**, user pages have **navbar/footer**.
-* Uses **FormData** for image uploads and product updates.
-* Search & pagination implemented for admin product list.
+## 📝 Important Notes
+- **Database**: Ensure the `rk_life_science` database exists before running the server.
+- **Product Images**: Uploaded images are stored in `server/uploads`. Ensure this directory exists.
+- **Cleanup**: Redundant debug and migration scripts have been removed for a cleaner production-ready codebase.
 
 ---
-
-## 📌 Next Steps / Enhancements
-
-* Add **real-time notifications** via Socket.io for new orders.
-* Implement **category dropdown** instead of manually entering ID.
-* Add **confirmation modal** before deleting a product or user.
-* Integrate **advanced reporting** with charts using Chart.js or Recharts.
-* Deploy to a **production server** with SSL and secure environment variables.
+© 2026 **R. K. Life Science**. All rights reserved.
