@@ -76,8 +76,8 @@ exports.createOrder = async (req, res) => {
                     product_code: "EPAYTEST",
                     product_service_charge: "0",
                     product_delivery_charge: "0",
-                    success_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/checkout/success`,
-                    failure_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/checkout/failure`,
+                    success_url: `${process.env.FRONTEND_URL}/checkout/success`,
+                    failure_url: `${process.env.FRONTEND_URL}/checkout/failure`,
                     signed_field_names: "total_amount,transaction_uuid,product_code",
                     signature: hash
                 }
@@ -92,8 +92,8 @@ exports.createOrder = async (req, res) => {
 
             try {
                 const payload = {
-                    return_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/checkout/khalti`,
-                    website_url: process.env.FRONTEND_URL || "http://localhost:3000",
+                    return_url: `${process.env.FRONTEND_URL}/checkout/khalti`,
+                    website_url: process.env.FRONTEND_URL,
                     amount: amountInPaisa,
                     purchase_order_id: purchase_order_id,
                     purchase_order_name: purchase_order_name,
