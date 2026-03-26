@@ -11,6 +11,7 @@ export default function ProductsPage() {
     const [editingId, setEditingId] = useState<number | null>(null)
     const [isFormOpen, setIsFormOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
     const [form, setForm] = useState({
         name: "",
@@ -28,11 +29,17 @@ export default function ProductsPage() {
 
     const fetchProducts = async () => {
         setIsLoading(true)
+        setError(null)
         try {
             const res = await API.get(`/products?search=${search}&page=${page}`)
-            setProducts(res.data)
-        } catch (error) {
+            if (Array.isArray(res.data)) {
+                setProducts(res.data)
+            } else {
+                setError("Invalid data format received")
+            }
+        } catch (error: any) {
             console.error("Failed to fetch products", error)
+            setError(error.response?.data?.error || "Failed to fetch products. Please try again.")
         } finally {
             setIsLoading(false)
         }
@@ -143,6 +150,12 @@ export default function ProductsPage() {
                     className="w-full bg-transparent border-none focus:ring-0 text-gray-700 placeholder-gray-400 px-4 py-2 text-sm sm:text-base outline-none" 
                 />
             </div>
+            {error && (
+                <div className="mb-8 bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl flex justify-between items-center">
+                    <p className="font-medium">{error}</p>
+                    <button onClick={fetchProducts} className="text-sm font-bold underline">Retry</button>
+                </div>
+            )}
 
             {/* Product Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

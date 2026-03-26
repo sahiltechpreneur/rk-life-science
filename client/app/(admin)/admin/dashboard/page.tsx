@@ -17,11 +17,19 @@ export default function DashboardPage() {
 
     const [stats, setStats] = useState<any>(null)
 
-    const fetchStats = () => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`)
-            .then(res => res.json())
-            .then(data => setStats(data))
-            .catch(err => console.error("Error fetching dashboard stats", err))
+    const fetchStats = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`);
+            const data = await res.json();
+            if (!res.ok) {
+                setStats({ error: data.error || "Failed to fetch statistics" });
+            } else {
+                setStats(data);
+            }
+        } catch (err) {
+            console.error("Error fetching dashboard stats", err);
+            setStats({ error: "Network error. Please check your connection." });
+        }
     }
 
     useEffect(() => {
@@ -45,6 +53,21 @@ export default function DashboardPage() {
             <div className="w-3 h-3 bg-primary rounded-full"></div>
             <div className="w-3 h-3 bg-primary rounded-full animation-delay-200"></div>
             <div className="w-3 h-3 bg-primary rounded-full animation-delay-400"></div>
+        </div>
+    )
+
+    if (stats.error) return (
+        <div className="max-w-7xl mx-auto mt-12 px-6">
+            <div className="bg-red-50 border border-red-200 text-red-700 p-8 rounded-3xl text-center">
+                <h2 className="text-2xl font-black mb-2">Dashboard Error</h2>
+                <p className="font-medium opacity-80">{stats.error}</p>
+                <button 
+                    onClick={fetchStats}
+                    className="mt-6 px-6 py-2 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors"
+                >
+                    Try Again
+                </button>
+            </div>
         </div>
     )
 
@@ -73,7 +96,7 @@ export default function DashboardPage() {
                     </div>
                     <div>
                         <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Total Revenue</p>
-                        <h3 className="text-3xl font-bold text-gray-900">NPR {stats.totalRevenue.toLocaleString()}</h3>
+                        <h3 className="text-3xl font-bold text-gray-900">NPR {stats.totalRevenue?.toLocaleString() || '0'}</h3>
                     </div>
                 </div>
 

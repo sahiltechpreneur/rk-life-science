@@ -22,6 +22,7 @@ export default function AdminOrdersPage() {
     const [startDate, setStartDate] = useState("")
     const [endDate, setEndDate] = useState("")
     const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
     const { socket } = useSocket()
 
@@ -41,12 +42,18 @@ export default function AdminOrdersPage() {
 
     const fetchOrders = async () => {
         setIsLoading(true)
+        setError(null)
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders`)
             const data = await res.json()
-            setOrders(data)
+            if (Array.isArray(data)) {
+                setOrders(data)
+            } else {
+                setError(data.error || "Failed to fetch orders")
+            }
         } catch (error) {
             console.error("Failed to fetch orders", error)
+            setError("Network error. Please try again.")
         } finally {
             setIsLoading(false)
         }
@@ -219,6 +226,12 @@ export default function AdminOrdersPage() {
                     )}
                 </div>
             </div>
+            {error && (
+                <div className="mb-8 bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl flex justify-between items-center">
+                    <p className="font-medium">{error}</p>
+                    <button onClick={fetchOrders} className="text-sm font-bold underline">Retry</button>
+                </div>
+            )}
 
             {/* Orders Table */}
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
