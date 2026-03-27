@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import RevenueChart from "@/components/admin/RevenueChart"
-import { FaMoneyBillWave, FaShoppingCart, FaBoxOpen } from "react-icons/fa"
+import { FaMoneyBillWave, FaShoppingCart, FaBoxOpen, FaChartLine, FaSync } from "react-icons/fa"
 import { useSocket } from "@/context/SocketContext"
 
 type Order = {
@@ -16,8 +16,10 @@ type Order = {
 export default function DashboardPage() {
 
     const [stats, setStats] = useState<any>(null)
+    const [isLoading, setIsLoading] = useState(true)
 
     const fetchStats = async () => {
+        setIsLoading(true)
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`);
             const data = await res.json();
@@ -29,6 +31,8 @@ export default function DashboardPage() {
         } catch (err) {
             console.error("Error fetching dashboard stats", err);
             setStats({ error: "Network error. Please check your connection." });
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -48,126 +52,134 @@ export default function DashboardPage() {
         }
     }, [socket])
 
-    if (!stats) return (
-        <div className="flex justify-center items-center h-[80vh] space-x-2 animate-pulse">
-            <div className="w-3 h-3 bg-primary rounded-full"></div>
-            <div className="w-3 h-3 bg-primary rounded-full animation-delay-200"></div>
-            <div className="w-3 h-3 bg-primary rounded-full animation-delay-400"></div>
+    if (isLoading) return (
+        <div className="flex justify-center items-center h-[60vh]">
+            <div className="flex flex-col items-center gap-3">
+                <div className="w-8 h-8 border-2 border-gray-200 border-t-emerald-500 rounded-full animate-spin"></div>
+                <p className="text-sm text-gray-500">Loading dashboard...</p>
+            </div>
         </div>
     )
 
-    if (stats.error) return (
-        <div className="max-w-7xl mx-auto mt-12 px-6">
-            <div className="bg-red-50 border border-red-200 text-red-700 p-8 rounded-3xl text-center">
-                <h2 className="text-2xl font-black mb-2">Dashboard Error</h2>
-                <p className="font-medium opacity-80">{stats.error}</p>
+    if (stats?.error) return (
+        <div className="flex items-center justify-center h-[60vh]">
+            <div className="bg-white rounded-xl border border-gray-100 p-8 text-center max-w-md shadow-sm">
+                <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FaChartLine className="w-5 h-5 text-red-500" />
+                </div>
+                <h2 className="text-lg font-semibold text-gray-800 mb-2">Unable to load dashboard</h2>
+                <p className="text-sm text-gray-500 mb-5">{stats.error}</p>
                 <button 
                     onClick={fetchStats}
-                    className="mt-6 px-6 py-2 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
                 >
-                    Try Again
+                    <FaSync className="w-3.5 h-3.5" />
+                    Try again
                 </button>
             </div>
         </div>
     )
 
-    const chartLabels = stats.weeklyRevenue?.map((m: any) => m.week) || []
-    const chartData = stats.weeklyRevenue?.map((m: any) => parseFloat(m.revenue)) || []
+    const chartLabels = stats?.weeklyRevenue?.map((m: any) => m.week) || []
+    const chartData = stats?.weeklyRevenue?.map((m: any) => parseFloat(m.revenue)) || []
 
     return (
-        <div className="space-y-8 max-w-7xl mx-auto">
-
-            <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <div>
-                    <h1 className="text-3xl font-extrabold text-gray-800 tracking-tight">
-                        Admin Dashboard
-                    </h1>
-                    <p className="text-gray-500 mt-1 text-sm">Overview of your store's performance</p>
-                </div>
+        <div className="space-y-6">
+            
+            {/* Header */}
+            <div>
+                <h1 className="text-xl font-semibold text-gray-800">Dashboard</h1>
+                <p className="text-sm text-gray-500 mt-1">Overview of your store's performance</p>
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 
-                {/* Revenue Card */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-6 hover:shadow-md transition-shadow">
-                    <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-2xl">
-                        <FaMoneyBillWave />
-                    </div>
-                    <div>
-                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Total Revenue</p>
-                        <h3 className="text-3xl font-bold text-gray-900">NPR {stats.totalRevenue?.toLocaleString() || '0'}</h3>
-                    </div>
-                </div>
-
-                {/* Orders Card */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-6 hover:shadow-md transition-shadow">
-                    <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-2xl">
-                        <FaShoppingCart />
-                    </div>
-                    <div>
-                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Total Orders</p>
-                        <h3 className="text-3xl font-bold text-gray-900">{stats.totalOrders}</h3>
+                <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Revenue</p>
+                            <h3 className="text-2xl font-bold text-gray-800 mt-1">NPR {stats?.totalRevenue?.toLocaleString() || '0'}</h3>
+                        </div>
+                        <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center">
+                            <FaMoneyBillWave className="w-4 h-4 text-emerald-600" />
+                        </div>
                     </div>
                 </div>
 
-                {/* Products Card */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-6 hover:shadow-md transition-shadow">
-                    <div className="w-14 h-14 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 text-2xl">
-                        <FaBoxOpen />
+                <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Orders</p>
+                            <h3 className="text-2xl font-bold text-gray-800 mt-1">{stats?.totalOrders || 0}</h3>
+                        </div>
+                        <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+                            <FaShoppingCart className="w-4 h-4 text-blue-600" />
+                        </div>
                     </div>
-                    <div>
-                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Total Products</p>
-                        <h3 className="text-3xl font-bold text-gray-900">{stats.totalProducts}</h3>
+                </div>
+
+                <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Products</p>
+                            <h3 className="text-2xl font-bold text-gray-800 mt-1">{stats?.totalProducts || 0}</h3>
+                        </div>
+                        <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center">
+                            <FaBoxOpen className="w-4 h-4 text-amber-600" />
+                        </div>
                     </div>
                 </div>
 
             </div>
 
             {/* Chart Area */}
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                 <h2 className="text-xl font-bold text-gray-800 mb-6">Revenue Overview</h2>
-                <div className="h-80 w-full mb-8">
+            <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-sm font-semibold text-gray-700">Revenue Overview</h2>
+                    <span className="text-[10px] text-gray-400">Last 6 weeks</span>
+                </div>
+                <div className="h-64 w-full">
                     {chartLabels.length > 0 ? (
                         <RevenueChart labels={chartLabels} dataset={chartData} />
                     ) : (
-                        <div className="h-full flex items-center justify-center text-gray-400">
-                            No revenue data available for the last 6 weeks.
+                        <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+                            No revenue data available
                         </div>
                     )}
                 </div>
             </div>
 
             {/* Recent Orders Table */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-gray-800">Recent Orders</h2>
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div className="px-5 py-4 border-b border-gray-100">
+                    <h2 className="text-sm font-semibold text-gray-700">Recent Orders</h2>
                 </div>
                 
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm text-gray-600 whitespace-nowrap">
-                        <thead className="bg-gray-50 text-gray-500 uppercase text-xs font-semibold">
+                    <table className="w-full text-left text-sm">
+                        <thead className="bg-gray-50 text-gray-500 text-xs font-medium">
                             <tr>
-                                <th className="px-6 py-4">Order ID</th>
-                                <th className="px-6 py-4">Customer</th>
-                                <th className="px-6 py-4">Date</th>
-                                <th className="px-6 py-4">Amount</th>
-                                <th className="px-6 py-4">Status</th>
+                                <th className="px-5 py-3">Order ID</th>
+                                <th className="px-5 py-3">Customer</th>
+                                <th className="px-5 py-3">Date</th>
+                                <th className="px-5 py-3">Amount</th>
+                                <th className="px-5 py-3">Status</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {stats.recentOrders && stats.recentOrders.length > 0 ? (
+                        <tbody className="divide-y divide-gray-50">
+                            {stats?.recentOrders && stats.recentOrders.length > 0 ? (
                                 stats.recentOrders.map((o: Order) => (
                                     <tr key={o.id} className="hover:bg-gray-50 transition-colors">
-                                        <td className="px-6 py-4 font-medium text-gray-900">#{o.id}</td>
-                                        <td className="px-6 py-4">{o.customer_name}</td>
-                                        <td className="px-6 py-4 text-gray-500">{o.created_at || "N/A"}</td>
-                                        <td className="px-6 py-4 font-medium text-gray-900">NPR {o.total.toLocaleString()}</td>
-                                        <td className="px-6 py-4">
-                                            <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-                                                o.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                o.status === 'Delivered' ? 'bg-green-100 text-green-800' :
-                                                'bg-gray-100 text-gray-800'
+                                        <td className="px-5 py-3 font-medium text-gray-700 text-xs">#{o.id}</td>
+                                        <td className="px-5 py-3 text-gray-600 text-xs">{o.customer_name}</td>
+                                        <td className="px-5 py-3 text-gray-400 text-xs">{o.created_at ? new Date(o.created_at).toLocaleDateString() : "N/A"}</td>
+                                        <td className="px-5 py-3 font-medium text-gray-700 text-xs">NPR {o.total.toLocaleString()}</td>
+                                        <td className="px-5 py-3">
+                                            <span className={`inline-flex px-2 py-0.5 text-[10px] font-medium rounded-full ${
+                                                o.status === 'Pending' ? 'bg-amber-50 text-amber-600' :
+                                                o.status === 'Delivered' ? 'bg-emerald-50 text-emerald-600' :
+                                                'bg-gray-50 text-gray-500'
                                             }`}>
                                                 {o.status}
                                             </span>
@@ -176,8 +188,8 @@ export default function DashboardPage() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
-                                        No recent orders found.
+                                    <td colSpan={5} className="px-5 py-8 text-center text-gray-400 text-sm">
+                                        No recent orders
                                     </td>
                                 </tr>
                             )}

@@ -31,40 +31,38 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
     ]
 
     return(
-        <div className={`fixed left-0 top-0 h-screen bg-gray-900 border-r border-gray-800 text-gray-300 flex flex-col transition-all duration-300 z-50 shadow-2xl
+        <div className={`fixed left-0 top-0 h-screen bg-white border-r border-gray-100 flex flex-col transition-all duration-300 z-50 shadow-sm
             ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} 
-            ${isCollapsed ? 'w-20' : 'w-64'}`}>
+            ${isCollapsed ? 'w-16' : 'w-56'}`}>
             
             {/* Header */}
-            <div className={`flex items-center justify-between p-6 ${isCollapsed ? 'flex-col gap-4' : ''}`}>
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center border border-emerald-500/50 shadow-inner shrink-0">
-                        <span className="text-emerald-500 text-xl font-bold">RK</span>
+            <div className={`flex items-center justify-between px-4 py-5 ${isCollapsed ? 'flex-col gap-3' : ''}`}>
+                <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center shrink-0">
+                        <span className="text-emerald-600 text-sm font-bold">RK</span>
                     </div>
                     {!isCollapsed && (
-                        <h1 className="text-2xl font-extrabold text-white tracking-tight">
+                        <h1 className="text-sm font-semibold text-gray-800 tracking-tight">
                             Admin
                         </h1>
                     )}
                 </div>
                 
-                {/* Mobile Close Button */}
-                <button onClick={() => setIsOpen(false)} className="md:hidden text-gray-400 hover:text-white">
-                    <FiX className="w-6 h-6" />
+                <button onClick={() => setIsOpen(false)} className="md:hidden text-gray-400 hover:text-gray-600">
+                    <FiX className="w-4 h-4" />
                 </button>
 
-                {/* Desktop Collapse Toggle */}
                 {!isOpen && (
                     <button 
                         onClick={() => setIsCollapsed(!isCollapsed)}
-                        className="hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 border border-gray-700 hover:bg-emerald-500 hover:text-white transition-all"
+                        className="hidden md:flex items-center justify-center w-6 h-6 rounded-full bg-gray-50 border border-gray-200 hover:bg-emerald-50 hover:border-emerald-200 transition-all"
                     >
-                        {isCollapsed ? <FaChevronRight size={12} /> : <FaChevronLeft size={12} />}
+                        {isCollapsed ? <FaChevronRight size={10} /> : <FaChevronLeft size={10} />}
                     </button>
                 )}
             </div>
 
-            <nav className="flex flex-col gap-2 flex-grow px-4 mt-4">
+            <nav className="flex flex-col gap-1 flex-grow px-2 mt-2">
                 {navItems.map((item) => {
                     const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== "/admin")
                     return (
@@ -72,21 +70,20 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
                             key={item.name} 
                             href={item.href}
                             onClick={() => setIsOpen(false)}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium group relative
+                            className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 group relative text-sm
                                 ${isActive 
-                                    ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" 
-                                    : "hover:bg-gray-800 hover:text-white"
+                                    ? "bg-emerald-50 text-emerald-600" 
+                                    : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                 }`}
                             title={isCollapsed ? item.name : ""}
                         >
-                            <span className={`text-lg transition-colors ${isActive ? "text-white" : "text-gray-400 group-hover:text-white"}`}>
+                            <span className={`text-base transition-colors ${isActive ? "text-emerald-500" : "text-gray-400 group-hover:text-gray-500"}`}>
                                 {item.icon}
                             </span>
                             {!isCollapsed && <span>{item.name}</span>}
                             
-                            {/* Tooltip for collapsed state */}
                             {isCollapsed && (
-                                <span className="absolute left-full ml-4 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-[100] border border-gray-800 shadow-xl">
+                                <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-[100]">
                                     {item.name}
                                 </span>
                             )}
@@ -95,14 +92,14 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
                 })}
             </nav>
 
-            <div className="p-4 border-t border-gray-800">
+            <div className="p-3 border-t border-gray-100 mt-auto">
                 <button
                     onClick={logout}
-                    className={`flex items-center justify-center gap-2 bg-gray-800/50 w-full hover:bg-red-500/10 text-gray-400 hover:text-red-400 py-3 rounded-xl transition-all duration-300 border border-gray-700/50 hover:border-red-500/30 font-semibold group
-                    ${isCollapsed ? 'px-0' : 'px-4'}`}
+                    className={`flex items-center justify-center gap-2 w-full text-gray-400 hover:text-red-500 py-2 rounded-lg transition-colors text-sm
+                    ${isCollapsed ? 'px-0' : 'px-3'}`}
                     title={isCollapsed ? "Logout" : ""}
                 >
-                    <FaSignOutAlt className="shrink-0" />
+                    <FaSignOutAlt className="shrink-0 w-3.5 h-3.5" />
                     {!isCollapsed && <span>Logout</span>}
                 </button>
             </div>

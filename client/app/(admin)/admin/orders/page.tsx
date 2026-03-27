@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { FiSearch, FiFileText, FiDownload, FiEye, FiClock, FiCheckCircle, FiTruck, FiXCircle, FiPackage } from "react-icons/fi"
+import { FiSearch, FiFileText, FiDownload, FiEye, FiClock, FiCheckCircle, FiTruck, FiXCircle, FiPackage, FiCalendar } from "react-icons/fi"
 import * as XLSX from "xlsx"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
@@ -82,23 +82,23 @@ export default function AdminOrdersPage() {
 
     const getStatusIcon = (status: string) => {
         switch(status.toLowerCase()) {
-            case 'pending': return <FiClock className="w-4 h-4" />
-            case 'processing': return <FiPackage className="w-4 h-4" />
-            case 'shipped': return <FiTruck className="w-4 h-4" />
-            case 'delivered': return <FiCheckCircle className="w-4 h-4" />
-            case 'cancelled': return <FiXCircle className="w-4 h-4" />
-            default: return <FiClock className="w-4 h-4" />
+            case 'pending': return <FiClock className="w-3.5 h-3.5" />
+            case 'processing': return <FiPackage className="w-3.5 h-3.5" />
+            case 'shipped': return <FiTruck className="w-3.5 h-3.5" />
+            case 'delivered': return <FiCheckCircle className="w-3.5 h-3.5" />
+            case 'cancelled': return <FiXCircle className="w-3.5 h-3.5" />
+            default: return <FiClock className="w-3.5 h-3.5" />
         }
     }
 
     const getStatusStyle = (status: string) => {
         switch(status.toLowerCase()) {
-            case 'pending': return 'bg-amber-50 text-amber-600 border-amber-200'
-            case 'processing': return 'bg-blue-50 text-blue-600 border-blue-200'
-            case 'shipped': return 'bg-indigo-50 text-indigo-600 border-indigo-200'
-            case 'delivered': return 'bg-emerald-50 text-emerald-600 border-emerald-200'
-            case 'cancelled': return 'bg-red-50 text-red-600 border-red-200'
-            default: return 'bg-gray-50 text-gray-600 border-gray-200'
+            case 'pending': return 'bg-amber-50 text-amber-600'
+            case 'processing': return 'bg-blue-50 text-blue-600'
+            case 'shipped': return 'bg-indigo-50 text-indigo-600'
+            case 'delivered': return 'bg-emerald-50 text-emerald-600'
+            case 'cancelled': return 'bg-red-50 text-red-600'
+            default: return 'bg-gray-50 text-gray-600'
         }
     }
 
@@ -122,16 +122,16 @@ export default function AdminOrdersPage() {
     const exportPDF = () => {
         const doc = new jsPDF()
         
-        doc.setFontSize(20)
+        doc.setFontSize(18)
         doc.text("RK Life Science - Orders Report", 14, 22)
-        doc.setFontSize(11)
-        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30)
+        doc.setFontSize(10)
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 30)
 
-        const tableColumn = ["Order ID", "Customer Name", "Total (NPR)", "Date", "Status"]
+        const tableColumn = ["Order ID", "Customer", "Total (NPR)", "Date", "Status"]
         const tableRows = filteredOrders.map(o => [
             `#${o.id}`,
             o.customer_name,
-            o.total,
+            o.total.toLocaleString(),
             new Date(o.created_at).toLocaleDateString(),
             o.status
         ])
@@ -139,15 +139,13 @@ export default function AdminOrdersPage() {
         autoTable(doc, {
             head: [tableColumn],
             body: tableRows,
-            startY: 40,
+            startY: 38,
             theme: 'grid',
-            styles: { fontSize: 10, cellPadding: 5 },
-            headStyles: { fillColor: [15, 23, 42], textColor: 255, halign: 'center' },
+            styles: { fontSize: 9, cellPadding: 4 },
+            headStyles: { fillColor: [16, 185, 129], textColor: 255, halign: 'center' },
             columnStyles: {
                 0: { halign: 'center' },
-                2: { halign: 'right' },
-                3: { halign: 'center' },
-                4: { halign: 'center' }
+                2: { halign: 'right' }
             }
         })
 
@@ -155,147 +153,132 @@ export default function AdminOrdersPage() {
     }
 
     return (
-        <div className="p-6 md:p-8 max-w-7xl mx-auto min-h-[85vh] bg-transparent">
-            {/* Header Area */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
-                <div>
-                    <h1 className="text-3xl font-black tracking-tight text-gray-900">
-                        Order
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500 ml-2">
-                            Management
-                        </span>
-                    </h1>
-                    <p className="text-gray-500 mt-1 text-sm font-medium">Track and export customer orders</p>
+        <div className="space-y-6">
+            
+            {/* Header */}
+            <div>
+                <div className="flex items-center gap-2 mb-1">
+                    <FiPackage className="w-5 h-5 text-emerald-600" />
+                    <h1 className="text-xl font-semibold text-gray-800">Orders</h1>
                 </div>
-                <div className="flex gap-3">
-                    <button 
-                        onClick={exportExcel}
-                        className="group relative inline-flex items-center justify-center px-4 py-2.5 text-sm font-bold text-gray-700 transition-all duration-200 bg-white border border-gray-200 rounded-xl hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 shadow-sm"
-                    >
-                        <FiFileText className="w-4 h-4 mr-2 text-emerald-600" />
-                        Export Excel
-                    </button>
-                    <button 
-                        onClick={exportPDF}
-                        className="group relative inline-flex items-center justify-center px-4 py-2.5 text-sm font-bold text-white transition-all duration-200 bg-gray-900 border border-transparent rounded-xl hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-                    >
-                        <FiDownload className="w-4 h-4 mr-2" />
-                        Export PDF
-                    </button>
-                </div>
+                <p className="text-sm text-gray-500">Manage and track customer orders</p>
             </div>
 
             {/* Controls */}
-            <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row md:items-center gap-4 mb-8">
-                <div className="flex-1 flex items-center bg-gray-50 rounded-xl px-3 py-1 border border-gray-200 focus-within:ring-2 focus-within:ring-emerald-500 focus-within:border-emerald-500 transition-all">
-                    <FiSearch className="text-gray-400 w-5 h-5" />
+            <div className="flex flex-col sm:flex-row gap-3">
+                <div className="relative flex-1">
+                    <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <input 
-                        placeholder="Search orders by ID or customer name..." 
+                        placeholder="Search by order ID or customer..." 
                         value={search} 
                         onChange={(e) => setSearch(e.target.value)} 
-                        className="w-full bg-transparent border-none focus:ring-0 text-gray-700 placeholder-gray-400 px-3 py-2 text-sm sm:text-base outline-none" 
+                        className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors" 
                     />
                 </div>
                 
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2">
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">From:</label>
+                <div className="flex gap-2">
+                    <div className="relative">
+                        <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
                         <input 
                             type="date" 
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
-                            className="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-medium"
+                            className="pl-8 pr-2 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
                         />
                     </div>
-                    <div className="flex items-center gap-2">
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">To:</label>
+                    <div className="relative">
+                        <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
                         <input 
                             type="date" 
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
-                            className="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-medium"
+                            className="pl-8 pr-2 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
                         />
                     </div>
                     {(startDate || endDate) && (
                         <button 
                             onClick={() => { setStartDate(""); setEndDate(""); }}
-                            className="text-xs font-bold text-gray-400 hover:text-red-500 transition-colors bg-gray-100 hover:bg-red-50 px-3 py-2.5 rounded-xl ml-1"
+                            className="px-3 py-2 text-sm text-gray-500 hover:text-red-500 transition-colors"
                         >
                             Clear
                         </button>
                     )}
                 </div>
+                
+                <div className="flex gap-2">
+                    <button 
+                        onClick={exportExcel}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                        <FiFileText className="w-4 h-4 text-emerald-600" />
+                        Excel
+                    </button>
+                    <button 
+                        onClick={exportPDF}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 text-sm text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors"
+                    >
+                        <FiDownload className="w-4 h-4" />
+                        PDF
+                    </button>
+                </div>
             </div>
+
             {error && (
-                <div className="mb-8 bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl flex justify-between items-center">
-                    <p className="font-medium">{error}</p>
-                    <button onClick={fetchOrders} className="text-sm font-bold underline">Retry</button>
+                <div className="bg-red-50 border border-red-100 text-red-600 p-3 rounded-lg text-sm flex justify-between items-center">
+                    <span>{error}</span>
+                    <button onClick={fetchOrders} className="text-xs font-medium underline">Retry</button>
                 </div>
             )}
 
             {/* Orders Table */}
-            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="overflow-x-auto custom-scrollbar">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-gray-50 border-b border-gray-100">
-                                <th className="px-6 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Order ID</th>
-                                <th className="px-6 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Customer</th>
-                                <th className="px-6 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Date</th>
-                                <th className="px-6 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Total</th>
-                                <th className="px-6 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Action</th>
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                        <thead className="bg-gray-50 text-gray-500 text-xs font-medium border-b border-gray-100">
+                            <tr>
+                                <th className="px-5 py-3">Order ID</th>
+                                <th className="px-5 py-3">Customer</th>
+                                <th className="px-5 py-3">Date</th>
+                                <th className="px-5 py-3 text-right">Total</th>
+                                <th className="px-5 py-3">Status</th>
+                                <th className="px-5 py-3 text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
                             {isLoading ? (
-                                [...Array(5)].map((_, i) => (
+                                [...Array(4)].map((_, i) => (
                                     <tr key={i} className="animate-pulse">
-                                        <td className="px-6 py-5"><div className="h-4 bg-gray-100 rounded w-16"></div></td>
-                                        <td className="px-6 py-5">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 bg-gray-100 rounded-full"></div>
-                                                <div className="h-4 bg-gray-100 rounded w-32"></div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-5"><div className="h-4 bg-gray-100 rounded w-24"></div></td>
-                                        <td className="px-6 py-5"><div className="h-4 bg-gray-100 rounded w-20 ml-auto"></div></td>
-                                        <td className="px-6 py-5"><div className="h-6 bg-gray-100 rounded-full w-24"></div></td>
-                                        <td className="px-6 py-5"><div className="h-8 bg-gray-100 rounded-lg w-20 ml-auto"></div></td>
+                                        <td className="px-5 py-4"><div className="h-4 bg-gray-100 rounded w-12"></div></td>
+                                        <td className="px-5 py-4"><div className="h-4 bg-gray-100 rounded w-28"></div></td>
+                                        <td className="px-5 py-4"><div className="h-4 bg-gray-100 rounded w-20"></div></td>
+                                        <td className="px-5 py-4"><div className="h-4 bg-gray-100 rounded w-16 ml-auto"></div></td>
+                                        <td className="px-5 py-4"><div className="h-5 bg-gray-100 rounded-full w-16"></div></td>
+                                        <td className="px-5 py-4"><div className="h-7 bg-gray-100 rounded w-14 ml-auto"></div></td>
                                     </tr>
                                 ))
                             ) : filteredOrders.length > 0 ? (
                                 filteredOrders.map((o: Order) => (
-                                    <tr key={o.id} className="hover:bg-amber-50/20 transition-colors group">
-                                        <td className="px-6 py-5">
-                                            <span className="font-bold text-gray-900 group-hover:text-amber-600 transition-colors">#{o.id}</span>
+                                    <tr key={o.id} className="hover:bg-gray-50 transition-colors">
+                                        <td className="px-5 py-4 font-medium text-gray-800">#{o.id}</td>
+                                        <td className="px-5 py-4 text-gray-700">{o.customer_name}</td>
+                                        <td className="px-5 py-4 text-gray-500 text-xs">
+                                            {new Date(o.created_at).toLocaleDateString()}
                                         </td>
-                                        <td className="px-6 py-5">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-gray-100 to-gray-50 border border-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">
-                                                    {o.customer_name.charAt(0)}
-                                                </div>
-                                                <span className="font-semibold text-gray-800">{o.customer_name}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-5 text-sm text-gray-500 font-medium">
-                                            {new Date(o.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
-                                        </td>
-                                        <td className="px-6 py-5 text-right font-black text-gray-900">
+                                        <td className="px-5 py-4 text-right font-medium text-gray-800">
                                             NPR {o.total.toLocaleString()}
                                         </td>
-                                        <td className="px-6 py-5">
-                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border ${getStatusStyle(o.status)}`}>
+                                        <td className="px-5 py-4">
+                                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded-full ${getStatusStyle(o.status)}`}>
                                                 {getStatusIcon(o.status)}
                                                 {o.status}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-5 text-right">
+                                        <td className="px-5 py-4 text-right">
                                             <Link 
                                                 href={`/admin/orders/${o.id}`}
-                                                className="inline-flex items-center justify-center px-4 py-2 text-sm font-bold text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:text-gray-900 hover:border-gray-300 transition-all shadow-sm"
+                                                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs text-gray-600 hover:text-emerald-600 transition-colors"
                                             >
-                                                <FiEye className="w-4 h-4 mr-2 text-gray-400" />
+                                                <FiEye className="w-3.5 h-3.5" />
                                                 View
                                             </Link>
                                         </td>
@@ -303,14 +286,13 @@ export default function AdminOrdersPage() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-20 text-center">
-                                        <div className="flex flex-col items-center justify-center">
-                                            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-5">
-                                                <FiSearch className="w-8 h-8 text-gray-400" />
+                                    <td colSpan={6} className="px-5 py-12 text-center">
+                                        <div className="flex flex-col items-center">
+                                            <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+                                                <FiPackage className="w-5 h-5 text-gray-300" />
                                             </div>
-                                            <h3 className="text-xl font-bold text-gray-900 mb-2">No orders found</h3>
-                                            <p className="text-gray-500 max-w-sm">
-                                                {search ? "We couldn't find any orders matching your search." : "You haven't received any orders yet."}
+                                            <p className="text-sm text-gray-500">
+                                                {search || startDate || endDate ? "No orders match your filters" : "No orders yet"}
                                             </p>
                                         </div>
                                     </td>

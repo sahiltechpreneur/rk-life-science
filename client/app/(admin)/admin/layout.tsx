@@ -2,8 +2,12 @@ import { Metadata } from "next";
 import AdminClientWrapper from "@/components/admin/AdminClientWrapper";
 
 export const metadata: Metadata = {
-  title: "R. K. Life Science | Admin Dashboard",
-  description: "Wholesale distributor for nutraceutical products",
+  title: "Admin Dashboard | R. K. Life Science",
+  description: "Admin dashboard for managing products, orders, and users",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function AdminLayout({
