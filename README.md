@@ -95,10 +95,6 @@ EMAIL_PASS=your_app_password
 # eSewa Payment Gateway
 ESEWA_SECRET_KEY=8gBm/:&EnhH.1/q
 FRONTEND_URL=http://localhost:3000
-
-# Admin Credentials (for .env.local)
-NEXT_PUBLIC_ADMIN_EMAIL=admin@rklifescience.com
-NEXT_PUBLIC_ADMIN_PASSWORD=admin123
 ```
 
 **Database Setup:**
@@ -206,16 +202,6 @@ rk-life-science/
 
 ---
 
-## 🔑 Admin Access
-
-Default admin credentials (set in environment variables):
-- **Email:** admin@rklifescience.com
-- **Password:** admin123
-
-*Make sure to change these credentials in production.*
-
----
-
 ## 💳 Payment Integration
 
 The platform supports:
@@ -289,8 +275,6 @@ eSewa test mode is configured in development. For production, update the eSewa e
 
 - **Sahil Gupta** — Lead Developer
   - GitHub: [@sahiltechpreneur](https://github.com/sahiltechpreneur)
-  - LinkedIn: [sahiltechpreneur](https://www.linkedin.com/in/sahiltechpreneur)
-
 ---
 
 ## 🙏 Acknowledgments
