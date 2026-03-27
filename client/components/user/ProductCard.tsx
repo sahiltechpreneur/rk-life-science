@@ -1,80 +1,105 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useContext } from "react"
-import { AuthContext } from "@/context/AuthContext"
-import { useRouter } from "next/navigation"
-import { useCart } from "@/context/CartContext"
-import { useNotification } from "@/context/NotificationContext"
-import { FiShoppingCart, FiEye, FiBox } from "react-icons/fi"
+import Link from "next/link";
+import { useContext } from "react";
+import { AuthContext } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useCart } from "@/context/CartContext";
+import { useNotification } from "@/context/NotificationContext";
+import { FiShoppingCart, FiEye, FiBox } from "react-icons/fi";
 
 type Props = {
-  id: number
-  name: string
-  image: string
-  description: string
-  price: number
-}
+  id: number;
+  name: string;
+  image: string;
+  description: string;
+  price: number;
+};
 
 export default function ProductCard({ id, name, image, description, price }: Props) {
-  const { user } = useContext(AuthContext)
-  const { addToCart } = useCart()
-  const { showNotification } = useNotification()
-  const router = useRouter()
+  const { user } = useContext(AuthContext);
+  const { addToCart } = useCart();
+  const { showNotification } = useNotification();
+  const router = useRouter();
 
   const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault() // prevent navigating to product detail
+    e.preventDefault(); // Keep navigation separate — user expects this to just add to cart
     if (!user) {
-      showNotification("Please login to add products to your cart.", "warning")
-      router.push("/auth/login")
-      return
+      showNotification("Please log in to add items to your cart", "warning");
+      router.push("/auth/login");
+      return;
     }
-    addToCart({ id, name, image, price, quantity: 1 })
-    showNotification(`${name} has been added to your cart!`, "success")
-  }
+    addToCart({ id, name, image, price, quantity: 1 });
+    showNotification(`${name} added to your cart`, "success");
+  };
 
   return (
-    <Link href={`/product/${id}`} className="group relative bg-white block rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-all flex-col overflow-hidden">
-        {/* Hover Actions */}
-        <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-2">
-            <button 
-                onClick={handleAddToCart} 
-                className="bg-white p-2 rounded-full text-primary hover:bg-lightGreen border border-gray-100 shadow-sm"
-                title="Add to Cart"
-            >
-                <FiShoppingCart className="w-5 h-5" />
-            </button>
+    <Link 
+      href={`/product/${id}`} 
+      className="group relative flex flex-col bg-white rounded-xl border border-gray-100 hover:border-gray-200 transition-all duration-200 hover:shadow-md overflow-hidden"
+    >
+      {/* 
+        Quick action button — appears on hover, but not in your face.
+        Real shopping interfaces keep secondary actions subtle.
+      */}
+      <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <button 
+          onClick={handleAddToCart} 
+          className="bg-white/95 backdrop-blur-sm p-2 rounded-full text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 border border-gray-100 shadow-sm transition-all duration-200"
+          title="Quick add to cart"
+        >
+          <FiShoppingCart className="w-4 h-4" />
+        </button>
+      </div>
+      
+      {/* 
+        Image area — clean, simple. No weird overlays or gradient gradients.
+        Just the product, presented honestly.
+      */}
+      <div className="relative h-56 bg-gray-50 flex items-center justify-center p-4">
+        {image ? (
+          <img 
+            src={image} 
+            className="max-h-full max-w-full object-contain" 
+            alt={name}
+          />
+        ) : (
+          <div className="flex flex-col items-center text-gray-300">
+            <FiBox className="w-12 h-12 mb-1" />
+            <span className="text-xs">No image</span>
+          </div>
+        )}
+      </div>
+      
+      {/* 
+        Product info — straightforward, no over-design.
+        The focus is on readability and quick scanning.
+      */}
+      <div className="flex-1 p-4">
+        <h3 className="font-semibold text-gray-800 text-base line-clamp-2 min-h-[3rem] group-hover:text-emerald-600 transition-colors">
+          {name}
+        </h3>
+        <p className="text-gray-500 text-sm line-clamp-2 mt-1.5 leading-relaxed">
+          {description}
+        </p>
+      </div>
+      
+      {/* 
+        Price and action — the moment of truth.
+        Kept clean with enough whitespace so it doesn't feel cramped.
+      */}
+      <div className="flex items-center justify-between p-4 pt-0 mt-auto">
+        <div>
+          <span className="text-xs text-gray-400 font-medium">Price</span>
+          <p className="font-bold text-gray-900 text-lg tracking-tight">
+            NPR {Number(price).toLocaleString()}
+          </p>
         </div>
-        
-        {/* Image Container */}
-        <div className="relative h-56 lg:h-64 mb-5 overflow-hidden rounded-lg bg-gray-50 flex items-center justify-center">
-            {image ? (
-                <img 
-                    src={image} 
-                    className="h-full w-full object-cover" 
-                    alt={name} 
-                />
-            ) : (
-                <FiBox className="w-12 h-12 text-gray-300" />
-            )}
+        <div className="flex items-center text-sm font-medium text-gray-500 group-hover:text-emerald-600 transition-colors">
+          View details
+          <FiEye className="ml-1.5 w-4 h-4" />
         </div>
-        
-        {/* Content */}
-        <div className="flex-1 px-2 pt-1">
-            <h3 className="font-semibold text-gray-900 text-lg sm:text-xl line-clamp-1 mb-1.5 group-hover:text-primary transition-colors">{name}</h3>
-            <p className="text-gray-500 text-sm line-clamp-2 min-h-[40px] mb-5 font-normal">{description}</p>
-        </div>
-        
-        {/* Footer */}
-        <div className="flex items-center justify-between mt-auto pt-4 px-2 border-t border-gray-50">
-            <div className="flex flex-col">
-                <span className="text-[11px] text-gray-400 font-medium uppercase tracking-wider mb-0.5">Price</span>
-                <span className="font-bold text-gray-900 text-lg">NPR {Number(price).toLocaleString()}</span>
-            </div>
-            <div className="flex items-center text-sm font-semibold text-primary group-hover:text-white group-hover:bg-primary px-4 py-2 rounded-xl transition-colors">
-                Details <FiEye className="ml-2 w-4 h-4" />
-            </div>
-        </div>
+      </div>
     </Link>
-  )
+  );
 }

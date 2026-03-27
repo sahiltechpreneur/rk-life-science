@@ -2,65 +2,69 @@ import { FiMapPin, FiPhone, FiMail, FiClock, FiFacebook, FiInstagram, FiTwitter,
 
 export default function ContactInfo() {
   return (
-    <div className="flex flex-col h-full relative z-10">
+    <div className="flex flex-col h-full">
       
-      <div className="space-y-8 flex-1">
-        <div className="flex items-start gap-4 group">
-            <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0 border border-white/10 group-hover:bg-lightGreen group-hover:text-darkGreen transition-colors duration-300">
-                <FiMapPin className="w-6 h-6" />
-            </div>
-            <div>
-                <h4 className="font-bold text-lg mb-1">Our Location</h4>
-                <p className="text-white/80 font-medium leading-relaxed">Shankhamul, Kathmandu<br/>Bagmati, Nepal, 44600</p>
-            </div>
+      <div className="space-y-6 flex-1">
+        <div className="flex items-start gap-3">
+          <div className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
+            <FiMapPin className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h4 className="font-semibold text-sm text-white mb-1">Location</h4>
+            <p className="text-white/70 text-sm leading-relaxed">Shankhamul, Kathmandu, Nepal 44600</p>
+          </div>
         </div>
 
-        <div className="flex items-start gap-4 group cursor-pointer text-white">
-            <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0 border border-white/10 group-hover:bg-lightGreen group-hover:text-darkGreen transition-colors duration-300">
-                <FiPhone className="w-6 h-6" />
-            </div>
-            <div>
-                <h4 className="font-bold text-lg mb-1">Phone Number</h4>
-                <p className="text-white/80 font-medium leading-relaxed group-hover:text-lightGreen transition-colors">+977-9768771762</p>
-            </div>
+        <div className="flex items-start gap-3">
+          <div className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
+            <FiPhone className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h4 className="font-semibold text-sm text-white mb-1">Phone</h4>
+            <a href="tel:+9779768771762" className="text-white/70 text-sm hover:text-white transition-colors">
+              +977-9768771762
+            </a>
+          </div>
         </div>
 
-        <div className="flex items-start gap-4 group cursor-pointer text-white">
-            <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0 border border-white/10 group-hover:bg-lightGreen group-hover:text-darkGreen transition-colors duration-300">
-                <FiMail className="w-6 h-6" />
-            </div>
-            <div>
-                <h4 className="font-bold text-lg mb-1">Email Address</h4>
-                <p className="text-white/80 font-medium leading-relaxed group-hover:text-lightGreen transition-colors">info.rklifescience@gmail.com</p>
-            </div>
+        <div className="flex items-start gap-3">
+          <div className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
+            <FiMail className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h4 className="font-semibold text-sm text-white mb-1">Email</h4>
+            <a href="mailto:info.rklifescience@gmail.com" className="text-white/70 text-sm hover:text-white transition-colors">
+              info.rklifescience@gmail.com
+            </a>
+          </div>
         </div>
 
-        <div className="flex items-start gap-4 group text-white">
-            <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0 border border-white/10 group-hover:bg-lightGreen group-hover:text-darkGreen transition-colors duration-300">
-                <FiClock className="w-6 h-6" />
-            </div>
-            <div>
-                <h4 className="font-bold text-lg mb-1">Working Hours</h4>
-                <p className="text-white/80 font-medium leading-relaxed">Sun to Fri: 10:00 AM - 6:00 PM<br/>Saturday: Closed</p>
-            </div>
+        <div className="flex items-start gap-3">
+          <div className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
+            <FiClock className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h4 className="font-semibold text-sm text-white mb-1">Hours</h4>
+            <p className="text-white/70 text-sm leading-relaxed">Sun–Fri: 10am–6pm<br />Saturday: Closed</p>
+          </div>
         </div>
       </div>
 
-      <div className="mt-12 pt-8 border-t border-white/20">
-        <h4 className="font-bold mb-4">Connect with us</h4>
-        <div className="flex items-center gap-3">
-            <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-lightGreen hover:text-darkGreen transition-colors hover:scale-110">
-                <FiFacebook />
-            </a>
-            <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-lightGreen hover:text-darkGreen transition-colors hover:scale-110">
-                <FiInstagram />
-            </a>
-            <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-lightGreen hover:text-darkGreen transition-colors hover:scale-110">
-                <FiTwitter />
-            </a>
-            <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-lightGreen hover:text-darkGreen transition-colors hover:scale-110">
-                <FiLinkedin />
-            </a>
+      <div className="mt-8 pt-6 border-t border-white/20">
+        <h4 className="font-semibold text-sm text-white mb-3">Follow us</h4>
+        <div className="flex items-center gap-2">
+          <a href="#" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-colors">
+            <FiFacebook className="w-3.5 h-3.5" />
+          </a>
+          <a href="#" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-colors">
+            <FiInstagram className="w-3.5 h-3.5" />
+          </a>
+          <a href="#" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-colors">
+            <FiTwitter className="w-3.5 h-3.5" />
+          </a>
+          <a href="#" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-colors">
+            <FiLinkedin className="w-3.5 h-3.5" />
+          </a>
         </div>
       </div>
 

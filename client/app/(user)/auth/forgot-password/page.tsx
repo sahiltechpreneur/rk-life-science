@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useNotification } from "@/context/NotificationContext"
-import { FiMail, FiLock, FiArrowRight, FiCheckCircle } from "react-icons/fi"
+import { FiMail, FiLock, FiArrowRight, FiCheckCircle, FiAlertCircle } from "react-icons/fi"
 
 export default function ForgotPasswordPage() {
     const router = useRouter()
@@ -42,9 +42,9 @@ export default function ForgotPasswordPage() {
                 const data = await res.json()
                 if (data.success) {
                     setOtpSent(true)
-                    setSuccessMsg("An OTP has been sent to your email.")
+                    setSuccessMsg("Check your email for the verification code.")
                 } else {
-                    setError(data.error || "Failed to send OTP.")
+                    setError(data.error || "Failed to send code. Email may not be registered.")
                 }
             } catch (err) {
                 setError("Network error. Please try again.")
@@ -56,12 +56,12 @@ export default function ForgotPasswordPage() {
 
         // Final reset step
         if (!otp || otp.length < 6) {
-            setError("Please enter the 6-digit OTP.")
+            setError("Please enter the 6-digit verification code.")
             return
         }
 
         if (form.newPassword.length < 6) {
-            setError("Password must be at least 6 characters long.")
+            setError("Password must be at least 6 characters.")
             return
         }
 
@@ -79,10 +79,10 @@ export default function ForgotPasswordPage() {
             })
             const data = await res.json()
             if (data.success) {
-                showNotification("Password reset successfully! You can now log in.", "success")
+                showNotification("Password reset successful! Please log in.", "success")
                 router.push("/auth/login")
             } else {
-                setError(data.error || "Failed to reset password. Invalid OTP.")
+                setError(data.error || "Invalid or expired verification code.")
             }
         } catch (err) {
             setError("Network error. Please try again.")
@@ -92,107 +92,136 @@ export default function ForgotPasswordPage() {
     }
 
     return (
-        <div className="flex justify-center items-center py-20 min-h-[90vh] bg-gray-50 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100/40 via-gray-50 to-gray-50 px-4">
-
-            <div className="w-full max-w-lg bg-white shadow-2xl rounded-[2.5rem] p-8 sm:p-10 border border-gray-100 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl pointer-events-none translate-x-1/2 -translate-y-1/2"></div>
-
-                <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-
-                    <div className="text-center mb-10">
-                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white mb-6 shadow-lg shadow-blue-500/20 transform -rotate-6">
-                            <FiLock className="w-8 h-8" />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 pt-24 pb-16">
+            <div className="w-full max-w-md">
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                    
+                    <div className="text-center mb-8">
+                        <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mx-auto mb-4">
+                            <FiLock className="w-5 h-5 text-emerald-600" />
                         </div>
-                        <h1 className="text-3xl font-black text-gray-900 mb-2">
-                            Reset Password
+                        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                            Reset password
                         </h1>
-                        <p className="text-gray-500 font-medium">
-                            {otpSent ? `Enter the OTP sent to ${form.email}` : "Enter your email to receive a reset code."}
+                        <p className="text-sm text-gray-500">
+                            {otpSent ? `Enter the 6-digit code sent to ${form.email}` : "Enter your email to receive a reset code"}
                         </p>
                     </div>
 
                     {error && (
-                        <div className="bg-red-50 text-red-600 p-4 rounded-2xl text-sm font-bold border border-red-100 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></span>
-                            {error}
+                        <div className="flex items-center gap-2 bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6">
+                            <FiAlertCircle className="w-4 h-4 shrink-0" />
+                            <span>{error}</span>
                         </div>
                     )}
 
                     {successMsg && !error && (
-                        <div className="bg-emerald-50 text-emerald-600 p-4 rounded-2xl text-sm font-bold border border-emerald-100 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
-                            {successMsg}
+                        <div className="flex items-center gap-2 bg-emerald-50 text-emerald-600 p-3 rounded-lg text-sm mb-6">
+                            <FiCheckCircle className="w-4 h-4 shrink-0" />
+                            <span>{successMsg}</span>
                         </div>
                     )}
 
-                    {!otpSent ? (
-                        <div className="relative">
-                            <label className="absolute -top-2 left-4 px-1 bg-white text-[10px] font-bold uppercase tracking-wider text-gray-400">Email Address</label>
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                                <FiMail className="w-5 h-5" />
-                            </div>
-                            <input required name="email" type="email" placeholder="john@example.com" onChange={handleChange} className="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-2xl pl-12 pr-4 py-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium" />
-                        </div>
-                    ) : (
-                        <div className="space-y-4 animate-in slide-in-from-right duration-500">
-                            <div className="relative">
-                                <label className="absolute -top-2 left-4 px-1 bg-white text-[10px] font-bold uppercase tracking-wider text-gray-400">One Time Password</label>
-                                <input 
-                                    required 
-                                    type="text"
-                                    maxLength={6}
-                                    placeholder="123456" 
-                                    value={otp} 
-                                    onChange={(e) => setOtp(e.target.value)} 
-                                    className="w-full text-center tracking-[0.5em] text-2xl font-black bg-white border border-gray-200 text-gray-900 rounded-2xl px-4 py-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" 
-                                />
-                            </div>
-
-                            <div className="relative mt-6">
-                                <label className="absolute -top-2 left-4 px-1 bg-white text-[10px] font-bold uppercase tracking-wider text-gray-400">New Password</label>
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                                    <FiLock className="w-5 h-5" />
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        {!otpSent ? (
+                            <div>
+                                <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                                    Email address
+                                </label>
+                                <div className="relative">
+                                    <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                    <input 
+                                        required 
+                                        name="email" 
+                                        type="email" 
+                                        placeholder="hello@example.com" 
+                                        onChange={handleChange}
+                                        className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                                    />
                                 </div>
-                                <input required name="newPassword" type="password" placeholder="••••••••" onChange={handleChange} className="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-2xl pl-12 pr-4 py-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium" />
                             </div>
-
-                            <div className="relative">
-                                <label className="absolute -top-2 left-4 px-1 bg-white text-[10px] font-bold uppercase tracking-wider text-gray-400">Confirm Password</label>
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                                    <FiLock className="w-5 h-5" />
-                                </div>
-                                <input required name="confirmPassword" type="password" placeholder="••••••••" onChange={handleChange} className="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-2xl pl-12 pr-4 py-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium" />
-                            </div>
-                        </div>
-                    )}
-
-                    <button 
-                        disabled={isLoading}
-                        className="group relative w-full flex items-center justify-center py-4 px-4 border border-transparent text-sm font-bold rounded-2xl text-white bg-gray-900 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 mt-8 disabled:opacity-70 disabled:hover:transform-none"
-                    >
-                        {isLoading ? (
-                            <span className="flex items-center gap-2">
-                                <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
-                                {otpSent ? "Resetting..." : "Sending OTP..."}
-                            </span>
                         ) : (
-                            <span className="flex items-center">
-                                {otpSent ? "Reset Password" : "Send Reset Link"}
-                                {otpSent ? <FiCheckCircle className="ml-2 w-4 h-4 group-hover:scale-110 transition-transform" /> : <FiArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />}
-                            </span>
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                                        Verification code
+                                    </label>
+                                    <input 
+                                        required 
+                                        type="text"
+                                        maxLength={6}
+                                        placeholder="123456" 
+                                        value={otp} 
+                                        onChange={(e) => setOtp(e.target.value)} 
+                                        className="w-full text-center tracking-[0.3em] text-lg font-mono px-3 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                                    />
+                                    <p className="text-xs text-gray-400 text-center mt-2">
+                                        Check your email for the 6-digit code
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                                        New password
+                                    </label>
+                                    <div className="relative">
+                                        <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                        <input 
+                                            required 
+                                            name="newPassword" 
+                                            type="password" 
+                                            placeholder="••••••••" 
+                                            onChange={handleChange}
+                                            className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                                        Confirm password
+                                    </label>
+                                    <div className="relative">
+                                        <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                        <input 
+                                            required 
+                                            name="confirmPassword" 
+                                            type="password" 
+                                            placeholder="••••••••" 
+                                            onChange={handleChange}
+                                            className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         )}
-                    </button>
+
+                        <button 
+                            disabled={isLoading}
+                            className="w-full flex items-center justify-center gap-2 bg-emerald-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed mt-4"
+                        >
+                            {isLoading ? (
+                                <>
+                                    <span className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
+                                    {otpSent ? "Resetting..." : "Sending code..."}
+                                </>
+                            ) : (
+                                <>
+                                    {otpSent ? "Reset password" : "Send reset code"}
+                                    {otpSent ? <FiCheckCircle className="w-3.5 h-3.5" /> : <FiArrowRight className="w-3.5 h-3.5" />}
+                                </>
+                            )}
+                        </button>
+                    </form>
                     
-                    <p className="text-center text-sm font-medium text-gray-500 mt-8">
+                    <p className="text-center text-xs text-gray-500 mt-6">
                         Remember your password?{" "}
-                        <Link href="/auth/login" className="text-blue-600 font-bold hover:text-blue-700 transition-colors border-b-2 border-blue-600/20 hover:border-blue-600 pb-0.5">
-                            Sign in here
+                        <Link href="/auth/login" className="text-emerald-600 font-medium hover:text-emerald-700 transition-colors">
+                            Back to sign in
                         </Link>
                     </p>
-
-                </form>
+                </div>
             </div>
-
         </div>
     )
 }

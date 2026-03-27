@@ -24,40 +24,62 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     const id = Date.now()
     setNotifications((prev) => [...prev, { id, message, type }])
     
-    // Auto remove after 5 seconds
+    // Auto remove after 4 seconds — feels responsive without being rushed
     setTimeout(() => {
       setNotifications((prev) => prev.filter((n) => n.id !== id))
-    }, 5000)
+    }, 4000)
+  }
+
+  // Notification styling — subtle shadows, clean borders, easy to read
+  const getNotificationStyles = (type: NotificationType) => {
+    switch (type) {
+      case "success":
+        return "bg-white border-l-4 border-emerald-500 shadow-md text-emerald-800"
+      case "error":
+        return "bg-white border-l-4 border-red-500 shadow-md text-red-800"
+      case "warning":
+        return "bg-white border-l-4 border-amber-500 shadow-md text-amber-800"
+      default:
+        return "bg-white border-l-4 border-blue-500 shadow-md text-blue-800"
+    }
+  }
+
+  const getIcon = (type: NotificationType) => {
+    switch (type) {
+      case "success":
+        return <FiCheckCircle className="w-5 h-5 text-emerald-500" />
+      case "error":
+        return <FiXCircle className="w-5 h-5 text-red-500" />
+      case "warning":
+        return <FiAlertTriangle className="w-5 h-5 text-amber-500" />
+      default:
+        return <FiInfo className="w-5 h-5 text-blue-500" />
+    }
   }
 
   return (
     <NotificationContext.Provider value={{ showNotification }}>
       {children}
       
-      {/* Notification Container */}
-      <div className="fixed bottom-6 right-6 z-[1000] flex flex-col gap-3 max-w-sm w-full pointer-events-none">
+      {/* Notification Container — clean, non-intrusive, easy to dismiss */}
+      <div className="fixed bottom-5 right-5 z-[1000] flex flex-col gap-2 max-w-sm w-full pointer-events-none">
         {notifications.map((n) => (
           <div
             key={n.id}
-            className={`pointer-events-auto flex items-center gap-4 p-4 rounded-2xl shadow-2xl border animate-in slide-in-from-right fade-in duration-300 ${
-              n.type === "success" ? "bg-emerald-50 border-emerald-100 text-emerald-800" :
-              n.type === "error" ? "bg-red-50 border-red-100 text-red-800" :
-              n.type === "warning" ? "bg-amber-50 border-amber-100 text-amber-800" :
-              "bg-blue-50 border-blue-100 text-blue-800"
-            }`}
+            className={`pointer-events-auto flex items-center gap-3 p-3 rounded-lg ${getNotificationStyles(n.type)} animate-in slide-in-from-right-5 fade-in duration-200`}
           >
             <div className="shrink-0">
-              {n.type === "success" && <FiCheckCircle className="w-5 h-5 text-emerald-500" />}
-              {n.type === "error" && <FiXCircle className="w-5 h-5 text-red-500" />}
-              {n.type === "warning" && <FiAlertTriangle className="w-5 h-5 text-amber-500" />}
-              {n.type === "info" && <FiInfo className="w-5 h-5 text-blue-500" />}
+              {getIcon(n.type)}
             </div>
-            <p className="text-sm font-bold flex-grow">{n.message}</p>
+            <p className="text-sm font-medium flex-grow leading-relaxed">
+              {n.message}
+            </p>
             <button
               onClick={() => setNotifications((prev) => prev.filter((not) => not.id !== n.id))}
-              className="ml-2 hover:opacity-70 transition-opacity"
+              className="shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Dismiss"
             >
-              <FiXCircle className="w-4 h-4 opacity-50" />
+              <FiXCircle className="w-4 h-4" />
             </button>
           </div>
         ))}

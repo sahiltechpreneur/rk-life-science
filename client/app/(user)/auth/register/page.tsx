@@ -4,7 +4,7 @@ import { useState, useContext } from "react"
 import { useRouter } from "next/navigation"
 import { AuthContext } from "@/context/AuthContext"
 import Link from "next/link"
-import { FiUser, FiMail, FiPhone, FiLock, FiArrowRight, FiCheckCircle } from "react-icons/fi"
+import { FiUser, FiMail, FiPhone, FiLock, FiArrowRight, FiCheckCircle, FiAlertCircle } from "react-icons/fi"
 
 export default function RegisterPage() {
     const router = useRouter()
@@ -37,7 +37,7 @@ export default function RegisterPage() {
             }
 
             if (form.password.length < 6) {
-                setError("Password must be at least 6 characters long.")
+                setError("Password must be at least 6 characters.")
                 return
             }
 
@@ -47,7 +47,7 @@ export default function RegisterPage() {
             }
 
             if (!/^9[87]\d{8}$/.test(form.phone)) {
-                setError("Phone must start with 98 or 97 and be exactly 10 digits long.")
+                setError("Phone must start with 98 or 97 and be 10 digits.")
                 return
             }
 
@@ -62,10 +62,10 @@ export default function RegisterPage() {
                 if (data.success) {
                     setOtpSent(true)
                 } else {
-                    setError(data.error || "Failed to send OTP. Email might be in use.")
+                    setError(data.error || "Failed to send OTP. Email may be in use.")
                 }
             } catch (err) {
-                setError("Failed to send OTP due to network error.")
+                setError("Network error. Please try again.")
             } finally {
                 setIsLoading(false)
             }
@@ -90,132 +90,165 @@ export default function RegisterPage() {
                 login(data.token || "dummy_token", data.user)
                 router.push("/")
             } else {
-                setError(data.error || "Failed to register. Invalid OTP.")
+                setError(data.error || "Registration failed. Invalid OTP.")
             }
         } catch (err) {
-            setError("Registration failed due to network error.")
+            setError("Network error. Please try again.")
         } finally {
             setIsLoading(false)
         }
     }
 
     return (
-        <div className="flex justify-center items-center py-20 min-h-[90vh] bg-gray-50 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100/40 via-gray-50 to-gray-50 px-4">
-
-            <div className="w-full max-w-xl bg-white shadow-2xl rounded-[2.5rem] p-8 sm:p-10 border border-gray-100 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl pointer-events-none translate-x-1/2 -translate-y-1/2"></div>
-
-                <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-
-                    <div className="text-center mb-10">
-                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white mb-6 shadow-lg shadow-blue-500/20 transform rotate-6">
-                            <FiUser className="w-8 h-8" />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 pt-24 pb-16">
+            <div className="w-full max-w-md">
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                    
+                    <div className="text-center mb-8">
+                        <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mx-auto mb-4">
+                            <FiUser className="w-5 h-5 text-emerald-600" />
                         </div>
-                        <h1 className="text-3xl font-black text-gray-900 mb-2">
-                            {otpSent ? "Verify Email" : "Create Account"}
+                        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                            {otpSent ? "Verify your email" : "Create account"}
                         </h1>
-                        <p className="text-gray-500 font-medium">
-                            {otpSent ? `Enter the 6-digit OTP sent to ${form.email}` : "Join R.K Life Science for premium healthcare access."}
+                        <p className="text-sm text-gray-500">
+                            {otpSent ? `Enter the 6-digit code sent to ${form.email}` : "Join us to start shopping"}
                         </p>
                     </div>
 
                     {error && (
-                        <div className="bg-red-50 text-red-600 p-4 rounded-2xl text-sm font-bold border border-red-100 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></span>
-                            {error}
+                        <div className="flex items-center gap-2 bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6">
+                            <FiAlertCircle className="w-4 h-4 shrink-0" />
+                            <span>{error}</span>
                         </div>
                     )}
 
-                    {!otpSent ? (
-                        <>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="relative">
-                                    <label className="absolute -top-2 left-4 px-1 bg-white text-[10px] font-bold uppercase tracking-wider text-gray-400">First Name</label>
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                                        <FiUser className="w-5 h-5" />
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        {!otpSent ? (
+                            <>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-600 mb-1.5">First name</label>
+                                        <input 
+                                            required 
+                                            name="fname" 
+                                            placeholder="John" 
+                                            onChange={handleChange}
+                                            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                                        />
                                     </div>
-                                    <input required name="fname" placeholder="John" onChange={handleChange} className="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-2xl pl-12 pr-4 py-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium" />
-                                </div>
-                                <div className="relative">
-                                    <label className="absolute -top-2 left-4 px-1 bg-white text-[10px] font-bold uppercase tracking-wider text-gray-400">Last Name</label>
-                                    <input required name="lname" placeholder="Doe" onChange={handleChange} className="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-2xl px-4 py-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium" />
-                                </div>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div className="relative">
-                                    <label className="absolute -top-2 left-4 px-1 bg-white text-[10px] font-bold uppercase tracking-wider text-gray-400">Email Address</label>
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                                        <FiMail className="w-5 h-5" />
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-600 mb-1.5">Last name</label>
+                                        <input 
+                                            required 
+                                            name="lname" 
+                                            placeholder="Doe" 
+                                            onChange={handleChange}
+                                            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                                        />
                                     </div>
-                                    <input required name="email" type="email" placeholder="john@example.com" onChange={handleChange} className="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-2xl pl-12 pr-4 py-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium" />
                                 </div>
 
-                                <div className="relative">
-                                    <label className="absolute -top-2 left-4 px-1 bg-white text-[10px] font-bold uppercase tracking-wider text-gray-400">Phone Number</label>
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                                        <FiPhone className="w-5 h-5" />
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-600 mb-1.5">Email address</label>
+                                    <div className="relative">
+                                        <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                        <input 
+                                            required 
+                                            name="email" 
+                                            type="email" 
+                                            placeholder="hello@example.com" 
+                                            onChange={handleChange}
+                                            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                                        />
                                     </div>
-                                    <input required name="phone" placeholder="98XXXXXXXX" onChange={handleChange} className="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-2xl pl-12 pr-4 py-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium" />
                                 </div>
-                            </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="relative">
-                                    <label className="absolute -top-2 left-4 px-1 bg-white text-[10px] font-bold uppercase tracking-wider text-gray-400">Password</label>
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                                        <FiLock className="w-5 h-5" />
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-600 mb-1.5">Phone number</label>
+                                    <div className="relative">
+                                        <FiPhone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                        <input 
+                                            required 
+                                            name="phone" 
+                                            placeholder="98XXXXXXXX" 
+                                            onChange={handleChange}
+                                            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                                        />
                                     </div>
-                                    <input required name="password" type="password" placeholder="••••••••" onChange={handleChange} className="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-2xl pl-12 pr-4 py-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium" />
                                 </div>
-                                <div className="relative">
-                                    <label className="absolute -top-2 left-4 px-1 bg-white text-[10px] font-bold uppercase tracking-wider text-gray-400">Confirm Password</label>
-                                    <input required name="confirm" type="password" placeholder="••••••••" onChange={handleChange} className="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-2xl px-4 py-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium" />
-                                </div>
-                            </div>
-                        </>
-                    ) : (
-                        <div className="relative animate-in slide-in-from-right duration-500">
-                            <label className="absolute -top-2 left-4 px-1 bg-white text-[10px] font-bold uppercase tracking-wider text-gray-400">One Time Password</label>
-                            <input 
-                                required 
-                                type="text"
-                                maxLength={6}
-                                placeholder="123456" 
-                                value={otp} 
-                                onChange={(e) => setOtp(e.target.value)} 
-                                className="w-full text-center tracking-[0.5em] text-2xl font-black bg-white border border-gray-200 text-gray-900 rounded-2xl px-4 py-6 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" 
-                            />
-                        </div>
-                    )}
 
-                    <button 
-                        disabled={isLoading}
-                        className="group relative w-full flex items-center justify-center py-4 px-4 border border-transparent text-sm font-bold rounded-2xl text-white bg-gray-900 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 mt-8 disabled:opacity-70 disabled:hover:transform-none"
-                    >
-                        {isLoading ? (
-                            <span className="flex items-center gap-2">
-                                <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
-                                {otpSent ? "Verifying..." : "Sending OTP..."}
-                            </span>
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-600 mb-1.5">Password</label>
+                                    <div className="relative">
+                                        <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                        <input 
+                                            required 
+                                            name="password" 
+                                            type="password" 
+                                            placeholder="••••••••" 
+                                            onChange={handleChange}
+                                            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-600 mb-1.5">Confirm password</label>
+                                    <input 
+                                        required 
+                                        name="confirm" 
+                                        type="password" 
+                                        placeholder="••••••••" 
+                                        onChange={handleChange}
+                                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                                    />
+                                </div>
+                            </>
                         ) : (
-                            <span className="flex items-center">
-                                {otpSent ? "Verify & Register" : "Continue"}
-                                {otpSent ? <FiCheckCircle className="ml-2 w-4 h-4 group-hover:scale-110 transition-transform" /> : <FiArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />}
-                            </span>
+                            <div>
+                                <label className="block text-xs font-medium text-gray-600 mb-1.5">Verification code</label>
+                                <input 
+                                    required 
+                                    type="text"
+                                    maxLength={6}
+                                    placeholder="123456" 
+                                    value={otp} 
+                                    onChange={(e) => setOtp(e.target.value)} 
+                                    className="w-full text-center tracking-[0.3em] text-lg font-mono px-3 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                                />
+                                <p className="text-xs text-gray-400 text-center mt-2">
+                                    Check your email for the 6-digit code
+                                </p>
+                            </div>
                         )}
-                    </button>
+
+                        <button 
+                            disabled={isLoading}
+                            className="w-full flex items-center justify-center gap-2 bg-emerald-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed mt-4"
+                        >
+                            {isLoading ? (
+                                <>
+                                    <span className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
+                                    {otpSent ? "Verifying..." : "Sending code..."}
+                                </>
+                            ) : (
+                                <>
+                                    {otpSent ? "Verify & create account" : "Continue"}
+                                    {otpSent ? <FiCheckCircle className="w-3.5 h-3.5" /> : <FiArrowRight className="w-3.5 h-3.5" />}
+                                </>
+                            )}
+                        </button>
+                    </form>
                     
-                    <p className="text-center text-sm font-medium text-gray-500 mt-8">
+                    <p className="text-center text-xs text-gray-500 mt-6">
                         Already have an account?{" "}
-                        <Link href="/auth/login" className="text-blue-600 font-bold hover:text-blue-700 transition-colors border-b-2 border-blue-600/20 hover:border-blue-600 pb-0.5">
-                            Sign in here
+                        <Link href="/auth/login" className="text-emerald-600 font-medium hover:text-emerald-700 transition-colors">
+                            Sign in
                         </Link>
                     </p>
-
-                </form>
+                </div>
             </div>
-
         </div>
     )
 }

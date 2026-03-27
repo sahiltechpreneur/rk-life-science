@@ -5,7 +5,7 @@ import API from "@/lib/api"
 import { useRouter } from "next/navigation"
 import { AuthContext } from "@/context/AuthContext"
 import Link from "next/link"
-import { FiMail, FiLock, FiArrowRight } from "react-icons/fi"
+import { FiMail, FiLock, FiArrowRight, FiAlertCircle } from "react-icons/fi"
 
 export default function LoginPage() {
 
@@ -43,94 +43,98 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex justify-center items-center min-h-[90vh] bg-gray-50 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-100/40 via-gray-50 to-gray-50 px-4">
-
-            <div className="w-full max-w-md bg-white shadow-2xl rounded-[2.5rem] p-8 sm:p-10 border border-gray-100 relative overflow-hidden">
-                {/* Decorative Elements */}
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                
-                <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-
-                    <div className="text-center mb-10">
-                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-white mb-6 shadow-lg shadow-emerald-500/20 transform -rotate-6">
-                            <FiLock className="w-8 h-8" />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 pt-24 pb-16">
+            <div className="w-full max-w-md">
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                    
+                    <div className="text-center mb-8">
+                        <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mx-auto mb-4">
+                            <FiLock className="w-5 h-5 text-emerald-600" />
                         </div>
-                        <h1 className="text-3xl font-black text-gray-900 mb-2">
-                            Welcome Back
+                        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                            Welcome back
                         </h1>
-                        <p className="text-gray-500 font-medium">Please enter your details to sign in.</p>
+                        <p className="text-sm text-gray-500">
+                            Sign in to your account
+                        </p>
                     </div>
 
                     {error && (
-                        <div className="bg-red-50 text-red-600 p-4 rounded-2xl text-sm font-bold border border-red-100 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></span>
-                            {error}
+                        <div className="flex items-center gap-2 bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6">
+                            <FiAlertCircle className="w-4 h-4 shrink-0" />
+                            <span>{error}</span>
                         </div>
                     )}
 
-                    <div className="space-y-4">
-                        <div className="relative">
-                            <label className="absolute -top-2 left-4 px-1 bg-white text-[10px] font-bold uppercase tracking-wider text-gray-400">Email Address</label>
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                                <FiMail className="w-5 h-5" />
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                                Email address
+                            </label>
+                            <div className="relative">
+                                <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                <input
+                                    required
+                                    type="email"
+                                    placeholder="name@example.com"
+                                    className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
                             </div>
-                            <input
-                                required
-                                type="email"
-                                placeholder="name@example.com"
-                                className="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-2xl pl-12 pr-4 py-4 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all font-medium"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
                         </div>
 
-                        <div className="relative">
-                            <div className="absolute -top-6 right-2">
-                                <Link href="/auth/forgot-password" className="text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors">Forgot password?</Link>
+                        <div>
+                            <div className="flex items-center justify-between mb-1.5">
+                                <label className="block text-xs font-medium text-gray-600">
+                                    Password
+                                </label>
+                                <Link 
+                                    href="/auth/forgot-password" 
+                                    className="text-xs text-emerald-600 hover:text-emerald-700 transition-colors"
+                                >
+                                    Forgot password?
+                                </Link>
                             </div>
-                            <label className="absolute -top-2 left-4 px-1 bg-white text-[10px] font-bold uppercase tracking-wider text-gray-400">Password</label>
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                                <FiLock className="w-5 h-5" />
+                            <div className="relative">
+                                <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                <input
+                                    required
+                                    type="password"
+                                    placeholder="••••••••"
+                                    className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
                             </div>
-                            <input
-                                required
-                                type="password"
-                                placeholder="••••••••"
-                                className="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-2xl pl-12 pr-4 py-4 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all font-medium"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
                         </div>
-                    </div>
 
-                    <button 
-                        disabled={isLoading}
-                        className="group relative w-full flex items-center justify-center py-4 px-4 border border-transparent text-sm font-bold rounded-2xl text-white bg-gray-900 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-600 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 disabled:opacity-70 disabled:hover:transform-none"
-                    >
-                        {isLoading ? (
-                            <span className="flex items-center gap-2">
-                                <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
-                                Signing in...
-                            </span>
-                        ) : (
-                            <span className="flex items-center">
-                                Sign In
-                                <FiArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                            </span>
-                        )}
-                    </button>
+                        <button 
+                            disabled={isLoading}
+                            className="w-full flex items-center justify-center gap-2 bg-emerald-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                            {isLoading ? (
+                                <>
+                                    <span className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
+                                    Signing in...
+                                </>
+                            ) : (
+                                <>
+                                    Sign in
+                                    <FiArrowRight className="w-3.5 h-3.5" />
+                                </>
+                            )}
+                        </button>
+                    </form>
                     
-                    <p className="text-center text-sm font-medium text-gray-500 mt-8">
+                    <p className="text-center text-xs text-gray-500 mt-6">
                         Don't have an account?{" "}
-                        <Link href="/auth/register" className="text-emerald-600 font-bold hover:text-emerald-700 transition-colors border-b-2 border-emerald-600/20 hover:border-emerald-600 pb-0.5">
-                            Create one now
+                        <Link href="/auth/register" className="text-emerald-600 font-medium hover:text-emerald-700 transition-colors">
+                            Create account
                         </Link>
                     </p>
-
-                </form>
+                </div>
             </div>
-
         </div>
-
     )
 }

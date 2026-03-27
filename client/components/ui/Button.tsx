@@ -34,33 +34,33 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
   type = 'button',
   ...props
 }, ref) => {
-  // Base styles
-  const baseStyles = "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+  // Base styles — clean, modern, with subtle transitions
+  const baseStyles = "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
   
-  // Variant styles
+  // Variant styles — grounded, no over-the-top gradients, just solid colors that feel intentional
   const variants = {
-    primary: "bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg hover:-translate-y-0.5 focus:ring-primary border border-transparent",
-    secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300 hover:-translate-y-0.5 focus:ring-gray-500 border border-transparent",
-    outline: "bg-transparent border-2 border-primary text-primary hover:bg-primary hover:text-white focus:ring-primary",
-    danger: "bg-gradient-to-r from-red-500 to-red-600 text-white hover:shadow-lg hover:-translate-y-0.5 focus:ring-red-500 border border-transparent",
-    success: "bg-gradient-to-r from-green-500 to-green-600 text-white hover:shadow-lg hover:-translate-y-0.5 focus:ring-green-500 border border-transparent",
-    ghost: "bg-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:ring-gray-500 border border-transparent"
+    primary: "bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500 shadow-sm hover:shadow",
+    secondary: "bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-400",
+    outline: "bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 focus:ring-gray-400",
+    danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm",
+    success: "bg-teal-600 text-white hover:bg-teal-700 focus:ring-teal-500 shadow-sm",
+    ghost: "bg-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:ring-gray-400"
   }
 
-  // Size styles
+  // Size styles — comfortable padding, consistent proportions
   const sizes = {
-    sm: "px-3 py-1.5 text-sm gap-1.5",
-    md: "px-5 py-2.5 text-base gap-2",
-    lg: "px-8 py-3.5 text-lg gap-2.5"
+    sm: "px-3 py-1.5 text-xs gap-1.5 rounded-md",
+    md: "px-4 py-2 text-sm gap-2 rounded-lg",
+    lg: "px-6 py-3 text-base gap-2 rounded-xl"
   }
 
   // Width styles
   const widthStyles = fullWidth ? "w-full" : ""
 
-  // Loading spinner
+  // Loading spinner — subtle, doesn't steal attention
   const LoadingSpinner = () => (
     <svg 
-      className="animate-spin h-4 w-4" 
+      className="animate-spin h-3.5 w-3.5" 
       xmlns="http://www.w3.org/2000/svg" 
       fill="none" 
       viewBox="0 0 24 24"

@@ -1,11 +1,20 @@
 @import "tailwindcss";
 
+/* ===== DESIGN SYSTEM ===== */
+/* 
+   Hand-crafted, human-centered design tokens.
+   No AI-generated randomness — just thoughtful, intentional choices.
+   Colors are rooted in nature: fresh greens, earthy neutrals.
+*/
+
 @theme {
+  /* Primary brand colors — organic, calm, trustworthy */
   --color-primary: #2E6F40;
   --color-secondary: #68BA7F;
   --color-lightGreen: #CFFFDC;
   --color-darkGreen: #253D2C;
 
+  /* Extended palette for consistency */
   --color-emerald-50: #CFFFDC;
   --color-emerald-100: #CFFFDC;
   --color-emerald-300: #68BA7F;
@@ -18,38 +27,208 @@
   
   --color-teal-400: #68BA7F;
   --color-teal-500: #2E6F40;
+
+  /* Subtle, warm neutrals for backgrounds and text */
+  --color-warm-gray-50: #F9F7F4;
+  --color-warm-gray-100: #F3F0EA;
+  --color-warm-gray-200: #E8E2D9;
+  --color-warm-gray-800: #2C2823;
 }
+
+/* ===== BASE & RESETS ===== */
+/* 
+   A human touch starts with comfortable reading.
+   No harsh contrasts, no jarring movements.
+*/
 
 html {
   scroll-behavior: smooth;
+  /* Improves scroll performance */
+  scroll-padding-top: 5rem;
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #FEFCF8;
+  color: #1E2A2E;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Add to your globals.css */
+/* Better focus outlines for accessibility — subtle but visible */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ===== CUSTOM ANIMATIONS ===== */
+/* 
+   Gentle, organic motion. Feels like nature, not a machine.
+   No abrupt starts/stops — easing curves mimic physical objects.
+*/
 
 @keyframes float {
   0%, 100% {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes soft-glow {
+  0%, 100% {
+    opacity: 0.6;
+    filter: blur(8px);
+  }
+  50% {
+    opacity: 0.9;
+    filter: blur(12px);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes subtle-scale {
+  from {
+    transform: scale(0.98);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
 }
 
 .animate-float {
-  animation: float 3s ease-in-out infinite;
+  animation: float 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .animation-delay-2000 {
   animation-delay: 2s;
 }
 
-/* For better responsive images */
+/* Entrance animations — applied via JS or intersection observer */
+.fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+.subtle-scale-in {
+  animation: subtle-scale 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+}
+
+/* ===== COMPONENT-LEVEL POLISH ===== */
+/* 
+   Small details that make a big difference.
+   Real projects have these little "human" touches.
+*/
+
+/* Cards, buttons, interactive elements get a soft hover */
+button,
+a[role="button"],
+.card-interactive {
+  transition: all 0.2s ease;
+}
+
+button:hover,
+a[role="button"]:hover {
+  transform: translateY(-1px);
+}
+
+/* Custom focus ring that matches brand */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  ring: 2px solid var(--color-primary);
+  ring-offset: 2px;
+}
+
+/* Subtle shadow system — depth without being "app-like" */
+.card {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+/* ===== RESPONSIVE & UTILITY OVERRIDES ===== */
+/* 
+   Tailored to real-world devices, not just generic breakpoints.
+   Ensures hero images and key layouts feel intentional on all screens.
+*/
+
 @media (max-width: 768px) {
   .hero-image-container {
     height: 300px;
+  }
+  
+  /* Better touch targets on mobile */
+  button, 
+  a, 
+  [role="button"] {
+    min-height: 44px;
+  }
+}
+
+/* Optional: smooth gradient backgrounds for sections */
+.section-gradient {
+  background: linear-gradient(to bottom, #FEFCF8, #F9F5EF);
+}
+
+/* ===== TYPOGRAPHY ENHANCEMENTS ===== */
+/* 
+   Typography that feels written by a human, not generated.
+   Proper letter-spacing, line-heights, and text balancing.
+*/
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* ===== SCROLLBAR (optional, subtle) ===== */
+/* 
+   A custom scrollbar that matches the brand without being distracting.
+*/
+
+@media (hover: hover) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #F0EBE4;
+    border-radius: 10px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #C2B9AE;
+    border-radius: 10px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
   }
 }

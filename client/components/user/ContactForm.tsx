@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import { FiSend } from "react-icons/fi"
+import { FiSend, FiCheckCircle, FiAlertCircle } from "react-icons/fi"
 
 export default function ContactForm() {
   const [form, setForm] = useState({ name: "", email: "", feedback: "" })
@@ -16,18 +16,18 @@ export default function ContactForm() {
     e.preventDefault()
 
     if(!form.name.trim() || !form.email.trim() || !form.feedback.trim()) {
-      setError("Please fill out all required fields.")
+      setError("Please fill out all fields.")
       return
     }
 
     const nameRegex = /^[A-Za-z\s]+$/
     if(!nameRegex.test(form.name)) {
-      setError("Name must contain only letters and spaces.")
+      setError("Name should only contain letters and spaces.")
       return
     }
 
     if(form.feedback.trim().length < 10) {
-      setError("Your message must be at least 10 characters long.")
+      setError("Message must be at least 10 characters.")
       return
     }
 
@@ -43,71 +43,73 @@ export default function ContactForm() {
     // Simulate API call
     setTimeout(() => {
         setIsSubmitting(false)
-        setSuccess("Message sent successfully! We will get back to you soon.")
+        setSuccess("Thanks for reaching out! We'll get back to you soon.")
         setForm({ name: "", email: "", feedback: "" })
     }, 1500)
   }
 
   return (
     <div className="w-full">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         
         {error && (
-            <div className="bg-red-50 text-red-500 px-5 py-4 rounded-xl font-bold flex items-center border border-red-100">
-                {error}
-            </div>
+          <div className="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-3 rounded-lg text-sm border border-red-100">
+            <FiAlertCircle className="w-4 h-4 shrink-0" />
+            <span>{error}</span>
+          </div>
         )}
         
         {success && (
-            <div className="bg-primary/10 text-primary px-5 py-4 rounded-xl font-bold flex items-center border border-primary/20">
-                {success}
-            </div>
+          <div className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-3 rounded-lg text-sm border border-emerald-100">
+            <FiCheckCircle className="w-4 h-4 shrink-0" />
+            <span>{success}</span>
+          </div>
         )}
         
-        <div className="grid md:grid-cols-2 gap-6">
-            <div className="flex flex-col gap-2">
-                <label className="text-sm font-bold text-gray-700 ml-1">Your Name</label>
-                <input 
-                    type="text" 
-                    name="name" 
-                    value={form.name} 
-                    onChange={handleChange}
-                    className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all font-medium placeholder:text-gray-400"
-                    placeholder="John Doe"
-                />
-            </div>
-            <div className="flex flex-col gap-2">
-                <label className="text-sm font-bold text-gray-700 ml-1">Email Address</label>
-                <input 
-                    type="email" 
-                    name="email" 
-                    value={form.email} 
-                    onChange={handleChange}
-                    className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all font-medium placeholder:text-gray-400"
-                    placeholder="john@example.com"
-                />
-            </div>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-medium text-gray-600">Full name</label>
+            <input 
+              type="text" 
+              name="name" 
+              value={form.name} 
+              onChange={handleChange}
+              className="w-full bg-gray-50 border border-gray-200 text-gray-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all placeholder:text-gray-400"
+              placeholder="John Doe"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-medium text-gray-600">Email address</label>
+            <input 
+              type="email" 
+              name="email" 
+              value={form.email} 
+              onChange={handleChange}
+              className="w-full bg-gray-50 border border-gray-200 text-gray-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all placeholder:text-gray-400"
+              placeholder="hello@example.com"
+            />
+          </div>
         </div>
 
-        <div className="flex flex-col gap-2">
-            <label className="text-sm font-bold text-gray-700 ml-1">Your Message</label>
-            <textarea 
-                name="feedback"
-                value={form.feedback}
-                onChange={handleChange}
-                rows={5}
-                className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all font-medium placeholder:text-gray-400 resize-none"
-                placeholder="How can we help you?"
-            ></textarea>
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium text-gray-600">Message</label>
+          <textarea 
+            name="feedback"
+            value={form.feedback}
+            onChange={handleChange}
+            rows={4}
+            className="w-full bg-gray-50 border border-gray-200 text-gray-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all placeholder:text-gray-400 resize-none"
+            placeholder="How can we help you?"
+          />
         </div>
         
         <button 
-            type="submit"
-            disabled={isSubmitting}
-            className={`mt-4 w-full md:w-auto md:ml-auto flex items-center justify-center gap-3 bg-gray-900 text-white px-10 py-4 rounded-2xl font-bold transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-primary'}`}
+          type="submit"
+          disabled={isSubmitting}
+          className={`mt-2 w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-all hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
         >
-            {isSubmitting ? 'Sending...' : 'Send Message'}
-            <FiSend className={isSubmitting ? 'animate-pulse' : ''} />
+          {isSubmitting ? 'Sending...' : 'Send message'}
+          <FiSend className="w-3.5 h-3.5" />
         </button>
       </form>
     </div>

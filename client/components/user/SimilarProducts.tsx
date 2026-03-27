@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import ProductCard from "./ProductCard"
-import { FiTrendingUp } from "react-icons/fi"
+import { FiTrendingUp, FiPackage } from "react-icons/fi"
 
 type Product = {
   id: number
@@ -44,27 +44,30 @@ export default function SimilarProducts() {
   }
 
   return (
-    <section className="pt-20">
-      <div className="flex items-center justify-between mb-10">
-          <div>
-              <h2 className="text-3xl font-black text-gray-900 mb-2 flex items-center gap-3">
-                  You May Also Like
-                  <span className="bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1">
-                      <FiTrendingUp /> Trending
-                  </span>
-              </h2>
-              <p className="text-gray-500 font-medium">Customers who viewed this item also bought</p>
-          </div>
+    <section className="py-16 border-t border-gray-100">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-1">
+            You may also like
+          </h2>
+          <p className="text-sm text-gray-500">
+            Customers who viewed this also bought
+          </p>
+        </div>
+        <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 rounded-full">
+          <FiTrendingUp className="w-3.5 h-3.5 text-emerald-600" />
+          <span className="text-xs font-medium text-emerald-600">Recommended for you</span>
+        </div>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 pb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((p) => (
           <ProductCard
             key={p.id}
             id={p.id}
             name={p.name}
             image={p.image?.startsWith("http") ? p.image : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/uploads/${p.image}`}
-            description={p.description?.substring(0, 60) + "..."}
+            description={p.description?.substring(0, 60) + (p.description?.length > 60 ? "..." : "")}
             price={p.price}
           />
         ))}
