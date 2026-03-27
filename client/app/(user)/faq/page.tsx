@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 import Container from "@/components/ui/Container"
-import { FiHelpCircle, FiChevronDown } from "react-icons/fi"
+import { FiHelpCircle, FiChevronDown, FiMail } from "react-icons/fi"
 
 const faqs = [
   {
@@ -30,57 +30,67 @@ export default function FAQPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-20">
+    <div className="bg-gray-50 min-h-screen pt-24 pb-16">
       
-      {/* Header Banner */}
-      <div className="bg-gray-900 border-b border-gray-800 text-white py-16 lg:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/40 via-gray-900 to-gray-900 pointer-events-none"></div>
-        <Container className="relative z-10 flex flex-col items-center text-center">
-            <div className="w-16 h-16 bg-white/5 text-lightGreen rounded-2xl flex items-center justify-center mb-6 backdrop-blur-md border border-white/10 shadow-xl">
-                <FiHelpCircle className="w-8 h-8" />
-            </div>
-            <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
-                Frequently Asked <span className="text-transparent bg-clip-text bg-gradient-to-r from-lightGreen to-secondary">Questions</span>
-            </h1>
-            <p className="text-gray-400 max-w-2xl text-lg font-medium">Everything you need to know about our products, billing, and distribution.</p>
+      {/* Header */}
+      <div className="bg-white border-b border-gray-100 pb-12 mb-10">
+        <Container className="text-center">
+          <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mx-auto mb-4">
+            <FiHelpCircle className="w-5 h-5 text-emerald-600" />
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3 tracking-tight">
+            Frequently Asked Questions
+          </h1>
+          <p className="text-gray-500 max-w-2xl mx-auto">
+            Quick answers to common questions about our products and services
+          </p>
         </Container>
       </div>
 
-      <Container className="relative z-20 -mt-10">
-        <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/40 p-8 md:p-12 max-w-4xl mx-auto">
-            
-            <div className="flex flex-col gap-4">
-                {faqs.map((faq, index) => (
-                    <div 
-                        key={index} 
-                        className={`border rounded-2xl transition-all duration-300 ${openIndex === index ? 'border-primary shadow-md bg-lightGreen/10' : 'border-gray-200 hover:border-primary/50 bg-white'}`}
-                    >
-                        <button 
-                            onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                            className="w-full text-left px-6 py-5 flex items-center justify-between focus:outline-none"
-                        >
-                            <span className="font-bold text-gray-900 text-lg">{faq.question}</span>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 ${openIndex === index ? 'bg-primary text-white rotate-180' : 'bg-gray-100 text-gray-500'}`}>
-                                <FiChevronDown />
-                            </div>
-                        </button>
-                        
-                        <div className={`overflow-hidden transition-all duration-300 ${openIndex === index ? 'max-h-48' : 'max-h-0'}`}>
-                            <p className="px-6 pb-6 text-gray-600 font-medium leading-relaxed">
-                                {faq.answer}
-                            </p>
-                        </div>
-                    </div>
-                ))}
-            </div>
+      <Container>
+        <div className="max-w-3xl mx-auto">
+          
+          <div className="space-y-3">
+            {faqs.map((faq, index) => (
+              <div 
+                key={index} 
+                className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden"
+              >
+                <button 
+                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                  className="w-full text-left px-5 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                >
+                  <span className="font-medium text-gray-800 text-sm">
+                    {faq.question}
+                  </span>
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-transform duration-200 ${openIndex === index ? 'rotate-180' : ''}`}>
+                    <FiChevronDown className="w-4 h-4 text-gray-400" />
+                  </div>
+                </button>
+                
+                <div className={`overflow-hidden transition-all duration-200 ${openIndex === index ? 'max-h-40' : 'max-h-0'}`}>
+                  <p className="px-5 pb-5 text-sm text-gray-500 leading-relaxed border-t border-gray-50 pt-3">
+                    {faq.answer}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
 
-            <div className="mt-12 bg-gray-50 rounded-2xl p-8 text-center border border-gray-100">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Still have questions?</h3>
-                <p className="text-gray-500 font-medium mb-6">Can't find the answer you're looking for? Please contact our friendly team.</p>
-                <a href="/contact" className="inline-block bg-primary text-white font-bold px-8 py-3 rounded-xl hover:bg-darkGreen transition-colors shadow-lg">
-                    Contact Support
-                </a>
+          <div className="mt-10 bg-gray-50 rounded-xl p-6 text-center border border-gray-100">
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm">
+              <FiMail className="w-4 h-4 text-emerald-600" />
             </div>
+            <h3 className="text-sm font-semibold text-gray-800 mb-1">Still have questions?</h3>
+            <p className="text-xs text-gray-500 mb-4">Can't find what you're looking for? Contact us directly.</p>
+            <a 
+              href="/contact" 
+              className="inline-flex items-center gap-1.5 text-sm text-emerald-600 font-medium hover:text-emerald-700 transition-colors"
+            >
+              Contact support
+              <span className="text-lg">→</span>
+            </a>
+          </div>
 
         </div>
       </Container>

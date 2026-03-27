@@ -1,43 +1,95 @@
 import Container from "@/components/ui/Container"
-import { FiTruck } from "react-icons/fi"
+import { FiTruck, FiPackage, FiRotateCcw, FiClock, FiMapPin } from "react-icons/fi"
 
 export default function ShippingPage() {
   return (
-    <div className="bg-gray-50 min-h-screen pb-20">
+    <div className="bg-gray-50 min-h-screen pt-24 pb-16">
       
-      {/* Header Banner */}
-      <div className="bg-gray-900 border-b border-gray-800 text-white py-16 lg:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/40 via-gray-900 to-gray-900 pointer-events-none"></div>
-        <Container className="relative z-10 flex flex-col items-center text-center">
-            <div className="w-16 h-16 bg-white/5 text-lightGreen rounded-2xl flex items-center justify-center mb-6 backdrop-blur-md border border-white/10 shadow-xl">
-                <FiTruck className="w-8 h-8" />
-            </div>
-            <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
-                Shipping & <span className="text-transparent bg-clip-text bg-gradient-to-r from-lightGreen to-secondary">Returns</span>
-            </h1>
-            <p className="text-gray-400 max-w-2xl text-lg font-medium">Seamless logistics to get essential health products to your doorstep safely.</p>
+      {/* Header */}
+      <div className="bg-white border-b border-gray-100 pb-12 mb-10">
+        <Container className="text-center">
+          <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mx-auto mb-4">
+            <FiTruck className="w-5 h-5 text-emerald-600" />
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3 tracking-tight">
+            Shipping & Returns
+          </h1>
+          <p className="text-gray-500 max-w-2xl mx-auto">
+            Fast, reliable delivery across Nepal
+          </p>
         </Container>
       </div>
 
-      <Container className="relative z-20 -mt-10">
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-200/40 p-8 md:p-12 lg:p-16 max-w-4xl mx-auto prose prose-lg prose-emerald text-gray-600 font-medium">
+      <Container>
+        <div className="max-w-3xl mx-auto space-y-6">
+          
+          {/* Shipping Section */}
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 md:p-8">
+            <div className="flex items-center gap-2 mb-5">
+              <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center">
+                <FiTruck className="w-4 h-4 text-emerald-600" />
+              </div>
+              <h2 className="text-lg font-semibold text-gray-900">Shipping policy</h2>
+            </div>
             
-            <h2>Shipping Policies</h2>
-            <p>We pride ourselves on an incredibly reliable logistics network dedicated exclusively to nutraceutical and medical distribution.</p>
-            <ul>
-                <li><strong>Local Deliveries (Kathmandu Valley):</strong> Orders verified before 3:00 PM are delivered the next working day. A standard flat rate applies for orders under NPR 5,000.</li>
-                <li><strong>Out of Valley:</strong> Delivered via partnered cargo & courier services within 2-4 business days. Shipping rates calculate automatically based on total weight and destination city at checkout.</li>
-                <li><strong>Cold Chain Storage:</strong> Certain supplements require cold chain integrity. These items feature a specialized delivery system preventing heat exposure.</li>
-            </ul>
+            <div className="space-y-4 text-sm">
+              <div className="flex gap-3">
+                <FiMapPin className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-medium text-gray-700">Kathmandu Valley</p>
+                  <p className="text-gray-500">Orders confirmed before 3 PM delivered next working day. Free shipping on orders over NPR 5,000.</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-3">
+                <FiClock className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-medium text-gray-700">Outside Valley</p>
+                  <p className="text-gray-500">Delivery within 2-4 business days via partnered courier services. Shipping calculated at checkout.</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-3">
+                <FiPackage className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-medium text-gray-700">Cold Chain Items</p>
+                  <p className="text-gray-500">Temperature-sensitive products shipped with special packaging to maintain integrity.</p>
+                </div>
+              </div>
+            </div>
+          </div>
 
-            <h2>Return Policies</h2>
-            <p>Because we distribute health products, return parameters are extremely strict to maintain consumer safety and product integrity.</p>
-            <ul>
-                <li><strong>Non-returnable Items:</strong> Once sealed products leave our logistics chain, they cannot be returned due to change-of-mind. This guarantees 100% untouched products for all buyers.</li>
-                <li><strong>Damaged on Arrival:</strong> If an item arrives structurally damaged or completely defected during transit, you are entitled to a free immediate replacement. You must instantly report damages within 48 hours to <code>returns.rklife@gmail.com</code> with photo evidence.</li>
-                <li><strong>Order Mistakes:</strong> If R.K Life Science dispatched the incorrect item, we will coordinate a rapid reverse-pickup at our own absolute cost and supply the appropriate product immediately.</li>
-            </ul>
+          {/* Returns Section */}
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 md:p-8">
+            <div className="flex items-center gap-2 mb-5">
+              <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center">
+                <FiRotateCcw className="w-4 h-4 text-emerald-600" />
+              </div>
+              <h2 className="text-lg font-semibold text-gray-900">Return policy</h2>
+            </div>
             
+            <div className="space-y-4 text-sm">
+              <div>
+                <p className="font-medium text-gray-700 mb-1">Non-returnable items</p>
+                <p className="text-gray-500">For safety reasons, sealed products cannot be returned for change of mind.</p>
+              </div>
+              
+              <div>
+                <p className="font-medium text-gray-700 mb-1">Damaged on arrival</p>
+                <p className="text-gray-500">If your order arrives damaged, contact us within 48 hours at <span className="text-emerald-600">returns.rklife@gmail.com</span> with photos for a free replacement.</p>
+              </div>
+              
+              <div>
+                <p className="font-medium text-gray-700 mb-1">Wrong item received</p>
+                <p className="text-gray-500">We'll arrange pickup and send the correct item at no cost to you.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Note */}
+          <div className="bg-gray-50 rounded-lg p-4 text-center text-xs text-gray-400 border border-gray-100">
+            For questions about your order, email support@rklifescience.com or call +977-9768771762
+          </div>
         </div>
       </Container>
     </div>

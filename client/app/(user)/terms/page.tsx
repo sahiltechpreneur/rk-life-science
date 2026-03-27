@@ -1,42 +1,87 @@
 import Container from "@/components/ui/Container"
-import { FiCheckSquare } from "react-icons/fi"
+import { FiCheckSquare, FiFileText, FiShield, FiUserCheck, FiCopy, FiXCircle } from "react-icons/fi"
 
 export default function TermsPage() {
   return (
-    <div className="bg-gray-50 min-h-screen pb-20">
+    <div className="bg-gray-50 min-h-screen pt-24 pb-16">
       
-      {/* Header Banner */}
-      <div className="bg-gray-900 border-b border-gray-800 text-white py-16 lg:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/40 via-gray-900 to-gray-900 pointer-events-none"></div>
-        <Container className="relative z-10 flex flex-col items-center text-center">
-            <div className="w-16 h-16 bg-white/5 text-lightGreen rounded-2xl flex items-center justify-center mb-6 backdrop-blur-md border border-white/10 shadow-xl">
-                <FiCheckSquare className="w-8 h-8" />
-            </div>
-            <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
-                Terms & <span className="text-transparent bg-clip-text bg-gradient-to-r from-lightGreen to-secondary">Conditions</span>
-            </h1>
-            <p className="text-gray-400 max-w-2xl text-lg font-medium">Please read these terms carefully before using our platform.</p>
+      {/* Header */}
+      <div className="bg-white border-b border-gray-100 pb-12 mb-10">
+        <Container className="text-center">
+          <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mx-auto mb-4">
+            <FiFileText className="w-5 h-5 text-emerald-600" />
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3 tracking-tight">
+            Terms & Conditions
+          </h1>
+          <p className="text-gray-500 max-w-2xl mx-auto">
+            Please read these terms carefully before using our services
+          </p>
         </Container>
       </div>
 
-      <Container className="relative z-20 -mt-10">
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-200/40 p-8 md:p-12 lg:p-16 max-w-4xl mx-auto prose prose-lg prose-emerald text-gray-600 font-medium">
+      <Container>
+        <div className="max-w-3xl mx-auto bg-white rounded-xl border border-gray-100 shadow-sm p-6 md:p-8">
+          
+          <div className="prose prose-sm max-w-none text-gray-600">
             
-            <h2>1. Acceptance of Terms</h2>
-            <p>By accessing and utilizing the R.K Life Science platform for wholesale nutraceutical and medical product distribution, you accept and agree to be bound by the terms and provisions of this agreement.</p>
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <FiCheckSquare className="w-4 h-4 text-emerald-500" />
+                <h2 className="text-base font-semibold text-gray-900 m-0">1. Acceptance of terms</h2>
+              </div>
+              <p className="text-sm leading-relaxed">
+                By accessing and using the R.K Life Science platform, you agree to be bound by these terms. If you do not agree, please do not use our services.
+              </p>
+            </div>
 
-            <h2>2. Product Use & Liability</h2>
-            <p>All products distributed by R.K Life Science are sold for their intended use. We ensure products leave our facilities in perfect condition. It is the buyer's (clinics, pharmacies, or individuals) responsibility to store and utilize products per manufacturer guidelines. We hold no liability for misuse, improper storage, or off-label use of any distributed items.</p>
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <FiShield className="w-4 h-4 text-emerald-500" />
+                <h2 className="text-base font-semibold text-gray-900 m-0">2. Product use & liability</h2>
+              </div>
+              <p className="text-sm leading-relaxed">
+                Products are sold for their intended use. We ensure quality upon dispatch. Buyers are responsible for proper storage and use per manufacturer guidelines. We are not liable for misuse, improper storage, or off-label use.
+              </p>
+            </div>
 
-            <h2>3. Account Registration & Security</h2>
-            <p>When you create an account with us, you must provide accurate, complete, and current information. Failure to do so constitutes a breach of the Terms. You are entirely responsible for safeguarding the password that you use to access the service and for any activities or actions under your password.</p>
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <FiUserCheck className="w-4 h-4 text-emerald-500" />
+                <h2 className="text-base font-semibold text-gray-900 m-0">3. Account registration & security</h2>
+              </div>
+              <p className="text-sm leading-relaxed">
+                You must provide accurate, complete information when creating an account. You are responsible for safeguarding your password and for all activities under your account.
+              </p>
+            </div>
 
-            <h2>4. Intellectual Property</h2>
-            <p>The Service and its original content (excluding products displayed), features, functionality, and aesthetic design are and will remain the exclusive property of R.K Life Science and its licensors. Our trademarks may not be used in connection with any product or service without the prior written consent of R.K Life Science.</p>
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <FiCopy className="w-4 h-4 text-emerald-500" />
+                <h2 className="text-base font-semibold text-gray-900 m-0">4. Intellectual property</h2>
+              </div>
+              <p className="text-sm leading-relaxed">
+                The service and its original content, features, and functionality are the exclusive property of R.K Life Science. Our trademarks may not be used without prior written consent.
+              </p>
+            </div>
 
-            <h2>5. Order Cancellation</h2>
-            <p>We reserve the right to refuse or cancel your order at any time for certain reasons including but not limited to: product availability, errors in the description or price of the product, error in your order, or suspicion of fraudulent transaction.</p>
-            
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <FiXCircle className="w-4 h-4 text-emerald-500" />
+                <h2 className="text-base font-semibold text-gray-900 m-0">5. Order cancellation</h2>
+              </div>
+              <p className="text-sm leading-relaxed">
+                We reserve the right to refuse or cancel orders due to product availability, pricing errors, or suspected fraudulent activity.
+              </p>
+            </div>
+
+            <div className="mt-8 pt-4 border-t border-gray-100">
+              <p className="text-xs text-gray-400">
+                Last updated: March 2026. For questions about these terms, contact us at legal@rklifescience.com
+              </p>
+            </div>
+
+          </div>
         </div>
       </Container>
     </div>

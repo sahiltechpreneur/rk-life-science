@@ -1,31 +1,39 @@
 "use client"
 import Container from "@/components/ui/Container"
-import { FiXCircle } from "react-icons/fi"
+import { FiXCircle, FiArrowLeft, FiShoppingBag } from "react-icons/fi"
 import { useRouter } from "next/navigation"
 
 export default function CheckoutFailurePage() {
     const router = useRouter()
 
     return (
-        <div className="bg-gray-50 min-h-screen flex items-center">
+        <div className="bg-gray-50 min-h-screen pt-24 pb-16 flex items-center">
             <Container>
-                <div className="max-w-xl mx-auto bg-white rounded-[2.5rem] p-10 md:p-14 text-center shadow-xl border border-gray-100">
-                    <div className="w-24 h-24 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-8 relative">
-                        <div className="absolute inset-0 bg-red-500/20 rounded-full animate-ping"></div>
-                        <FiXCircle className="w-12 h-12 relative z-10" />
+                <div className="max-w-md mx-auto bg-white rounded-xl border border-gray-100 p-8 text-center shadow-sm">
+                    
+                    <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-5">
+                        <FiXCircle className="w-7 h-7 text-red-500" />
                     </div>
                     
-                    <h1 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">Payment Failed</h1>
-                    <p className="text-gray-500 font-medium text-lg mb-10 leading-relaxed">
-                        Your eSewa transaction could not be completed. You have not been charged.
+                    <h1 className="text-xl font-semibold text-gray-800 mb-2">Payment failed</h1>
+                    <p className="text-sm text-gray-500 mb-6">
+                        Your transaction couldn't be completed. You have not been charged.
                     </p>
 
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
                         <button 
                             onClick={() => router.push('/cart')}
-                            className="bg-primary text-white font-bold px-8 py-4 rounded-xl hover:bg-darkGreen transition-colors shadow-lg"
+                            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
                         >
-                            Return to Cart
+                            <FiShoppingBag className="w-4 h-4" />
+                            Return to cart
+                        </button>
+                        <button 
+                            onClick={() => router.push('/')}
+                            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                            <FiArrowLeft className="w-4 h-4" />
+                            Continue shopping
                         </button>
                     </div>
                 </div>

@@ -1,55 +1,95 @@
 import Container from "@/components/ui/Container"
-import { FiShield } from "react-icons/fi"
+import { FiShield, FiLock, FiEye, FiMail } from "react-icons/fi"
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="bg-gray-50 min-h-screen pb-20">
+    <div className="bg-gray-50 min-h-screen pt-24 pb-16">
       
-      {/* Header Banner */}
-      <div className="bg-gray-900 border-b border-gray-800 text-white py-16 lg:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/40 via-gray-900 to-gray-900 pointer-events-none"></div>
-        <Container className="relative z-10 flex flex-col items-center text-center">
-            <div className="w-16 h-16 bg-white/5 text-lightGreen rounded-2xl flex items-center justify-center mb-6 backdrop-blur-md border border-white/10 shadow-xl">
-                <FiShield className="w-8 h-8" />
-            </div>
-            <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
-                Privacy <span className="text-transparent bg-clip-text bg-gradient-to-r from-lightGreen to-secondary">Policy</span>
-            </h1>
-            <p className="text-gray-400 max-w-2xl text-lg font-medium">Last updated: March 2026. Learn how we collect, use, and protect your data.</p>
+      {/* Header */}
+      <div className="bg-white border-b border-gray-100 pb-12 mb-10">
+        <Container className="text-center">
+          <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mx-auto mb-4">
+            <FiShield className="w-5 h-5 text-emerald-600" />
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3 tracking-tight">
+            Privacy Policy
+          </h1>
+          <p className="text-gray-500 max-w-2xl mx-auto">
+            Last updated: March 2026. We take your privacy seriously.
+          </p>
         </Container>
       </div>
 
-      <Container className="relative z-20 -mt-10">
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-200/40 p-8 md:p-12 lg:p-16 max-w-4xl mx-auto prose prose-lg prose-emerald text-gray-600 font-medium">
+      <Container>
+        <div className="max-w-3xl mx-auto bg-white rounded-xl border border-gray-100 shadow-sm p-8 md:p-10">
+          
+          <div className="prose prose-sm max-w-none text-gray-600">
             
-            <h2>1. Information We Collect</h2>
-            <p>At R.K Life Science, we are committed to protecting your privacy. We collect information that you directly provide to us when creating an account, subscribing to our newsletter, or contacting customer support.</p>
-            <ul>
-                <li><strong>Personal Data:</strong> Name, email address, postal address, phone number.</li>
-                <li><strong>Transaction Data:</strong> Details about payments and the products you have purchased from us.</li>
-                <li><strong>Usage Data:</strong> Information on how you interact with our website.</li>
-            </ul>
+            <div className="mb-8">
+              <h2 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <FiLock className="w-4 h-4 text-emerald-500" />
+                1. Information we collect
+              </h2>
+              <p className="text-sm leading-relaxed">
+                We collect information you provide directly to us when creating an account, placing an order, or contacting our support team.
+              </p>
+              <ul className="mt-3 space-y-1 text-sm">
+                <li><strong className="text-gray-700">Personal data:</strong> Name, email, phone number, shipping address</li>
+                <li><strong className="text-gray-700">Transaction data:</strong> Order details and payment information</li>
+                <li><strong className="text-gray-700">Usage data:</strong> How you interact with our website</li>
+              </ul>
+            </div>
 
-            <h2>2. How We Use Your Information</h2>
-            <p>Your data is safely stored and processed to:</p>
-            <ul>
-                <li>Process and deliver your medical and nutraceutical orders securely.</li>
-                <li>Manage your account and prevent fraudulent transactions.</li>
-                <li>Provide customer support and respond to your inquiries.</li>
-                <li>Comply with legal obligations concerning medical distribution.</li>
-            </ul>
+            <div className="mb-8">
+              <h2 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <FiEye className="w-4 h-4 text-emerald-500" />
+                2. How we use your information
+              </h2>
+              <p className="text-sm leading-relaxed">
+                We use your information to:
+              </p>
+              <ul className="mt-3 space-y-1 text-sm">
+                <li>Process and deliver your orders securely</li>
+                <li>Manage your account and prevent fraud</li>
+                <li>Provide customer support</li>
+                <li>Send order updates and important notifications</li>
+              </ul>
+            </div>
 
-            <h2>3. Data Security measures</h2>
-            <p>We implement a variety of security measures to maintain the safety of your personal information. Our servers use SSL technology to ensure that all data passed between the web server and browsers remain private and integral.</p>
+            <div className="mb-8">
+              <h2 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <FiShield className="w-4 h-4 text-emerald-500" />
+                3. Data security
+              </h2>
+              <p className="text-sm leading-relaxed">
+                We use industry-standard security measures including SSL encryption to protect your personal information. Your data is stored securely and access is limited to authorized personnel only.
+              </p>
+            </div>
 
-            <h2>4. Third-Party Disclosure</h2>
-            <p>We do not sell, trade, or otherwise transfer your personally identifiable information to outside parties. This does not include trusted third parties who assist us in operating our website, conducting our business, or servicing you, so long as those parties agree to keep this information confidential.</p>
+            <div className="mb-8">
+              <h2 className="text-lg font-semibold text-gray-900 mb-3">
+                4. Third-party disclosure
+              </h2>
+              <p className="text-sm leading-relaxed">
+                We do not sell, trade, or transfer your personal information to outside parties. Trusted partners who assist in operating our website or fulfilling orders are bound by confidentiality agreements.
+              </p>
+            </div>
 
-            <h2>5. Contact regarding Privacy</h2>
-            <p>If there are any questions regarding this privacy policy, you may contact our compliance team using the information below:</p>
-            <p><strong>Email:</strong> privacy.rklifescience@gmail.com <br/>
-            <strong>Address:</strong> Shankhamul, Kathmandu, Nepal</p>
-            
+            <div className="pt-4 border-t border-gray-100">
+              <h2 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <FiMail className="w-4 h-4 text-emerald-500" />
+                5. Contact us
+              </h2>
+              <p className="text-sm leading-relaxed">
+                If you have questions about this privacy policy, please contact us:
+              </p>
+              <div className="mt-3 p-4 bg-gray-50 rounded-lg text-sm">
+                <p className="mb-1"><strong className="text-gray-700">Email:</strong> privacy.rklifescience@gmail.com</p>
+                <p><strong className="text-gray-700">Address:</strong> Shankhamul, Kathmandu, Nepal</p>
+              </div>
+            </div>
+
+          </div>
         </div>
       </Container>
     </div>
