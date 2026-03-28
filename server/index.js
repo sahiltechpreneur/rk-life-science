@@ -25,6 +25,8 @@ app.use("/api/user",userRoutes)
 app.use("/api/products",productRoutes)
 app.use("/api/orders", orderRoutes)
 app.use("/api/dashboard", dashboardRoutes)
+app.use("/api/contact", require("./routes/contactRoutes"))
+app.use("/api/newsletter", require("./routes/newsletterRoutes"))
 
 app.get("/", (req,res)=>{
   res.send("RK Life Science API running")

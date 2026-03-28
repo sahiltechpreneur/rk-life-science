@@ -10,6 +10,49 @@ const { getEmailTemplate } = require("../utils/emailTemplates")
  */
 
 /**
+ * Helper: Sends a standard order confirmation email.
+ */
+const sendOrderConfirmationEmail = async (orderId, customer_name, email, address, city, total, items) => {
+    const itemsHtml = items.map(item => `
+        <tr>
+            <td>${item.name}</td>
+            <td>${item.quantity}</td>
+            <td>NPR ${item.price}</td>
+            <td>NPR ${item.price * item.quantity}</td>
+        </tr>
+    `).join('');
+
+    const orderEmailContent = getEmailTemplate(
+        "Order Confirmation",
+        `<p>Dear ${customer_name},</p>
+         <p>Thank you for your order! We've received your request and it's now being processed.</p>
+         <p><b>Order ID:</b> #${orderId}</p>
+         <p><b>Shipping Address:</b> ${address}, ${city}</p>
+         
+         <table class="order-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${itemsHtml}
+            </tbody>
+         </table>
+         
+         <div style="text-align: right; font-weight: 800; font-size: 18px; color: #2E6F40; margin-top: 10px;">
+            Grand Total: NPR ${total}
+         </div>
+         <p>We'll notify you once your order is shipped!</p>`
+    );
+
+    await sendEmail(email, `Order Placed Successfully - #${orderId}`, orderEmailContent);
+}
+
+/**
  * Creates a new order and initiates payment gateway if necessary.
  */
 exports.createOrder = async (req, res) => {
@@ -57,7 +100,16 @@ exports.createOrder = async (req, res) => {
             )
         }
 
-        // 3. Handle eSewa Payment Integration
+        // 3. Emit Socket Event for Real-time Admin Notification
+        const io = req.app.get('io')
+        if (io) {
+            io.emit('new_order', { orderId, customer_name, total })
+        }
+
+        // 4. Send Order Confirmation Email (Common for both methods)
+        await sendOrderConfirmationEmail(orderId, customer_name, email, address, city, total, items);
+
+        // 5. Handle eSewa Payment Integration
         if (payment_method === 'eSewa') {
             const transaction_uuid = `${orderId}-${Date.now()}`;
             const productCode = process.env.ESEWA_PRODUCT_CODE || "EPAYTEST";
@@ -84,51 +136,6 @@ exports.createOrder = async (req, res) => {
                 }
             })
         }
-
-        // 4. Emit Socket Event for Real-time Admin Notification
-        const io = req.app.get('io')
-        if (io) {
-            io.emit('new_order', { orderId, customer_name, total })
-        }
-
-        // 6. Send Order Confirmation Email
-        const itemsHtml = items.map(item => `
-            <tr>
-                <td>${item.name}</td>
-                <td>${item.quantity}</td>
-                <td>NPR ${item.price}</td>
-                <td>NPR ${item.price * item.quantity}</td>
-            </tr>
-        `).join('');
-
-        const orderEmailContent = getEmailTemplate(
-            "Order Confirmation",
-            `<p>Dear ${customer_name},</p>
-             <p>Thank you for your order! We've received your request and it's now being processed.</p>
-             <p><b>Order ID:</b> #${orderId}</p>
-             <p><b>Shipping Address:</b> ${address}, ${city}</p>
-             
-             <table class="order-table">
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Qty</th>
-                        <th>Price</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${itemsHtml}
-                </tbody>
-             </table>
-             
-             <div style="text-align: right; font-weight: 800; font-size: 18px; color: #2E6F40; margin-top: 10px;">
-                Grand Total: NPR ${total}
-             </div>
-             <p>We'll notify you once your order is shipped!</p>`
-        );
-
-        await sendEmail(email, `Order Placed Successfully - #${orderId}`, orderEmailContent);
 
         res.json({
             success: true,

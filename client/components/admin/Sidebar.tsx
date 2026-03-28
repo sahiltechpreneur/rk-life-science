@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { FaTachometerAlt, FaBoxOpen, FaUsers, FaSignOutAlt, FaShoppingCart, FaChevronLeft, FaChevronRight } from "react-icons/fa"
-import { FiX } from "react-icons/fi"
+import { FiX, FiMessageSquare, FiMail } from "react-icons/fi"
 
 interface SidebarProps {
     isOpen: boolean;
@@ -28,6 +28,8 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
         { name: "Products", href: "/admin/products", icon: <FaBoxOpen /> },
         { name: "Orders", href: "/admin/orders", icon: <FaShoppingCart /> },
         { name: "Users", href: "/admin/users", icon: <FaUsers /> },
+        { name: "Contacts", href: "/admin/contacts", icon: <FiMessageSquare /> },
+        { name: "Newsletter", href: "/admin/newsletters", icon: <FiMail /> },
     ]
 
     return(

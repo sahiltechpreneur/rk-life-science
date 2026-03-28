@@ -40,12 +40,25 @@ export default function ContactForm() {
     setError("")
     setIsSubmitting(true)
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/contact`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(form)
+        })
+        const data = await res.json()
+        
+        if (data.success) {
+            setSuccess("Thanks for reaching out! We'll get back to you soon.")
+            setForm({ name: "", email: "", feedback: "" })
+        } else {
+            setError(data.error || "Failed to send message. Please try again.")
+        }
+    } catch (err) {
+        setError("Network error. Please try again later.")
+    } finally {
         setIsSubmitting(false)
-        setSuccess("Thanks for reaching out! We'll get back to you soon.")
-        setForm({ name: "", email: "", feedback: "" })
-    }, 1500)
+    }
   }
 
   return (
