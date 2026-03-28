@@ -11,9 +11,9 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pr
   // Show limited page numbers with ellipsis for better UX
   const getPageNumbers = () => {
     const delta = 2
-    const range: (number | string)[] = []
+    const range: number[] = []
     const rangeWithDots: (number | string)[] = []
-    let l
+    let l: number | undefined
 
     for (let i = 1; i <= totalPages; i++) {
       if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
@@ -21,8 +21,8 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pr
       }
     }
 
-    for (let i of range) {
-      if (l) {
+    for (const i of range) {
+      if (l !== undefined) {
         if (i - l === 2) {
           rangeWithDots.push(l + 1)
         } else if (i - l !== 1) {
