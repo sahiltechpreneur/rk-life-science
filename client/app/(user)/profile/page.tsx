@@ -32,31 +32,34 @@ export default function ProfilePage() {
     const [uploadingImage, setUploadingImage] = useState(false)
     const [isSaving, setIsSaving] = useState(false)
     const [timedOut, setTimedOut] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (!user) setTimedOut(true)
-        }, 8000) // 8 second timeout
+            if (!user && !error) setTimedOut(true)
+        }, 8000)
         return () => clearTimeout(timer)
-    }, [user])
+    }, [user, error])
 
     useEffect(() => {
         if (authUser?.token) fetchProfile(authUser.token)
     }, [authUser])
 
     const fetchProfile = async (token: string) => {
+        setError(null)
         try {
             const res = await API.get("/user/profile", {
                 headers: { Authorization: `Bearer ${token}` }
             })
             setUser(res.data)
         } catch (err: any) {
-            console.error(err)
+            console.error("Fetch Profile Error:", err)
+            const errMsg = err.response?.data?.error || "Failed to load profile. Please check your connection or try logging in again."
+            setError(errMsg)
+            
             if (err.response?.status === 404 || err.response?.status === 401) {
                 logout()
                 window.location.href = "/"
-            } else {
-                showNotification("Failed to load profile.", "error")
             }
         }
     }
@@ -170,19 +173,25 @@ export default function ProfilePage() {
             <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24 px-4">
                 <div className="flex flex-col items-center text-center">
                     <div className="w-10 h-10 border-3 border-gray-200 border-t-emerald-500 rounded-full animate-spin mb-4"></div>
-                    <h2 className="text-lg font-semibold text-gray-900">Loading your profile</h2>
-                    <p className="text-gray-500 text-sm max-w-xs mt-1">Please wait while we fetch your account details and order history.</p>
+                    <h2 className="text-lg font-semibold text-gray-900">
+                        {error ? "Couldn't load profile" : "Loading your profile"}
+                    </h2>
+                    <p className="text-gray-500 text-sm max-w-xs mt-1">
+                        {error || "Please wait while we fetch your account details and order history."}
+                    </p>
                     
-                    {timedOut && (
+                    {(timedOut || error) && (
                         <div className="mt-8 animate-in fade-in slide-in-from-bottom-2 duration-700">
-                            <p className="text-sm text-amber-600 mb-4 bg-amber-50 px-4 py-2 rounded-lg border border-amber-100 italic">
-                                This is taking longer than expected.
-                            </p>
+                            {timedOut && !error && (
+                                <p className="text-sm text-amber-600 mb-4 bg-amber-50 px-4 py-2 rounded-lg border border-amber-100 italic">
+                                    This is taking longer than expected.
+                                </p>
+                            )}
                             <button 
-                                onClick={() => window.location.reload()}
+                                onClick={() => error ? fetchProfile(authUser.token) : window.location.reload()}
                                 className="px-6 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 shadow-sm transition-all active:scale-95"
                             >
-                                Reload page
+                                {error ? "Try again" : "Reload page"}
                             </button>
                         </div>
                     )}
