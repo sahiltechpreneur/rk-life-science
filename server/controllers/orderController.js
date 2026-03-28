@@ -181,13 +181,18 @@ exports.getOrderDetails = async (req, res) => {
 exports.updateOrderStatus = async (req, res) => {
     try {
         const { id } = req.params
-        const { status } = req.body
+        const { status, payment_status } = req.body
 
         let query = `UPDATE orders SET status=$1 WHERE id=$2`
         let params = [status, id]
 
-        // Custom business logic: Delivery implies payment completion for most models
-        if (status === 'Delivered') {
+        // Handle explicit payment status update (e.g. from eSewa success)
+        if (payment_status) {
+            query = `UPDATE orders SET status=$1, payment_status=$2 WHERE id=$3`
+            params = [status, payment_status, id]
+        } 
+        // Auto-mark COD as Paid upon delivery
+        else if (status === 'Delivered') {
             query = `UPDATE orders SET status=$1, payment_status='Paid' WHERE id=$2`
         }
 

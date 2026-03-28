@@ -21,7 +21,7 @@ exports.getUserProfile = async (req, res) => {
     let orders = [];
     try {
       const ordersResult = await pool.query(
-        "SELECT id, total, status, TO_CHAR(created_at, 'Mon DD, YYYY') as created_at FROM orders WHERE email=$1 ORDER BY id DESC",
+        "SELECT id, total, status, payment_method, payment_status, TO_CHAR(created_at, 'Mon DD, YYYY') as created_at FROM orders WHERE email=$1 ORDER BY id DESC",
         [user.email]
       );
       orders = ordersResult.rows;

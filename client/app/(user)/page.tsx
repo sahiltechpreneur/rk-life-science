@@ -6,11 +6,11 @@ import Newsletter from "@/components/user/Newsletter";
 
 export default function Home() {
   return (
-    <Container>
+    <>
       <Hero />
       <Services />
       <FeaturedProducts />
       <Newsletter />
-    </Container>
+    </>
   );
 }

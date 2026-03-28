@@ -5,7 +5,7 @@ import API from "@/lib/api"
 import ProtectedRoute from "@/components/auth/ProtectedRoute"
 import { AuthContext } from "@/context/AuthContext"
 import { useNotification } from "@/context/NotificationContext"
-import { FiUser, FiMail, FiPhone, FiEdit2, FiCamera, FiPackage, FiLogOut, FiTrash2, FiClock, FiCheckCircle, FiTruck, FiShoppingBag, FiAlertCircle } from "react-icons/fi"
+import { FiUser, FiMail, FiPhone, FiEdit2, FiCamera, FiPackage, FiLogOut, FiTrash2, FiClock, FiCheckCircle, FiTruck, FiShoppingBag, FiAlertCircle, FiCreditCard } from "react-icons/fi"
 import Link from "next/link"
 
 type Order = {
@@ -13,6 +13,8 @@ type Order = {
   total: number
   status: string
   created_at: string
+  payment_method: string
+  payment_status: string
 }
 
 type User = {
@@ -322,39 +324,52 @@ export default function ProfilePage() {
                                 {user.orders && user.orders.length > 0 ? (
                                     <div className="divide-y divide-gray-50">
                                         {user.orders.map((order) => (
-                                            <div key={order.id} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                                <div className="flex items-start gap-3">
-                                                    <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center shrink-0">
-                                                        <FiShoppingBag className="w-4 h-4 text-gray-400" />
-                                                    </div>
-                                                    <div>
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <h3 className="font-medium text-gray-900 text-sm">Order #{order.id}</h3>
-                                                            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${getStatusStyle(order.status)}`}>
-                                                                {order.status}
-                                                            </span>
+                                                <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center shrink-0 border border-gray-100">
+                                                            {order.payment_method === 'eSewa' ? (
+                                                                <FiCreditCard className="w-5 h-5 text-indigo-500" title="eSewa" />
+                                                            ) : (
+                                                                <FiTruck className="w-5 h-5 text-amber-500" title="Cash on Delivery" />
+                                                            )}
                                                         </div>
-                                                        <p className="text-xs text-gray-400">
-                                                            {new Date(order.created_at).toLocaleDateString()}
-                                                        </p>
+                                                        <div>
+                                                            <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                                                                <h3 className="font-semibold text-gray-900 text-sm">Order #{order.id}</h3>
+                                                                <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md ${getStatusStyle(order.status)}`}>
+                                                                    {order.status}
+                                                                </span>
+                                                                <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md border ${
+                                                                    order.payment_status === 'Paid' 
+                                                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
+                                                                    : 'bg-gray-50 text-gray-500 border-gray-200'
+                                                                }`}>
+                                                                    {order.payment_status === 'Paid' ? 'Paid' : 'Unpaid'}
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex items-center gap-3 text-[11px] text-gray-400">
+                                                                <span>{new Date(order.created_at).toLocaleDateString()}</span>
+                                                                <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                                                <span className="font-medium text-gray-500">{order.payment_method}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div className="flex items-center justify-between sm:justify-end gap-6 border-t sm:border-t-0 pt-3 sm:pt-0">
+                                                        <span className="font-bold text-gray-900 text-base">
+                                                            NPR {Number(order.total).toLocaleString()}
+                                                        </span>
+                                                        
+                                                        {order.status === 'Pending' && (
+                                                            <button 
+                                                                onClick={() => handleCancelOrder(order.id)}
+                                                                className="text-xs font-medium text-red-500 hover:text-red-600 px-3 py-1 rounded-lg hover:bg-red-50 transition-colors"
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </div>
-                                                
-                                                <div className="flex items-center justify-between sm:justify-end gap-4">
-                                                    <span className="font-semibold text-gray-900 text-sm">
-                                                        NPR {Number(order.total).toLocaleString()}
-                                                    </span>
-                                                    
-                                                    {order.status === 'pending' && (
-                                                        <button 
-                                                            onClick={() => handleCancelOrder(order.id)}
-                                                            className="text-xs text-red-500 hover:text-red-600"
-                                                        >
-                                                            Cancel
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
                                         ))}
                                     </div>
                                 ) : (

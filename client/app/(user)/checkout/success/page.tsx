@@ -27,7 +27,10 @@ function SuccessContent() {
                 fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/status`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: 'Processing' }) // Or 'Paid' depending on your backend enum
+                    body: JSON.stringify({ 
+                        status: 'Processing',
+                        payment_status: 'Paid'
+                    })
                 }).then(() => {
                     setStatus("success")
                     setTimeout(() => {

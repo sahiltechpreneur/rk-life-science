@@ -36,8 +36,9 @@ export default function RegisterPage() {
                 return
             }
 
-            if (form.password.length < 6) {
-                setError("Password must be at least 6 characters.")
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+            if (!passwordRegex.test(form.password)) {
+                setError("Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.")
                 return
             }
 

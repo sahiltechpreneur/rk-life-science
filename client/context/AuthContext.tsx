@@ -14,6 +14,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const initAuth = async () => {
             const token = localStorage.getItem("token")
+            
+            // Safety timeout to prevent infinite loading screens
+            const timeoutId = setTimeout(() => {
+                if (loading) {
+                    setLoading(false)
+                    setUser(null)
+                    console.warn("Auth check timed out after 10s. Defaulting to unauthenticated.")
+                }
+            }, 10000)
+
             if (token) {
                 try {
                     const res = await API.get("/user/profile", {
@@ -27,6 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             } else {
                 setUser(null)
             }
+            clearTimeout(timeoutId)
             setLoading(false)
         }
         initAuth()
