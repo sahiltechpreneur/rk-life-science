@@ -61,6 +61,7 @@ export default function Newsletter() {
             className="flex-1 px-5 py-3 border-gray-200 rounded-xl focus:ring-emerald-500 focus:border-emerald-500"
           />
           <Button 
+            type="submit"
             disabled={status === 'loading'}
             text={status === 'loading' ? "..." : "Subscribe →"} 
             className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-colors shadow-sm hover:shadow disabled:opacity-70"

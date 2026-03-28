@@ -6,11 +6,13 @@ import Newsletter from "@/components/user/Newsletter";
 
 export default function Home() {
   return (
-    <>
+    <main className="min-h-screen">
       <Hero />
-      <Services />
-      <FeaturedProducts />
-      <Newsletter />
-    </>
+      <Container className="space-y-16 pb-20">
+        <Services />
+        <FeaturedProducts />
+        <Newsletter />
+      </Container>
+    </main>
   );
 }
