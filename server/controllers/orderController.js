@@ -60,7 +60,8 @@ exports.createOrder = async (req, res) => {
         // 3. Handle eSewa Payment Integration
         if (payment_method === 'eSewa') {
             const transaction_uuid = `${orderId}-${Date.now()}`;
-            const signatureString = `total_amount=${total},transaction_uuid=${transaction_uuid},product_code=EPAYTEST`;
+            const productCode = process.env.ESEWA_PRODUCT_CODE || "EPAYTEST";
+            const signatureString = `total_amount=${total},transaction_uuid=${transaction_uuid},product_code=${productCode}`;
             const secretKey = process.env.ESEWA_SECRET_KEY || "8gBm/:&EnhH.1/q";
             const hash = crypto.createHmac('sha256', secretKey).update(signatureString).digest('base64');
 
@@ -73,7 +74,7 @@ exports.createOrder = async (req, res) => {
                     tax_amount: "0",
                     total_amount: total,
                     transaction_uuid,
-                    product_code: "EPAYTEST",
+                    product_code: productCode,
                     product_service_charge: "0",
                     product_delivery_charge: "0",
                     success_url: `${process.env.FRONTEND_URL}/checkout/success`,
