@@ -1,7 +1,6 @@
 "use client"
 import { useEffect, useState, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import Container from "@/components/ui/Container"
 import { FiCheckCircle, FiLoader, FiAlertCircle, FiHome } from "react-icons/fi"
 
 function SuccessContent() {
@@ -97,7 +96,7 @@ function SuccessContent() {
 export default function CheckoutSuccessPage() {
   return (
     <div className="bg-gray-50 min-h-screen pt-24 pb-16">
-      <Container>
+      <div className="px-4 md:px-8 lg:px-12">
          <Suspense fallback={
             <div className="min-h-[60vh] flex justify-center items-center">
                 <div className="w-8 h-8 border-2 border-gray-200 border-t-emerald-500 rounded-full animate-spin"></div>
@@ -105,7 +104,7 @@ export default function CheckoutSuccessPage() {
          }>
              <SuccessContent />
          </Suspense>
-      </Container>
+      </div>
     </div>
   )
 }

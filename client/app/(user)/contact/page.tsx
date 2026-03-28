@@ -1,4 +1,3 @@
-import Container from "@/components/ui/Container"
 import ContactForm from "@/components/user/ContactForm"
 import ContactInfo from "@/components/user/ContactInfo"
 import { FiMail, FiMessageSquare } from "react-icons/fi"
@@ -9,7 +8,7 @@ export default function ContactPage() {
       
       {/* Hero Section — cleaner, less heavy */}
       <div className="bg-white border-b border-gray-100 pb-12 mb-12">
-        <Container className="text-center">
+        <div className="text-center px-4 md:px-8 lg:px-12">
           <span className="inline-block text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-1.5 rounded-full mb-5">
             Get in touch
           </span>
@@ -19,10 +18,10 @@ export default function ContactPage() {
           <p className="text-gray-500 max-w-2xl mx-auto text-lg leading-relaxed">
             Questions about our products? Need wholesale pricing? Our team is here to help.
           </p>
-        </Container>
+        </div>
       </div>
 
-      <Container>
+      <div className="px-4 md:px-8 lg:px-12">
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="grid lg:grid-cols-5 gap-0">
             
@@ -52,7 +51,7 @@ export default function ContactPage() {
 
           </div>
         </div>
-      </Container>
+      </div>
     </div>
   )
 }

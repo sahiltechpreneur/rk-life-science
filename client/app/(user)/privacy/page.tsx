@@ -1,4 +1,4 @@
-import Container from "@/components/ui/Container"
+"use client"
 import { FiShield, FiLock, FiEye, FiMail } from "react-icons/fi"
 
 export default function PrivacyPolicyPage() {
@@ -7,7 +7,7 @@ export default function PrivacyPolicyPage() {
       
       {/* Header */}
       <div className="bg-white border-b border-gray-100 pb-12 mb-10">
-        <Container className="text-center">
+        <div className="text-center px-4 md:px-8 lg:px-12">
           <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mx-auto mb-4">
             <FiShield className="w-5 h-5 text-emerald-600" />
           </div>
@@ -17,10 +17,10 @@ export default function PrivacyPolicyPage() {
           <p className="text-gray-500 max-w-2xl mx-auto">
             Last updated: March 2026. We take your privacy seriously.
           </p>
-        </Container>
+        </div>
       </div>
 
-      <Container>
+      <div className="px-4 md:px-8 lg:px-12">
         <div className="max-w-3xl mx-auto bg-white rounded-xl border border-gray-100 shadow-sm p-8 md:p-10">
           
           <div className="prose prose-sm max-w-none text-gray-600">
@@ -91,7 +91,7 @@ export default function PrivacyPolicyPage() {
 
           </div>
         </div>
-      </Container>
+      </div>
     </div>
   )
 }

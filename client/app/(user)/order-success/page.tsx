@@ -2,7 +2,6 @@
 
 import { useSearchParams, useRouter } from "next/navigation"
 import { useEffect, useState, Suspense } from "react"
-import Container from "@/components/ui/Container"
 import API from "@/lib/api"
 import { FiCheckCircle, FiPackage, FiShoppingBag, FiArrowRight, FiHome } from "react-icons/fi"
 import Link from "next/link"
@@ -38,9 +37,8 @@ function OrderSuccessContent() {
     )
 
     return (
-        <div className="bg-gray-50 min-h-screen py-20">
-            <Container>
-                <div className="max-w-3xl mx-auto">
+        <div className="bg-gray-50 min-h-screen py-20 px-4 md:px-8 lg:px-12">
+            <div className="max-w-3xl mx-auto">
                     {/* Success Hero Card */}
                     <div className="bg-white rounded-[2rem] shadow-xl shadow-emerald-500/5 border border-emerald-50 overflow-hidden relative mb-10">
                         <div className="absolute top-0 left-0 w-full h-2 bg-emerald-500"></div>
@@ -129,8 +127,7 @@ function OrderSuccessContent() {
                     <div className="mt-12 text-center text-gray-400 text-sm font-medium">
                         <p>Need help with your order? <Link href="/contact" className="text-emerald-500 hover:underline">Contact Support</Link></p>
                     </div>
-                </div>
-            </Container>
+            </div>
         </div>
     )
 }

@@ -2,7 +2,6 @@
 
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState, useContext } from "react"
-import Container from "@/components/ui/Container"
 import SimilarProducts from "@/components/user/SimilarProducts"
 import { useCart } from "@/context/CartContext"
 import { AuthContext } from "@/context/AuthContext"

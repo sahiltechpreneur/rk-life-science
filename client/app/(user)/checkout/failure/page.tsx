@@ -1,5 +1,4 @@
 "use client"
-import Container from "@/components/ui/Container"
 import { FiXCircle, FiArrowLeft, FiShoppingBag } from "react-icons/fi"
 import { useRouter } from "next/navigation"
 
@@ -8,7 +7,7 @@ export default function CheckoutFailurePage() {
 
     return (
         <div className="bg-gray-50 min-h-screen pt-24 pb-16 flex items-center">
-            <Container>
+      <div className="px-4 md:px-8 lg:px-12 w-full">
                 <div className="max-w-md mx-auto bg-white rounded-xl border border-gray-100 p-8 text-center shadow-sm">
                     
                     <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-5">
@@ -37,7 +36,7 @@ export default function CheckoutFailurePage() {
                         </button>
                     </div>
                 </div>
-            </Container>
+      </div>
         </div>
     )
 }

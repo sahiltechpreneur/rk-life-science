@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import Container from "@/components/ui/Container"
 import { useCart } from "@/context/CartContext"
 import { useNotification } from "@/context/NotificationContext"
 import { FiCheckCircle, FiCreditCard, FiMapPin, FiUser, FiMail, FiPhone, FiBox, FiTruck, FiAlertCircle } from "react-icons/fi"

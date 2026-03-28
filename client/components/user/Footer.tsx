@@ -1,6 +1,5 @@
 import Link from "next/link"
 import Image from "next/image"
-import Container from "@/components/ui/Container"
 import { FiMapPin, FiPhone, FiMail, FiFacebook, FiTwitter, FiInstagram, FiLinkedin, FiArrowRight } from "react-icons/fi"
 
 export default function Footer() {
@@ -11,7 +10,7 @@ export default function Footer() {
       {/* Subtle background glow — adds depth without being distracting */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-emerald-500/5 via-transparent to-transparent pointer-events-none"></div>
 
-      <Container className="relative z-10">
+      <div className="relative z-10 px-4 md:px-8 lg:px-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8 mb-12">
 
           {/* Column 1 - Brand Info */}
@@ -119,7 +118,8 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-500 text-xs text-center md:text-left">
-            © {currentYear} R. K. Life Science. All rights reserved.
+            © {currentYear} R. K. Life Science. All rights reserved. {" | "}
+            <span className="opacity-80">Developed by <a href="https://sahiltechpreneur.vercel.app/" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 font-medium transition-colors">Sahil Gupta</a></span>
           </p>
 
           <div className="flex items-center gap-3">
@@ -130,7 +130,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
-      </Container>
+      </div>
     </footer>
   )
 }

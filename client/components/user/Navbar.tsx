@@ -3,8 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useContext, useState, useEffect, useRef } from "react"
-import { FiShoppingCart, FiUser, FiMenu, FiX, FiLogOut } from "react-icons/fi"
-import Container from "@/components/ui/Container"
+import { FiShoppingCart, FiUser, FiMenu, FiX, FiLogOut, FiMessageSquare, FiMail } from "react-icons/fi"
 import { AuthContext } from "@/context/AuthContext"
 import { useCart } from "@/context/CartContext"
 
@@ -48,7 +47,7 @@ export default function Navbar() {
 
   return (
     <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100 py-3' : 'bg-transparent py-5'}`}>
-      <Container>
+      <div className="px-4 md:px-8 lg:px-12">
         <div className="flex items-center justify-between">
           
           {/* Logo with Image */}
@@ -214,7 +213,7 @@ export default function Navbar() {
             )}
           </div>
         )}
-      </Container>
+      </div>
     </nav>
   )
 }
