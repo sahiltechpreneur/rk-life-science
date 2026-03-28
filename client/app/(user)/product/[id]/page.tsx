@@ -86,6 +86,22 @@ export default function ProductDetailPage() {
     showNotification(`${product.name} added to cart`, "success")
   }
 
+  const handleBuyNow = () => {
+    if (!user) {
+      showNotification("Please login to buy items", "warning")
+      router.push("/auth/login")
+      return
+    }
+    addToCart({
+      id: product.id,
+      name: product.name,
+      image: product.image,
+      price: product.price,
+      quantity: 1
+    })
+    router.push("/checkout")
+  }
+
   // Construct full image URL
   const imageUrl = product.image?.startsWith("http") 
     ? product.image 
@@ -140,13 +156,22 @@ export default function ProductDetailPage() {
                   <p>{product.description}</p>
                 </div>
 
-                <button
-                  onClick={handleAddToCart}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 text-white text-sm font-semibold rounded-lg hover:bg-emerald-700 transition-colors shadow-sm"
-                >
-                  <FiShoppingCart className="w-4 h-4" />
-                  Add to Cart
-                </button>
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={handleAddToCart}
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-emerald-600 text-emerald-600 text-sm font-semibold rounded-lg hover:bg-emerald-50 transition-all active:scale-95 shadow-sm"
+                  >
+                    <FiShoppingCart className="w-4 h-4" />
+                    Add to Cart
+                  </button>
+                  <button
+                    onClick={handleBuyNow}
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 text-white text-sm font-semibold rounded-lg hover:bg-emerald-700 transition-all active:scale-95 shadow-sm"
+                  >
+                    Buy Now
+                  </button>
+                </div>
 
                 {/* Feature Highlights — cleaner, less prominent */}
                 <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-gray-100">

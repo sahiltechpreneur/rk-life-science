@@ -172,35 +172,45 @@ export default function ProfilePage() {
 
     if (!user) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24 px-4">
-                <div className="flex flex-col items-center text-center">
-                    <div className="w-10 h-10 border-3 border-gray-200 border-t-emerald-500 rounded-full animate-spin mb-4"></div>
-                    <h2 className="text-lg font-semibold text-gray-900">
-                        {error ? "Couldn't load profile" : "Loading your profile"}
-                    </h2>
-                    <p className="text-gray-500 text-sm max-w-xs mt-1">
-                        {error || "Please wait while we fetch your account details and order history."}
-                    </p>
-                    
-                    {(timedOut || error) && (
-                        <div className="mt-8 animate-in fade-in slide-in-from-bottom-2 duration-700">
-                            {timedOut && !error && (
-                                <p className="text-sm text-amber-600 mb-4 bg-amber-50 px-4 py-2 rounded-lg border border-amber-100 italic">
-                                    This is taking longer than expected.
-                                </p>
-                            )}
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24 px-4 border-t border-gray-100">
+                <div className="flex flex-col items-center text-center animate-in fade-in duration-500">
+                    {!error && !timedOut ? (
+                        <>
+                            {/* Standard Loading State */}
+                            <div className="w-12 h-12 border-4 border-gray-200 border-t-emerald-500 rounded-full animate-spin mb-5 shadow-sm"></div>
+                            <h2 className="text-xl font-bold text-gray-900 mb-2">
+                                Loading your profile
+                            </h2>
+                            <p className="text-gray-500 text-sm max-w-sm">
+                                Please wait while we securely fetch your account details and order history.
+                            </p>
+                        </>
+                    ) : (
+                        <>
+                            {/* Error or Timeout State */}
+                            <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-5 shadow-sm border border-red-100">
+                                <FiAlertCircle className="w-8 h-8" />
+                            </div>
+                            <h2 className="text-xl font-bold text-gray-900 mb-2">
+                                Couldn't load profile
+                            </h2>
+                            <p className="text-gray-500 text-sm max-w-sm mb-6">
+                                {error || "This is taking longer than expected. Our secure server might be waking up from sleep mode."}
+                            </p>
+                            
                             <button 
                                 onClick={() => error ? fetchProfile(authUser.token) : window.location.reload()}
-                                className="px-6 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 shadow-sm transition-all active:scale-95"
+                                className="px-8 py-3 bg-emerald-600 text-white text-sm font-bold rounded-xl hover:bg-emerald-700 shadow-md transition-all active:scale-95 flex items-center gap-2"
                             >
-                                {error ? "Try again" : "Reload page"}
+                                Try again
                             </button>
-                        </div>
+                        </>
                     )}
                 </div>
             </div>
         )
     }
+
 
     return (
         <ProtectedRoute>
@@ -324,7 +334,7 @@ export default function ProfilePage() {
                                 {user.orders && user.orders.length > 0 ? (
                                     <div className="divide-y divide-gray-50">
                                         {user.orders.map((order) => (
-                                                <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                                <div key={`order-${order.id}`} className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 px-6 hover:bg-gray-50/50 transition-colors">
                                                     <div className="flex items-start gap-4">
                                                         <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center shrink-0 border border-gray-100">
                                                             {order.payment_method === 'eSewa' ? (

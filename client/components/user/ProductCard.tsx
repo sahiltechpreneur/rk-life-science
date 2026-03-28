@@ -6,7 +6,7 @@ import { AuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useNotification } from "@/context/NotificationContext";
-import { FiShoppingCart, FiEye, FiBox } from "react-icons/fi";
+import { FiShoppingCart, FiEye, FiBox, FiCreditCard } from "react-icons/fi";
 
 type Props = {
   id: number;
@@ -33,6 +33,17 @@ export default function ProductCard({ id, name, image, description, price }: Pro
     showNotification(`${name} added to your cart`, "success");
   };
 
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.preventDefault(); 
+    if (!user) {
+      showNotification("Please log in to buy items", "warning");
+      router.push("/auth/login");
+      return;
+    }
+    addToCart({ id, name, image, price, quantity: 1 });
+    router.push("/checkout");
+  };
+
   return (
     <Link 
       href={`/product/${id}`} 
@@ -42,13 +53,20 @@ export default function ProductCard({ id, name, image, description, price }: Pro
         Quick action button — appears on hover, but not in your face.
         Real shopping interfaces keep secondary actions subtle.
       */}
-      <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col gap-2">
         <button 
           onClick={handleAddToCart} 
           className="bg-white/95 backdrop-blur-sm p-2 rounded-full text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 border border-gray-100 shadow-sm transition-all duration-200"
           title="Quick add to cart"
         >
           <FiShoppingCart className="w-4 h-4" />
+        </button>
+        <button 
+          onClick={handleBuyNow} 
+          className="bg-emerald-600 p-2 rounded-full text-white hover:bg-emerald-700 shadow-sm transition-all duration-200"
+          title="Buy now"
+        >
+          <FiCreditCard className="w-4 h-4" />
         </button>
       </div>
       

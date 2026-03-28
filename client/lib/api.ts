@@ -8,12 +8,16 @@ const API = axios.create({
 API.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("Fetch Error Detail:", {
-      status: error.response?.status,
-      data: error.response?.data,
-      url: error.config?.url,
-      message: error.message
-    });
+    // If it's a network error (no response), log the string message
+    if (error.response) {
+      console.error("API Response Error:", {
+        status: error.response.status,
+        data: error.response.data,
+        url: error.config?.url,
+      });
+    } else {
+      console.error("API Network/Connection Error:", error.message || "Unknown Error");
+    }
     return Promise.reject(error);
   }
 );
