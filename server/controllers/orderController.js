@@ -2,6 +2,7 @@ const pool = require("../config/db")
 const crypto = require("crypto")
 const { sendEmail } = require("../utils/mailer")
 const { getEmailTemplate } = require("../utils/emailTemplates")
+const { sendWhatsAppMessage } = require("../utils/ultramsg")
 
 /**
  * orderController.js
@@ -108,6 +109,26 @@ exports.createOrder = async (req, res) => {
 
         // 4. Send Order Confirmation Email (Common for both methods)
         await sendOrderConfirmationEmail(orderId, customer_name, email, address, city, total, items);
+
+        // 4.1 Send WhatsApp Notification to Admin
+        const itemsText = items.map(item => {
+            const imgFile = item.image || item.image_url;
+            const imgUrl = imgFile ? 
+                (imgFile.startsWith("http") ? imgFile : `https://rk-life-science.onrender.com/uploads/${imgFile}`) 
+                : "No image provided";
+            return `*Product:* ${item.name}\n*Quantity:* ${item.quantity}\n*Rate:* NPR ${item.price}\n*Image:* ${imgUrl}`;
+        }).join('\n\n');
+
+        const waMessage = `*New Order Placed!* 🛍️\n\n` +
+            `*Order ID:* #${orderId}\n` +
+            `*Customer Name:* ${customer_name}\n` +
+            `*Payment Mode:* ${payment_method}\n\n` +
+            `*Order Details:*\n${itemsText}\n\n` +
+            `*Total Amount:* NPR ${total}\n\n` +
+            `Please check the admin dashboard to process this order.`;
+        
+        // Do not block the request if WhatsApp fails, fire and forget or await
+        await sendWhatsAppMessage('9779768771762', waMessage);
 
         // 5. Handle eSewa Payment Integration
         if (payment_method === 'eSewa') {
@@ -219,6 +240,13 @@ exports.updateOrderStatus = async (req, res) => {
                  <p>If you have any questions or feedback, feel free to reply to this email.</p>`
             );
             await sendEmail(order.email, `Order Delivered - #${id}`, deliveredEmailContent);
+
+            // Send WhatsApp Delivery Notification
+            const waDeliveryMessage = `Hello ${order.customer_name}, thank you for shopping with us! 🌟\n\n` + 
+                `Your order #${id} has been delivered successfully. ` + 
+                `Please visit again to explore more amazing products!\n\n` + 
+                `- RK Life Science`;
+            await sendWhatsAppMessage(order.phone, waDeliveryMessage);
         }
 
         const io = req.app.get('io')
