@@ -1,28 +1,41 @@
 const pool = require("../config/db")
 
-exports.getUserProfile = async(req,res)=>{
-  try{
-    const result = await pool.query(
-      "SELECT id,fname,lname,email,phone,image FROM users WHERE id=$1",
-      [req.user.id]
-    )
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({error: "User not found"})
+exports.getUserProfile = async (req, res) => {
+  try {
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ error: "Unauthorized: No user ID provided" });
     }
 
-    const user = result.rows[0]
-    
-    const ordersResult = await pool.query(
-      "SELECT * FROM orders WHERE email=$1 ORDER BY created_at DESC",
-      [user.email]
-    )
+    const result = await pool.query(
+      "SELECT id, fname, lname, email, phone, image FROM users WHERE id=$1",
+      [req.user.id]
+    );
 
-    user.orders = ordersResult.rows
-    res.json(user)
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "User not found in system" });
+    }
 
-  }catch(err){
-    res.status(500).json({error:err.message})
+    const user = result.rows[0];
+
+    // Fetch orders associated with this user's email
+    let orders = [];
+    try {
+      const ordersResult = await pool.query(
+        "SELECT id, total, status, TO_CHAR(created_at, 'Mon DD, YYYY') as created_at FROM orders WHERE email=$1 ORDER BY id DESC",
+        [user.email]
+      );
+      orders = ordersResult.rows;
+    } catch (orderErr) {
+      console.error("Degraded experience: Failed to fetch orders for profile", orderErr);
+      // We still return the user profile even if orders fail to load
+    }
+
+    user.orders = orders;
+    res.json(user);
+
+  } catch (err) {
+    console.error("Profile Fetch Error:", err);
+    res.status(500).json({ error: "Internal server error while fetching profile. Please try again later." });
   }
 }
 

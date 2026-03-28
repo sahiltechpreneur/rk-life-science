@@ -4,31 +4,31 @@ import { FiArrowRight, FiPhone, FiCheckCircle, FiStar, FiShield } from "react-ic
 
 export default function Hero() {
   return (
-    <section className="relative pt-20 pb-20 lg:pt-32 lg:pb-32 overflow-hidden bg-gradient-to-b from-white to-gray-50/70">
+    <section className="relative pt-24 pb-16 lg:pt-32 lg:pb-32 overflow-hidden bg-gradient-to-b from-white to-gray-50/70">
       {/* 
         Background layers — soft, organic blobs that add depth without being distracting.
         Hand-tweaked positions to feel natural, not algorithmically placed.
       */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-50/60 via-transparent to-transparent"></div>
-        <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-emerald-100/30 rounded-full blur-3xl -z-10"></div>
-        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-amber-50/40 rounded-full blur-3xl -z-10"></div>
+        <div className="absolute top-1/4 right-0 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-emerald-100/30 rounded-full blur-3xl -z-10"></div>
+        <div className="absolute bottom-0 left-1/4 w-[250px] sm:w-[400px] h-[250px] sm:h-[400px] bg-amber-50/40 rounded-full blur-3xl -z-10"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           
           {/* Left Content — copy that speaks like a real person wrote it */}
-          <div className="max-w-2xl">
+          <div className="max-w-2xl text-center lg:text-left">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white shadow-sm border border-emerald-100 text-emerald-700 text-sm font-medium mb-6">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              <span>Trusted by 100+ healthcare partners</span>
+              <span>Trusted by 100+ partners</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-[1.15] tracking-tight mb-6">
+            <h1 className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-[1.15] tracking-tight mb-6">
               Premium nutraceuticals,{" "}
               <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                 wholesale trusted

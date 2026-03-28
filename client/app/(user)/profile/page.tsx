@@ -31,6 +31,14 @@ export default function ProfilePage() {
     const [user, setUser] = useState<User | null>(null)
     const [uploadingImage, setUploadingImage] = useState(false)
     const [isSaving, setIsSaving] = useState(false)
+    const [timedOut, setTimedOut] = useState(false)
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (!user) setTimedOut(true)
+        }, 8000) // 8 second timeout
+        return () => clearTimeout(timer)
+    }, [user])
 
     useEffect(() => {
         if (authUser?.token) fetchProfile(authUser.token)
@@ -159,10 +167,25 @@ export default function ProfilePage() {
 
     if (!user) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24">
-                <div className="flex flex-col items-center">
-                    <div className="w-8 h-8 border-2 border-gray-200 border-t-emerald-500 rounded-full animate-spin mb-3"></div>
-                    <p className="text-gray-500 text-sm">Loading profile...</p>
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24 px-4">
+                <div className="flex flex-col items-center text-center">
+                    <div className="w-10 h-10 border-3 border-gray-200 border-t-emerald-500 rounded-full animate-spin mb-4"></div>
+                    <h2 className="text-lg font-semibold text-gray-900">Loading your profile</h2>
+                    <p className="text-gray-500 text-sm max-w-xs mt-1">Please wait while we fetch your account details and order history.</p>
+                    
+                    {timedOut && (
+                        <div className="mt-8 animate-in fade-in slide-in-from-bottom-2 duration-700">
+                            <p className="text-sm text-amber-600 mb-4 bg-amber-50 px-4 py-2 rounded-lg border border-amber-100 italic">
+                                This is taking longer than expected.
+                            </p>
+                            <button 
+                                onClick={() => window.location.reload()}
+                                className="px-6 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 shadow-sm transition-all active:scale-95"
+                            >
+                                Reload page
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         )

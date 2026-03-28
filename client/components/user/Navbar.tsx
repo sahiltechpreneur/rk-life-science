@@ -65,8 +65,8 @@ export default function Navbar() {
                 />
               </div>
             </div>
-            <span className={`text-lg font-semibold tracking-tight transition-colors ${scrolled ? 'text-gray-800' : 'text-gray-900'}`}>
-              R. K. Life Science
+            <span className={`text-base sm:text-lg font-semibold tracking-tight transition-colors ${scrolled ? 'text-gray-800' : 'text-gray-900'}`}>
+              R. K. <span className="hidden xs:inline">Life Science</span>
             </span>
           </Link>
 
