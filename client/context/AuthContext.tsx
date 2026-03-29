@@ -23,9 +23,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     // Merge token with profile data
                     setUser({ token, ...res.data })
                 } catch (e: any) {
-                    console.error("Auth initialization failed:", e.message)
-                    localStorage.removeItem("token")
-                    setUser(null)
+                    console.error("Auth initialization issue:", e.response?.data?.error || e.message)
+                    // Only log out if the token is explicitly rejected by the server
+                    if (e.response?.status === 401 || e.response?.status === 403) {
+                        localStorage.removeItem("token")
+                        setUser(null)
+                    } else {
+                        // Keep the token for now, maybe it's a temporary 500 error
+                        setUser({ token })
+                    }
                 }
             } else {
                 setUser(null)

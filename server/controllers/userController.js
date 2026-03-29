@@ -12,7 +12,8 @@ exports.getUserProfile = async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "User not found in system" });
+      console.warn("Profile fetch failed: User not found for ID", req.user.id);
+      return res.status(404).json({ error: "User profile not found. Please log in again." });
     }
 
     const user = result.rows[0];
@@ -26,7 +27,7 @@ exports.getUserProfile = async (req, res) => {
       );
       orders = ordersResult.rows;
     } catch (orderErr) {
-      console.error("Degraded experience: Failed to fetch orders for profile", orderErr);
+      console.error("Profile Data Error: Failed to fetch orders for user", user.email, orderErr.message);
       // We still return the user profile even if orders fail to load
     }
 
