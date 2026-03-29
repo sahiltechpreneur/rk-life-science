@@ -12,8 +12,14 @@ type Product = {
   id: number
   name: string
   image: string
+  images: string[]
   description: string
   price: number
+  composition?: string
+  packing?: string
+  ingredients?: string
+  advantages?: string
+  content?: string
 }
 
 export default function ProductDetailPage() {
@@ -21,6 +27,7 @@ export default function ProductDetailPage() {
   const { id } = params
   const [product, setProduct] = useState<Product | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
   
   const { addToCart } = useCart()
   const { user } = useContext(AuthContext)
@@ -31,10 +38,25 @@ export default function ProductDetailPage() {
     setIsLoading(true)
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`)
       .then(res => res.json())
-      .then(data => setProduct(data))
+      .then(data => {
+        setProduct(data)
+        // If images array is present and has at least one image, set it as the selected image
+        if (data.images && data.images.length > 0) {
+          setSelectedImage(data.images[0])
+        } else if (data.image) {
+          setSelectedImage(data.image)
+        }
+      })
       .catch(err => console.error(err))
       .finally(() => setIsLoading(false))
   }, [id])
+
+  const getFullImageUrl = (img?: string | null) => {
+    if (!img) return ""
+    return img.startsWith("http") 
+      ? img 
+      : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/uploads/${img}`
+  }
 
   if (isLoading) {
     return (
@@ -119,22 +141,39 @@ export default function ProductDetailPage() {
           Back
         </button>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
           <div className="grid md:grid-cols-2 gap-8 p-6 md:p-8">
               
-              {/* Product Image — smaller, well-proportioned */}
-              <div className="relative">
-                <div className="aspect-square rounded-xl bg-gray-50 flex items-center justify-center p-6 border border-gray-100">
-                  {product.image ? (
+              {/* Product Gallery */}
+              <div className="space-y-4">
+                <div className="aspect-square rounded-xl bg-gray-50 flex items-center justify-center p-6 border border-gray-100 overflow-hidden">
+                  {selectedImage ? (
                     <img
-                      src={imageUrl}
+                      src={getFullImageUrl(selectedImage)}
                       alt={product.name}
-                      className="max-w-full max-h-full object-contain"
+                      className="max-w-full max-h-full object-contain transition-all duration-300"
                     />
                   ) : (
                     <FiBox className="w-20 h-20 text-gray-300" />
                   )}
                 </div>
+                
+                {/* Thumbnails */}
+                {product.images && product.images.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {product.images.map((img, idx) => (
+                      <button 
+                        key={idx}
+                        onClick={() => setSelectedImage(img)}
+                        className={`w-16 h-16 rounded-lg border-2 overflow-hidden transition-all ${
+                          selectedImage === img ? 'border-emerald-500 ring-2 ring-emerald-500/10' : 'border-gray-100 hover:border-emerald-200'
+                        }`}
+                      >
+                        <img src={getFullImageUrl(img)} alt="" className="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Product Info */}
@@ -144,15 +183,31 @@ export default function ProductDetailPage() {
                     <FiCheckCircle className="w-3 h-3" />
                     In stock
                   </span>
-                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight mb-3">
+                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight mb-2">
                     {product.name}
                   </h1>
-                  <div className="text-2xl md:text-3xl font-bold text-emerald-600">
+                  <div className="text-2xl md:text-3xl font-bold text-emerald-600 mb-4">
                     NPR {Number(product.price).toLocaleString()}
                   </div>
                 </div>
 
-                <div className="prose prose-sm text-gray-600 mb-6">
+                {/* Quick Details Chips */}
+                {(product.packing || product.composition) && (
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {product.composition && (
+                      <div className="px-3 py-1.5 bg-gray-50 rounded-lg text-xs font-medium text-gray-600 border border-gray-100">
+                        <span className="text-gray-400 mr-1">Composition:</span> {product.composition}
+                      </div>
+                    )}
+                    {product.packing && (
+                      <div className="px-3 py-1.5 bg-gray-50 rounded-lg text-xs font-medium text-gray-600 border border-gray-100">
+                        <span className="text-gray-400 mr-1">Packing:</span> {product.packing}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="prose prose-sm text-gray-600 mb-8 max-w-none">
                   <p>{product.description}</p>
                 </div>
 
@@ -173,7 +228,7 @@ export default function ProductDetailPage() {
                   </button>
                 </div>
 
-                {/* Feature Highlights — cleaner, less prominent */}
+                {/* Feature Highlights */}
                 <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-gray-100">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-emerald-600">
@@ -197,6 +252,32 @@ export default function ProductDetailPage() {
               </div>
           </div>
         </div>
+
+        {/* Detailed Catalog Info */}
+        {(product.ingredients || product.advantages || product.content) && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8">
+            <div className="grid md:grid-cols-3 gap-8 text-sm">
+              {product.ingredients && (
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-2 uppercase tracking-tight text-xs border-b border-emerald-100 pb-1">Ingredients</h3>
+                  <p className="text-gray-500 leading-relaxed whitespace-pre-line">{product.ingredients}</p>
+                </div>
+              )}
+              {product.advantages && (
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-2 uppercase tracking-tight text-xs border-b border-emerald-100 pb-1">Advantages</h3>
+                  <p className="text-gray-500 leading-relaxed whitespace-pre-line">{product.advantages}</p>
+                </div>
+              )}
+              {product.content && (
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-2 uppercase tracking-tight text-xs border-b border-emerald-100 pb-1">More Details</h3>
+                  <p className="text-gray-500 leading-relaxed whitespace-pre-line">{product.content}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         <SimilarProducts />
       </div>

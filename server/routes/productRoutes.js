@@ -12,8 +12,8 @@ getProductById
 } = require("../controllers/productController")
 
 router.get("/", getProducts)
-router.post("/", upload.single("image"), createProduct)
-router.put("/:id", upload.single("image"), updateProduct)
+router.post("/", upload.array("images", 6), createProduct)
+router.put("/:id", upload.array("images", 6), updateProduct)
 router.delete("/:id", deleteProduct)
 router.get("/:id", getProductById)
 

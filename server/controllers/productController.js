@@ -32,69 +32,85 @@ exports.getProducts = async (req, res) => {
 
 
 exports.createProduct = async (req, res) => {
+  try {
+    const { 
+      name, description, price, stock, 
+      composition, packing, ingredients, advantages, content 
+    } = req.body
+    
+    // Parse numeric fields safely
+    const numericPrice = parseFloat(price) || 0
+    const numericStock = parseInt(stock) || 0
 
- try {
+    // Handle multiple images from Cloudinary (req.files)
+    const images = req.files ? req.files.map(file => file.path) : []
+    const mainImage = images.length > 0 ? images[0] : null
 
-  const { name, description, price, stock } = req.body
+    const result = await pool.query(
+      `INSERT INTO products 
+      (name, description, price, stock, images, image, composition, packing, ingredients, advantages, content) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
+      RETURNING *`,
+      [
+        name, description, numericPrice, numericStock, 
+        images, mainImage, 
+        composition || null, packing || null, 
+        ingredients || null, advantages || null, content || null
+      ]
+    )
 
-  const image = req.file ? req.file.path : null
-
-  const result = await pool.query(
-   `INSERT INTO products
-   (name, description, price, stock, image)
-   VALUES ($1,$2,$3,$4,$5)
-   RETURNING *`,
-   [name, description, price, stock, image]
-  )
-
-  res.json(result.rows[0])
-
- } catch (err) {
-
-  console.error(err)
-
-  res.status(500).json({ error: err.message })
-
- }
-
+    res.json(result.rows[0])
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: err.message })
+  }
 }
+
 
 exports.updateProduct = async (req, res) => {
+  const { id } = req.params
+  const { 
+    name, description, price, stock, 
+    composition, packing, ingredients, advantages, content 
+  } = req.body
 
-    const { id } = req.params
+  const numericPrice = parseFloat(price) || 0
+  const numericStock = parseInt(stock) || 0
 
-    const { name, description, price, stock } = req.body
+  try {
+    // Build values array
+    let values = [
+      name, description, numericPrice, numericStock, 
+      composition || null, packing || null, 
+      ingredients || null, advantages || null, content || null
+    ]
+    let argCount = values.length // 9
 
-    const image = req.file ? req.file.path : null
+    let updateQuery = `
+      UPDATE products 
+      SET name=$1, description=$2, price=$3, stock=$4, 
+          composition=$5, packing=$6, ingredients=$7, advantages=$8, content=$9
+    `
 
-    try {
-
-        await pool.query(
-
-            `
- UPDATE products
- SET
- name=$1,
- description=$2,
- price=$3,
- stock=$4,
- image=COALESCE($5,image)
- WHERE id=$6
- `,
-
-            [name, description, price, stock, image, id]
-
-        )
-
-        res.json({ message: "Product updated" })
-
-    } catch (err) {
-
-        res.status(500).json({ error: err.message })
-
+    if (req.files && req.files.length > 0) {
+      const images = req.files.map(file => file.path)
+      const mainImage = images[0]
+      updateQuery += `, images=$${argCount + 1}, image=$${argCount + 2}`
+      values.push(images, mainImage)
+      argCount += 2
     }
 
+    updateQuery += ` WHERE id=$${argCount + 1}`
+    values.push(id)
+
+    await pool.query(updateQuery, values)
+    res.json({ message: "Product updated" })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: err.message })
+  }
 }
+
 
 
 exports.deleteProduct = async (req, res) => {

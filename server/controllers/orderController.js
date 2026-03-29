@@ -128,7 +128,7 @@ exports.createOrder = async (req, res) => {
             `Please check the admin dashboard to process this order.`;
         
         // Do not block the request if WhatsApp fails, fire and forget or await
-        await sendWhatsAppMessage('9779768771762', waMessage);
+        await sendWhatsAppMessage(process.env.ADMIN_PHONE || '9779768771762', waMessage);
 
         // 5. Handle eSewa Payment Integration
         if (payment_method === 'eSewa') {

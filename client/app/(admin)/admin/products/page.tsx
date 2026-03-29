@@ -1,16 +1,22 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import API from "@/lib/api"
-import { FiEdit3, FiTrash2, FiPlus, FiSearch, FiX, FiImage, FiBox, FiDollarSign, FiAlignLeft, FiPackage } from "react-icons/fi"
+import { FiEdit3, FiTrash2, FiPlus, FiSearch, FiX, FiImage, FiBox, FiDollarSign, FiAlignLeft, FiPackage, FiLoader } from "react-icons/fi"
+import { AuthContext } from "@/context/AuthContext"
+import { useNotification } from "@/context/NotificationContext"
 
 export default function ProductsPage() {
+    const { user } = useContext(AuthContext)
+    const { showNotification } = useNotification()
+
     const [products, setProducts] = useState<any[]>([])
     const [search, setSearch] = useState("")
     const [page, setPage] = useState(1)
     const [editingId, setEditingId] = useState<number | null>(null)
     const [isFormOpen, setIsFormOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+    const [isSaving, setIsSaving] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
     const [form, setForm] = useState({
@@ -18,10 +24,15 @@ export default function ProductsPage() {
         description: "",
         price: "",
         stock: "",
+        composition: "",
+        packing: "",
+        ingredients: "",
+        advantages: "",
+        content: "",
     })
 
-    const [image, setImage] = useState<File | null>(null)
-    const [imagePreview, setImagePreview] = useState<string | null>(null)
+    const [images, setImages] = useState<File[]>([])
+    const [imagePreviews, setImagePreviews] = useState<string[]>([])
 
     useEffect(() => {
         fetchProducts()
@@ -31,7 +42,7 @@ export default function ProductsPage() {
         setIsLoading(true)
         setError(null)
         try {
-            const res = await API.get(`/products?search=${search}&page=${page}`)
+            const res = await API.get(`/products?search=${search}&page=${page}&limit=8`)
             if (Array.isArray(res.data)) {
                 setProducts(res.data)
             } else {
@@ -49,16 +60,31 @@ export default function ProductsPage() {
         setForm({ ...form, [e.target.name]: e.target.value })
     }
 
-    const handleImage = (e: any) => {
-        const file = e.target.files[0]
-        setImage(file)
-        if (file) {
-            const reader = new FileReader()
-            reader.onloadend = () => setImagePreview(reader.result as string)
-            reader.readAsDataURL(file)
-        } else {
-            setImagePreview(null)
+    const handleImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            const files = Array.from(e.target.files)
+            const newImages = [...images, ...files].slice(0, 6)
+            setImages(newImages)
+
+            const newPreviews: string[] = []
+            newImages.forEach(file => {
+                const reader = new FileReader()
+                reader.onloadend = () => {
+                    newPreviews.push(reader.result as string)
+                    if (newPreviews.length === newImages.length) {
+                        setImagePreviews(newPreviews)
+                    }
+                }
+                reader.readAsDataURL(file)
+            })
         }
+    }
+
+    const removeImage = (index: number) => {
+        const newImages = images.filter((_, i) => i !== index)
+        const newPreviews = imagePreviews.filter((_, i) => i !== index)
+        setImages(newImages)
+        setImagePreviews(newPreviews)
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -69,31 +95,59 @@ export default function ProductsPage() {
         data.append("description", form.description)
         data.append("price", form.price)
         data.append("stock", form.stock)
+        data.append("composition", form.composition)
+        data.append("packing", form.packing)
+        data.append("ingredients", form.ingredients)
+        data.append("advantages", form.advantages)
+        data.append("content", form.content)
 
-        if (image) {
-            data.append("image", image)
+        images.forEach((img) => {
+            data.append("images", img)
+        })
+
+        if (!user?.token) {
+            showNotification("Your session has expired. Please login again.", "error")
+            return
         }
 
+        setIsSaving(true)
         try {
+            const config = {
+                headers: { 
+                    Authorization: `Bearer ${user.token}`,
+                    // Axios will set multipart header automatically
+                }
+            }
+
             if (editingId) {
-                await API.put(`/products/${editingId}`, data)
+                await API.put(`/products/${editingId}`, data, config)
+                showNotification("Product updated successfully!", "success")
             } else {
-                await API.post("/products", data)
+                await API.post("/products", data, config)
+                showNotification("Product added successfully!", "success")
             }
             closeForm()
             fetchProducts()
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to save product", error)
+            const errMsg = error.response?.data?.error || "Failed to save product. Please try again."
+            showNotification(errMsg, "error")
+        } finally {
+            setIsSaving(false)
         }
     }
 
     const deleteProduct = async (id: number) => {
-        if (!confirm("Delete this product?")) return
+        if (!confirm("Are you sure you want to delete this product?")) return
         try {
-            await API.delete(`/products/${id}`)
+            await API.delete(`/products/${id}`, {
+                headers: { Authorization: `Bearer ${user?.token}` }
+            })
+            showNotification("Product deleted", "success")
             fetchProducts()
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to delete product", error)
+            showNotification(error.response?.data?.error || "Delete failed", "error")
         }
     }
 
@@ -104,15 +158,29 @@ export default function ProductsPage() {
             description: p.description,
             price: p.price,
             stock: p.stock,
+            composition: p.composition || "",
+            packing: p.packing || "",
+            ingredients: p.ingredients || "",
+            advantages: p.advantages || "",
+            content: p.content || "",
         })
-        setImagePreview(p.image?.startsWith("http") ? p.image : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/uploads/${p.image}`)
+        
+        // Handle existing images
+        const existingImages = p.images || (p.image ? [p.image] : [])
+        const previews = existingImages.map((img: string) => 
+            img.startsWith("http") ? img : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/uploads/${img}`
+        )
+        setImagePreviews(previews)
         setIsFormOpen(true)
     }
 
     const closeForm = () => {
-        setForm({ name: "", description: "", price: "", stock: "" })
-        setImage(null)
-        setImagePreview(null)
+        setForm({ 
+            name: "", description: "", price: "", stock: "", 
+            composition: "", packing: "", ingredients: "", advantages: "", content: "" 
+        })
+        setImages([])
+        setImagePreviews([])
         setEditingId(null)
         setIsFormOpen(false)
     }
@@ -258,7 +326,7 @@ export default function ProductsPage() {
             {/* Form Modal */}
             {isFormOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-hidden">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
                         {/* Modal Header */}
                         <div className="px-5 py-4 border-b border-gray-100 flex justify-between items-center">
                             <div>
@@ -270,10 +338,10 @@ export default function ProductsPage() {
                             </button>
                         </div>
                         
-                        {/* Modal Body */}
-                        <div className="p-5 overflow-y-auto">
-                            <form id="productForm" onSubmit={handleSubmit} className="space-y-4">
-                                
+                        {/* Modal Form */}
+                        <form id="productForm" onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+                            {/* Modal Body */}
+                            <div className="p-5 overflow-y-auto flex-1 custom-scrollbar space-y-4">
                                 <div>
                                     <label className="block text-xs font-medium text-gray-600 mb-1">Product name</label>
                                     <input 
@@ -323,51 +391,83 @@ export default function ProductsPage() {
                                         name="description" 
                                         value={form.description} 
                                         onChange={handleChange} 
-                                        rows={3} 
+                                        rows={2} 
                                         className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors resize-none" 
-                                        placeholder="Product description"
+                                        placeholder="Brief description"
                                     />
                                 </div>
 
-                                <div>
-                                    <label className="block text-xs font-medium text-gray-600 mb-1">Product image</label>
-                                    <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-emerald-200 transition-colors">
-                                        {imagePreview ? (
-                                            <div className="relative w-24 h-24 mx-auto mb-2 rounded-lg overflow-hidden">
-                                                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                                            </div>
-                                        ) : (
-                                            <FiImage className="w-8 h-8 text-gray-300 mx-auto mb-1" />
-                                        )}
-                                        <label className="cursor-pointer">
-                                            <span className="text-xs text-emerald-600 font-medium hover:text-emerald-700">
-                                                Choose image
-                                            </span>
-                                            <input type="file" className="hidden" onChange={handleImage} accept="image/*" />
-                                        </label>
-                                        <p className="text-[10px] text-gray-400 mt-1">PNG, JPG up to 5MB</p>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-600 mb-1">Composition</label>
+                                        <input name="composition" value={form.composition} onChange={handleChange} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" placeholder="e.g. Paracetamol 500mg" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-600 mb-1">Packing</label>
+                                        <input name="packing" value={form.packing} onChange={handleChange} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" placeholder="e.g. 10x10 Tablets" />
                                     </div>
                                 </div>
-                            </form>
-                        </div>
 
-                        {/* Modal Footer */}
-                        <div className="px-5 py-3 border-t border-gray-100 flex justify-end gap-2">
-                            <button 
-                                type="button" 
-                                onClick={closeForm} 
-                                className="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button 
-                                type="submit" 
-                                form="productForm" 
-                                className="px-4 py-1.5 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors"
-                            >
-                                {editingId ? 'Save' : 'Add product'}
-                            </button>
-                        </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-600 mb-1">Ingredients / Advantages / Content</label>
+                                    <textarea name="ingredients" value={form.ingredients} onChange={handleChange} rows={2} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 mb-2" placeholder="Ingredients..." />
+                                    <textarea name="advantages" value={form.advantages} onChange={handleChange} rows={2} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 mb-2" placeholder="Advantages..." />
+                                    <textarea name="content" value={form.content} onChange={handleChange} rows={2} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" placeholder="Other content..." />
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-600 mb-1">Product images (Up to 6)</label>
+                                    <div className="border-2 border-dashed border-gray-200 rounded-lg p-3 text-center hover:border-emerald-200 transition-colors">
+                                        <div className="flex flex-wrap gap-2 mb-2 justify-center">
+                                            {imagePreviews.map((preview, idx) => (
+                                                <div key={idx} className="relative w-16 h-16 rounded-md overflow-hidden border border-gray-100 group">
+                                                    <img src={preview} alt="" className="w-full h-full object-cover" />
+                                                    <button 
+                                                        type="button"
+                                                        onClick={() => removeImage(idx)}
+                                                        className="absolute top-0 right-0 bg-red-500 text-white p-0.5 rounded-bl-md opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    >
+                                                        <FiX className="w-3 h-3" />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                            {imagePreviews.length < 6 && (
+                                                <label className="w-16 h-16 flex flex-col items-center justify-center border border-dashed border-gray-300 rounded-md cursor-pointer hover:bg-gray-50 bg-white">
+                                                    <FiPlus className="w-4 h-4 text-gray-400" />
+                                                    <input type="file" className="hidden" onChange={handleImages} accept="image/*" multiple />
+                                                </label>
+                                            )}
+                                        </div>
+                                        <p className="text-[10px] text-gray-400">Add up to 6 high-quality product photos</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Modal Footer */}
+                            <div className="px-5 py-3 border-t border-gray-100 flex justify-end gap-2 bg-gray-50/50">
+                                <button 
+                                    type="button" 
+                                    onClick={closeForm} 
+                                    className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors font-medium"
+                                >
+                                    Cancel
+                                </button>
+                                <button 
+                                    type="submit" 
+                                    disabled={isSaving}
+                                    className="px-6 py-2 text-sm font-bold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 shadow-md shadow-emerald-200 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                >
+                                    {isSaving ? (
+                                        <>
+                                            <FiLoader className="w-4 h-4 animate-spin" />
+                                            Saving...
+                                        </>
+                                    ) : (
+                                        editingId ? 'Save Changes' : 'Add Product'
+                                    )}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}

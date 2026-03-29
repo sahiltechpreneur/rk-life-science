@@ -37,11 +37,10 @@ export default function ProfilePage() {
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            if (!user && !error) setTimedOut(true)
-        }, 8000)
-        return () => clearTimeout(timer)
-    }, [user, error])
+        if (!loading && !authUser) {
+            window.location.href = "/auth/login"
+        }
+    }, [authUser, loading])
 
     useEffect(() => {
         if (authUser?.token) fetchProfile(authUser.token)
@@ -61,7 +60,7 @@ export default function ProfilePage() {
             
             if (err.response?.status === 404 || err.response?.status === 401) {
                 logout()
-                window.location.href = "/"
+                window.location.href = "/auth/login"
             }
         }
     }
@@ -170,46 +169,47 @@ export default function ProfilePage() {
         }
     }
 
-    if (!user) {
+    if (loading || !user || error) {
+        if (error) {
+            return (
+                <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24 px-4 border-t border-gray-100">
+                    <div className="flex flex-col items-center text-center animate-in fade-in duration-500">
+                        <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-5 shadow-sm border border-red-100">
+                            <FiAlertCircle className="w-8 h-8" />
+                        </div>
+                        <h2 className="text-xl font-bold text-gray-900 mb-2">
+                            Couldn't load profile
+                        </h2>
+                        <p className="text-gray-500 text-sm max-w-sm mb-6">
+                            {error || "This is taking longer than expected."}
+                        </p>
+                        <button 
+                            onClick={() => authUser?.token ? fetchProfile(authUser.token) : window.location.reload()}
+                            className="px-8 py-3 bg-emerald-600 text-white text-sm font-bold rounded-xl hover:bg-emerald-700 shadow-md transition-all active:scale-95 flex items-center gap-2"
+                        >
+                            Try again
+                        </button>
+                    </div>
+                </div>
+            )
+        }
+
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24 px-4 border-t border-gray-100">
                 <div className="flex flex-col items-center text-center animate-in fade-in duration-500">
-                    {!error && !timedOut ? (
-                        <>
-                            {/* Standard Loading State */}
-                            <div className="w-12 h-12 border-4 border-gray-200 border-t-emerald-500 rounded-full animate-spin mb-5 shadow-sm"></div>
-                            <h2 className="text-xl font-bold text-gray-900 mb-2">
-                                Loading your profile
-                            </h2>
-                            <p className="text-gray-500 text-sm max-w-sm">
-                                Please wait while we securely fetch your account details and order history.
-                            </p>
-                        </>
-                    ) : (
-                        <>
-                            {/* Error or Timeout State */}
-                            <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-5 shadow-sm border border-red-100">
-                                <FiAlertCircle className="w-8 h-8" />
-                            </div>
-                            <h2 className="text-xl font-bold text-gray-900 mb-2">
-                                Couldn't load profile
-                            </h2>
-                            <p className="text-gray-500 text-sm max-w-sm mb-6">
-                                {error || "This is taking longer than expected. Our secure server might be waking up from sleep mode."}
-                            </p>
-                            
-                            <button 
-                                onClick={() => error ? fetchProfile(authUser.token) : window.location.reload()}
-                                className="px-8 py-3 bg-emerald-600 text-white text-sm font-bold rounded-xl hover:bg-emerald-700 shadow-md transition-all active:scale-95 flex items-center gap-2"
-                            >
-                                Try again
-                            </button>
-                        </>
-                    )}
+                    <div className="w-12 h-12 border-4 border-gray-200 border-t-emerald-500 rounded-full animate-spin mb-5 shadow-sm"></div>
+                    <h2 className="text-xl font-bold text-gray-900 mb-2">
+                        Loading your profile
+                    </h2>
+                    <p className="text-gray-500 text-sm max-w-sm">
+                        Please wait while we securely fetch your account details and order history.
+                    </p>
                 </div>
             </div>
         )
     }
+
+    // At this point 'user' is guaranteed to be non-null for the rest of the component
 
 
     return (
