@@ -5,7 +5,6 @@ import API from "@/lib/api"
 import { FiEdit3, FiTrash2, FiPlus, FiSearch, FiX, FiImage, FiBox, FiDollarSign, FiAlignLeft, FiPackage, FiLoader } from "react-icons/fi"
 import { AuthContext } from "@/context/AuthContext"
 import { useNotification } from "@/context/NotificationContext"
-import ProtectedRoute from "@/components/auth/ProtectedRoute"
 
 export default function ProductsPage() {
     const { user, loading: authLoading } = useContext(AuthContext)
@@ -201,8 +200,7 @@ export default function ProductsPage() {
     }
 
     return (
-        <ProtectedRoute>
-            <div className="space-y-6">
+        <div className="space-y-6">
                 
                 {/* Header */}
                 <div>
@@ -487,7 +485,6 @@ export default function ProductsPage() {
                         </div>
                     </div>
                 )}
-            </div>
-        </ProtectedRoute>
+        </div>
     )
 }

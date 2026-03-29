@@ -5,6 +5,9 @@ import { usePathname, useRouter } from "next/navigation"
 import { FaTachometerAlt, FaBoxOpen, FaUsers, FaSignOutAlt, FaShoppingCart, FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { FiX, FiMessageSquare, FiMail } from "react-icons/fi"
 
+import { useContext } from "react"
+import { AuthContext } from "@/context/AuthContext"
+
 interface SidebarProps {
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
@@ -16,10 +19,10 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
 
     const router = useRouter()
     const pathname = usePathname()
+    const { logout: globalLogout } = useContext(AuthContext)
 
     const logout = ()=>{
-        localStorage.removeItem("token")
-        localStorage.removeItem("admin")
+        globalLogout()
         router.push("/admin/login")
     }
 
