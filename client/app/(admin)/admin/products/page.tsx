@@ -106,23 +106,16 @@ export default function ProductsPage() {
         })
 
         if (authLoading) {
-            showNotification("Still initializing your session. Please wait a moment...", "warning")
+            showNotification("Still initializing your session. Please wait...", "warning")
             return
         }
 
-        // Fallback to localStorage if state is somehow missing the token
-        const activeToken = user?.token || localStorage.getItem("token")
-
-        if (!activeToken) {
-            console.error("Critical Authentication Failure in ProductsPage:", { 
-                userStatePresent: !!user, 
-                tokenInState: !!user?.token, 
-                tokenInStorage: !!localStorage.getItem("token"),
-                authLoading 
-            })
+        if (!user?.token) {
             showNotification("Your session has expired. Please login again.", "error")
             return
         }
+
+        const activeToken = user.token
 
         setIsSaving(true)
         try {

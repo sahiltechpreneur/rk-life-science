@@ -2,8 +2,9 @@
 
 import Sidebar from "@/components/admin/Sidebar";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { FiMenu, FiX, FiUser } from "react-icons/fi";
+import { AuthContext } from "@/context/AuthContext";
 
 export default function AdminClientWrapper({
   children,
@@ -12,6 +13,7 @@ export default function AdminClientWrapper({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { user, loading } = useContext(AuthContext);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -19,8 +21,12 @@ export default function AdminClientWrapper({
   const isLoginPage = pathname === "/admin/login";
 
   useEffect(() => {
-    const adminFlag = localStorage.getItem("admin");
-    if (adminFlag === "true") {
+    if (loading) return;
+
+    const adminFlag = localStorage.getItem("admin") === "true";
+    const hasAdminRole = user?.role === 'admin';
+
+    if (adminFlag || hasAdminRole) {
       setIsAuthenticated(true);
       if (isLoginPage) {
         router.push("/admin/dashboard");
@@ -31,7 +37,7 @@ export default function AdminClientWrapper({
         router.push("/admin/login");
       }
     }
-  }, [pathname, router]);
+  }, [pathname, router, user, loading]);
 
   if (isAuthenticated === null) {
     return (

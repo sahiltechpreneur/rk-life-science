@@ -1,34 +1,45 @@
 "use client"
 
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { FiLock, FiMail, FiArrowLeft, FiShield } from "react-icons/fi"
+import API from "@/lib/api"
+import { AuthContext } from "@/context/AuthContext"
 
 export default function AdminLogin(){
     const router = useRouter()
+    const { login } = useContext(AuthContext)
     const [email,setEmail] = useState("")
     const [password,setPassword] = useState("")
     const [error, setError] = useState("")
     const [isLoading, setIsLoading] = useState(false)
 
-    const handleSubmit = (e:React.FormEvent<HTMLFormElement>)=>{
+    const handleSubmit = async (e:React.FormEvent<HTMLFormElement>)=>{
         e.preventDefault()
         setError("")
         setIsLoading(true)
         
-        const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL
-        const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD
-
-        setTimeout(() => {
-            if(email === ADMIN_EMAIL && password === ADMIN_PASSWORD){
-                localStorage.setItem("admin","true")
+        try {
+            const res = await API.post("/auth/login", { email, password })
+            
+            if (res.data.success && res.data.user.role === 'admin') {
+                // Store regular user token for AuthContext
+                login(res.data.token, res.data.user)
+                
+                // Keep the admin flag for AdminClientWrapper
+                localStorage.setItem("admin", "true")
+                
                 router.push("/admin/dashboard")
             } else {
-                setError("Invalid admin credentials")
+                setError("You do not have administrator permissions.")
                 setIsLoading(false)
             }
-        }, 500)
+        } catch (err: any) {
+            console.error("Admin Login Error:", err)
+            setError(err.response?.data?.error || "Invalid admin credentials")
+            setIsLoading(false)
+        }
     }
 
     return(

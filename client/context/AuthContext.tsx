@@ -14,29 +14,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const initAuth = async () => {
             const token = localStorage.getItem("token")
-            const isAdmin = localStorage.getItem("admin") === "true"
+            const isAdminFlag = localStorage.getItem("admin") === "true"
             
             if (token) {
                 try {
                     const res = await API.get("/user/profile", {
                         headers: { Authorization: `Bearer ${token}` }
                     })
-                    // Merge token with profile data and admin status
-                    setUser({ token, role: isAdmin ? 'admin' : res.data.role, ...res.data })
+                    // Ensure admin flag is synced if the role is admin
+                    if (res.data.role === 'admin') localStorage.setItem("admin", "true")
+                    
+                    setUser({ token, ...res.data })
                 } catch (e: any) {
                     console.error("Auth initialization issue:", e.response?.data?.error || e.message)
-                    // Only log out if the token is explicitly rejected by the server
+                    // If server explicitly rejects, clear the session
                     if (e.response?.status === 401 || e.response?.status === 403) {
                         localStorage.removeItem("token")
-                        // If token fails, but they have admin flag, maybe they are still an admin via portal
-                        setUser(isAdmin ? { role: 'admin' } : null)
+                        if (!isAdminFlag) setUser(null)
+                        else setUser({ role: 'admin' }) // Fallback for portal access
                     } else {
-                        // Keep the token for now, maybe it's a temporary 500 error
-                        setUser({ token, role: isAdmin ? 'admin' : 'user' })
+                        // Network error, keep existing state if possible
+                        setUser({ token, role: isAdminFlag ? 'admin' : 'user' })
                     }
                 }
-            } else if (isAdmin) {
-                // Admin Portal session (no token yet)
+            } else if (isAdminFlag) {
+                // Legacy Portal support
                 setUser({ role: 'admin' })
             } else {
                 setUser(null)
