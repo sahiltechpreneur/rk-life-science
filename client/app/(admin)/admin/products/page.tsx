@@ -7,7 +7,7 @@ import { AuthContext } from "@/context/AuthContext"
 import { useNotification } from "@/context/NotificationContext"
 
 export default function ProductsPage() {
-    const { user } = useContext(AuthContext)
+    const { user, loading: authLoading } = useContext(AuthContext)
     const { showNotification } = useNotification()
 
     const [products, setProducts] = useState<any[]>([])
@@ -104,6 +104,11 @@ export default function ProductsPage() {
         images.forEach((img) => {
             data.append("images", img)
         })
+
+        if (authLoading) {
+            showNotification("Still initializing your session. Please wait a moment...", "warning")
+            return
+        }
 
         if (!user?.token) {
             showNotification("Your session has expired. Please login again.", "error")

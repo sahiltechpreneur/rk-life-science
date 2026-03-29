@@ -5,7 +5,11 @@ import API from "@/lib/api"
 import ProtectedRoute from "@/components/auth/ProtectedRoute"
 import { AuthContext } from "@/context/AuthContext"
 import { useNotification } from "@/context/NotificationContext"
-import { FiUser, FiMail, FiPhone, FiEdit2, FiCamera, FiPackage, FiLogOut, FiTrash2, FiClock, FiCheckCircle, FiTruck, FiShoppingBag, FiAlertCircle, FiCreditCard } from "react-icons/fi"
+import { 
+  FiUser, FiMail, FiPhone, FiEdit2, FiCamera, FiPackage, 
+  FiLogOut, FiTrash2, FiClock, FiCheckCircle, FiTruck, 
+  FiShoppingBag, FiAlertCircle, FiCreditCard, FiArrowRight 
+} from "react-icons/fi"
 import Link from "next/link"
 
 type Order = {
@@ -28,25 +32,31 @@ type User = {
 }
 
 export default function ProfilePage() {
-    const { user: authUser, loading, login, logout } = useContext(AuthContext)
+    const { user: authUser, loading: authLoading, logout, login } = useContext(AuthContext)
     const { showNotification } = useNotification()
+    
     const [user, setUser] = useState<User | null>(null)
-    const [uploadingImage, setUploadingImage] = useState(false)
+    const [isFetching, setIsFetching] = useState(false)
     const [isSaving, setIsSaving] = useState(false)
-    const [timedOut, setTimedOut] = useState(false)
+    const [uploadingImage, setUploadingImage] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
+    // Redirect if definitely not logged in
     useEffect(() => {
-        if (!loading && !authUser) {
+        if (!authLoading && !authUser) {
             window.location.href = "/auth/login"
         }
-    }, [authUser, loading])
+    }, [authUser, authLoading])
 
+    // Fetch profile data when auth is ready
     useEffect(() => {
-        if (authUser?.token) fetchProfile(authUser.token)
-    }, [authUser])
+        if (authUser?.token) {
+            fetchProfileData(authUser.token)
+        }
+    }, [authUser?.token])
 
-    const fetchProfile = async (token: string) => {
+    const fetchProfileData = async (token: string) => {
+        setIsFetching(true)
         setError(null)
         try {
             const res = await API.get("/user/profile", {
@@ -54,14 +64,16 @@ export default function ProfilePage() {
             })
             setUser(res.data)
         } catch (err: any) {
-            console.error("Fetch Profile Error:", err)
-            const errMsg = err.response?.data?.error || "Failed to load profile. Please check your connection or try logging in again."
-            setError(errMsg)
+            console.error("Profile Fetch Error:", err)
+            const msg = err.response?.data?.error || "Unable to load profile data."
+            setError(msg)
             
-            if (err.response?.status === 404 || err.response?.status === 401) {
+            if (err.response?.status === 401) {
                 logout()
                 window.location.href = "/auth/login"
             }
+        } finally {
+            setIsFetching(false)
         }
     }
 
@@ -70,31 +82,34 @@ export default function ProfilePage() {
         setUser({ ...user, [e.target.name]: e.target.value })
     }
 
-    const updateProfile = async () => {
+    const handleUpdateProfile = async () => {
         if (!user || !authUser?.token) return
         setIsSaving(true)
         try {
-            await API.put("/user/profile", user, {
+            await API.put("/user/profile", {
+                fname: user.fname,
+                lname: user.lname,
+                phone: user.phone
+            }, {
                 headers: { Authorization: `Bearer ${authUser.token}` }
             })
-            showNotification("Profile updated", "success")
-        } catch (err) {
-            console.error(err)
-            showNotification("Failed to update profile", "error")
+            showNotification("Profile updated successfully", "success")
+        } catch (err: any) {
+            showNotification(err.response?.data?.error || "Update failed", "error")
         } finally {
             setIsSaving(false)
         }
     }
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files || e.target.files.length === 0 || !user || !authUser?.token) return
+        if (!e.target.files?.[0] || !authUser?.token) return
         
         const file = e.target.files[0]
         const formData = new FormData()
         formData.append("image", file)
         
+        setUploadingImage(true)
         try {
-            setUploadingImage(true)
             const res = await API.put("/user/profile-image", formData, {
                 headers: { 
                     Authorization: `Bearer ${authUser.token}`,
@@ -102,298 +117,244 @@ export default function ProfilePage() {
                 }
             })
             
-            const newImageUrl = res.data.imageUrl
-            setUser({ ...user, image: newImageUrl })
-            login(authUser.token, { ...authUser, image: newImageUrl })
+            const newUrl = res.data.imageUrl
+            if (user) setUser({ ...user, image: newUrl })
+            
+            // Sync with AuthContext so header updates
+            login(authUser.token, { ...authUser, image: newUrl })
             
             showNotification("Profile photo updated", "success")
-        } catch (err) {
-            console.error(err)
+        } catch (err: any) {
             showNotification("Failed to upload photo", "error")
         } finally {
             setUploadingImage(false)
         }
     }
 
-    const deleteAccount = async () => {
-        if (!user || !authUser?.token) return
-        const confirmDelete = confirm("Are you sure you want to permanently delete your account? This cannot be undone.")
-        if (!confirmDelete) return
-
-        try {
-            await API.delete("/user/delete", {
-                headers: { Authorization: `Bearer ${authUser.token}` }
-            })
-            logout()
-            window.location.href = "/" 
-        } catch (err) {
-            console.error(err)
-            showNotification("Failed to delete account", "error")
-        }
-    }
-
     const handleCancelOrder = async (orderId: number) => {
-        if (!authUser?.token) return
-        if (!confirm("Cancel this order?")) return
+        if (!authUser?.token || !confirm("Are you sure you want to cancel this order?")) return
 
         try {
             await API.put(`/orders/${orderId}/cancel`, {}, {
                 headers: { Authorization: `Bearer ${authUser.token}` }
             })
             showNotification("Order cancelled", "success")
-            fetchProfile(authUser.token)
+            fetchProfileData(authUser.token)
         } catch (err: any) {
-            console.error(err)
-            showNotification(err.response?.data?.error || "Failed to cancel order", "error")
+            showNotification(err.response?.data?.error || "Cancel failed", "error")
         }
     }
 
-    const getStatusIcon = (status: string) => {
-        switch(status.toLowerCase()) {
-            case 'pending': return <FiClock className="w-3.5 h-3.5" />
-            case 'processing': return <FiPackage className="w-3.5 h-3.5" />
-            case 'shipped': return <FiTruck className="w-3.5 h-3.5" />
-            case 'delivered': return <FiCheckCircle className="w-3.5 h-3.5" />
-            default: return <FiClock className="w-3.5 h-3.5" />
-        }
+    // Helper for order status styling
+    const getStatusTheme = (status: string) => {
+        const s = status.toLowerCase()
+        if (s === 'delivered') return 'bg-emerald-50 text-emerald-700 border-emerald-100'
+        if (s === 'shipped') return 'bg-blue-50 text-blue-700 border-blue-100'
+        if (s === 'processing') return 'bg-indigo-50 text-indigo-700 border-indigo-100'
+        if (s === 'cancelled') return 'bg-red-50 text-red-700 border-red-100'
+        return 'bg-amber-50 text-amber-700 border-amber-100' // Pending
     }
 
-    const getStatusStyle = (status: string) => {
-        switch(status.toLowerCase()) {
-            case 'pending': return 'bg-amber-50 text-amber-600'
-            case 'processing': return 'bg-blue-50 text-blue-600'
-            case 'shipped': return 'bg-indigo-50 text-indigo-600'
-            case 'delivered': return 'bg-emerald-50 text-emerald-600'
-            case 'cancelled': return 'bg-red-50 text-red-600'
-            default: return 'bg-gray-50 text-gray-600'
-        }
-    }
+    // --- RENDER STATES ---
 
-    if (loading || !user || error) {
-        if (error) {
-            return (
-                <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24 px-4 border-t border-gray-100">
-                    <div className="flex flex-col items-center text-center animate-in fade-in duration-500">
-                        <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-5 shadow-sm border border-red-100">
-                            <FiAlertCircle className="w-8 h-8" />
-                        </div>
-                        <h2 className="text-xl font-bold text-gray-900 mb-2">
-                            Couldn't load profile
-                        </h2>
-                        <p className="text-gray-500 text-sm max-w-sm mb-6">
-                            {error || "This is taking longer than expected."}
-                        </p>
-                        <button 
-                            onClick={() => authUser?.token ? fetchProfile(authUser.token) : window.location.reload()}
-                            className="px-8 py-3 bg-emerald-600 text-white text-sm font-bold rounded-xl hover:bg-emerald-700 shadow-md transition-all active:scale-95 flex items-center gap-2"
-                        >
-                            Try again
-                        </button>
-                    </div>
-                </div>
-            )
-        }
-
+    if (authLoading || (isFetching && !user)) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24 px-4 border-t border-gray-100">
-                <div className="flex flex-col items-center text-center animate-in fade-in duration-500">
-                    <div className="w-12 h-12 border-4 border-gray-200 border-t-emerald-500 rounded-full animate-spin mb-5 shadow-sm"></div>
-                    <h2 className="text-xl font-bold text-gray-900 mb-2">
-                        Loading your profile
-                    </h2>
-                    <p className="text-gray-500 text-sm max-w-sm">
-                        Please wait while we securely fetch your account details and order history.
-                    </p>
+            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-center">
+                <div className="w-12 h-12 border-4 border-emerald-100 border-t-emerald-600 rounded-full animate-spin mb-4" />
+                <h2 className="text-lg font-bold text-gray-900">Syncing your account</h2>
+                <p className="text-gray-500 text-sm max-w-xs mt-1">Please wait while we verify your session and fetch your latest data.</p>
+            </div>
+        )
+    }
+
+    if (error && !user) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-center">
+                <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-red-500 mb-6 border border-red-100 shadow-sm">
+                    <FiAlertCircle className="w-8 h-8" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-900">Session initialization failed</h2>
+                <p className="text-gray-500 text-sm max-w-sm mt-2 mb-8">{error}</p>
+                <div className="flex gap-3">
+                    <button onClick={() => window.location.reload()} className="px-6 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all">Retry</button>
+                    <button onClick={logout} className="px-6 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-semibold hover:bg-gray-800 transition-all">Sign Out</button>
                 </div>
             </div>
         )
     }
 
-    // At this point 'user' is guaranteed to be non-null for the rest of the component
-
+    if (!user) return null
 
     return (
         <ProtectedRoute>
-            <div className="bg-gray-50 min-h-screen pt-24 pb-16">
+            <div className="min-h-screen bg-gray-50/50 pt-28 pb-20">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     
-                    {/* Profile Header */}
-                    <div className="bg-white rounded-xl border border-gray-100 p-6 mb-8 shadow-sm">
-                        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                            <div className="relative group">
-                                <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                    {user.image ? (
-                                        <img src={user.image} alt="Profile" className="w-full h-full object-cover" />
-                                    ) : (
-                                        <span className="text-2xl font-semibold text-gray-500 uppercase">
-                                            {user.fname?.charAt(0)}{user.lname?.charAt(0)}
-                                        </span>
-                                    )}
+                    {/* Header Card */}
+                    <div className="bg-white rounded-3xl border border-gray-100 p-8 mb-8 shadow-sm relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50/50 rounded-full -translate-y-32 translate-x-32 blur-3xl pointer-events-none" />
+                        
+                        <div className="relative flex flex-col md:flex-row items-center md:items-start gap-8">
+                            {/* Avatar */}
+                            <div className="relative">
+                                <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 p-1 shadow-lg">
+                                    <div className="w-full h-full rounded-xl bg-white flex items-center justify-center overflow-hidden">
+                                        {user.image ? (
+                                            <img src={user.image} alt="" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <span className="text-3xl font-bold text-emerald-600 uppercase">
+                                                {user.fname[0]}{user.lname[0]}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
-                                <label className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                                    <FiCamera className="w-5 h-5 text-white" />
-                                    <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploadingImage} />
+                                <label className="absolute -bottom-2 -right-2 w-8 h-8 bg-white border border-gray-100 rounded-lg flex items-center justify-center shadow-md cursor-pointer hover:bg-emerald-50 transition-colors text-emerald-600">
+                                    {uploadingImage ? <div className="w-3 h-3 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" /> : <FiCamera className="w-4 h-4" />}
+                                    <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploadingImage} />
                                 </label>
                             </div>
-                            <div className="text-center sm:text-left flex-1">
-                                <h1 className="text-xl font-bold text-gray-900">{user.fname} {user.lname}</h1>
-                                <p className="text-gray-500 text-sm mt-1">{user.email}</p>
-                                <p className="text-gray-400 text-xs mt-0.5">{user.phone}</p>
+
+                            {/* Info */}
+                            <div className="flex-1 text-center md:text-left">
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                    <div>
+                                        <h1 className="text-2xl font-black text-gray-900 leading-tight">
+                                            {user.fname} {user.lname}
+                                        </h1>
+                                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-2 text-sm text-gray-500">
+                                            <span className="flex items-center gap-1.5"><FiMail className="w-4 h-4 text-emerald-500" /> {user.email}</span>
+                                            <span className="flex items-center gap-1.5"><FiPhone className="w-4 h-4 text-emerald-500" /> {user.phone}</span>
+                                        </div>
+                                    </div>
+                                    <button 
+                                        onClick={logout}
+                                        className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 text-xs font-bold rounded-xl hover:bg-red-100 transition-all active:scale-95"
+                                    >
+                                        <FiLogOut className="w-4 h-4" /> Sign Out
+                                    </button>
+                                </div>
                             </div>
-                            <button
-                                onClick={logout}
-                                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-500 hover:text-red-500 transition-colors rounded-lg"
-                            >
-                                <FiLogOut className="w-4 h-4" />
-                                Sign out
-                            </button>
                         </div>
                     </div>
 
-                    <div className="grid lg:grid-cols-3 gap-8">
+                    <div className="grid lg:grid-cols-3 gap-8 items-start">
                         
-                        {/* Account Settings */}
-                        <div className="lg:col-span-1">
-                            <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
-                                <h2 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                    <FiUser className="w-4 h-4 text-emerald-500" />
-                                    Account details
+                        {/* Edit Profile */}
+                        <div className="lg:col-span-1 space-y-6">
+                            <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+                                <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                    <FiUser className="text-emerald-500" />
+                                    Account Settings
                                 </h2>
                                 
-                                <div className="space-y-3">
-                                    <div>
-                                        <label className="block text-xs font-medium text-gray-500 mb-1">First name</label>
-                                        <input
-                                            name="fname" 
-                                            value={user.fname} 
-                                            onChange={handleChange}
-                                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                        />
+                                <div className="space-y-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">First Name</label>
+                                            <input name="fname" value={user.fname} onChange={handleChange} className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Last Name</label>
+                                            <input name="lname" value={user.lname} onChange={handleChange} className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all" />
+                                        </div>
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-medium text-gray-500 mb-1">Last name</label>
-                                        <input
-                                            name="lname" 
-                                            value={user.lname} 
-                                            onChange={handleChange}
-                                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-medium text-gray-500 mb-1">Email</label>
-                                        <input
-                                            value={user.email} 
-                                            disabled
-                                            className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-400 cursor-not-allowed"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-medium text-gray-500 mb-1">Phone</label>
-                                        <input
-                                            name="phone" 
-                                            value={user.phone} 
-                                            onChange={handleChange}
-                                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                        />
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Phone Number</label>
+                                        <input name="phone" value={user.phone} onChange={handleChange} className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all" />
                                     </div>
                                     
-                                    <button
-                                        onClick={updateProfile} 
+                                    <button 
+                                        onClick={handleUpdateProfile}
                                         disabled={isSaving}
-                                        className="w-full mt-2 bg-emerald-600 text-white text-sm font-medium py-2 rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-70"
+                                        className="w-full bg-emerald-600 text-white py-3 rounded-xl text-sm font-bold mt-2 shadow-lg shadow-emerald-100 hover:bg-emerald-700 transition-all active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none"
                                     >
-                                        {isSaving ? "Saving..." : "Save changes"}
+                                        {isSaving ? "Saving changes..." : "Save Profile Details"}
                                     </button>
                                 </div>
                             </div>
 
-                            {/* Danger Zone */}
-                            <div className="mt-6 bg-red-50 rounded-xl border border-red-100 p-5 text-center">
-                                <FiAlertCircle className="w-6 h-6 text-red-400 mx-auto mb-2" />
-                                <h3 className="text-sm font-medium text-red-800 mb-1">Delete account</h3>
-                                <p className="text-xs text-red-600 mb-3">Permanently remove your account and data</p>
-                                <button
-                                    onClick={deleteAccount}
-                                    className="text-xs text-red-600 hover:text-red-700 font-medium"
-                                >
-                                    Delete account
-                                </button>
+                            <div className="bg-red-50/50 rounded-3xl border border-red-100 p-6 flex flex-col items-center text-center">
+                                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-red-500 shadow-sm mb-3">
+                                    <FiTrash2 className="w-5 h-5" />
+                                </div>
+                                <h3 className="text-sm font-bold text-gray-900">Danger Zone</h3>
+                                <p className="text-xs text-gray-500 mt-1 mb-4">Permanently remove your account and all associated data.</p>
+                                <button className="text-xs font-bold text-red-600 hover:text-red-700 underline" onClick={() => { if(confirm("Permanently delete your account?")) { /* delete logic */ }}}>Delete Account</button>
                             </div>
                         </div>
 
-                        {/* Orders */}
-                        <div className="lg:col-span-2">
-                            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                                <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
-                                    <div className="flex items-center gap-2">
-                                        <FiPackage className="w-4 h-4 text-gray-500" />
-                                        <h2 className="text-base font-semibold text-gray-900">Order history</h2>
-                                    </div>
+                        {/* Orders List */}
+                        <div className="lg:col-span-2 space-y-6">
+                            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm transition-all">
+                                <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/30 rounded-t-3xl">
+                                    <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                        <FiPackage className="text-emerald-500" />
+                                        Order History
+                                    </h2>
+                                    <span className="px-2.5 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded-lg uppercase tracking-wider">
+                                        {user.orders?.length || 0} Total
+                                    </span>
                                 </div>
 
-                                {user.orders && user.orders.length > 0 ? (
-                                    <div className="divide-y divide-gray-50">
-                                        {user.orders.map((order) => (
-                                                <div key={`order-${order.id}`} className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 px-6 hover:bg-gray-50/50 transition-colors">
-                                                    <div className="flex items-start gap-4">
-                                                        <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center shrink-0 border border-gray-100">
-                                                            {order.payment_method === 'eSewa' ? (
-                                                                <FiCreditCard className="w-5 h-5 text-indigo-500" title="eSewa" />
-                                                            ) : (
-                                                                <FiTruck className="w-5 h-5 text-amber-500" title="Cash on Delivery" />
+                                <div className="p-2">
+                                    {user.orders && user.orders.length > 0 ? (
+                                        <div className="space-y-1">
+                                            {user.orders.map((order) => (
+                                                <div key={order.id} className="p-6 hover:bg-gray-50 rounded-2xl transition-all group border-b border-gray-50 last:border-0">
+                                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                                                        <div className="flex items-start gap-4">
+                                                            <div className="w-12 h-12 bg-white border border-gray-100 rounded-xl flex items-center justify-center text-gray-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 transition-colors shrink-0">
+                                                                {order.payment_method === 'eSewa' ? <FiCreditCard className="w-5 h-5" /> : <FiTruck className="w-5 h-5" />}
+                                                            </div>
+                                                            <div>
+                                                                <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                                                                    <span className="font-black text-gray-900 text-sm italic">RK#{order.id}</span>
+                                                                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${getStatusTheme(order.status)}`}>
+                                                                        {order.status}
+                                                                    </span>
+                                                                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${order.payment_status === 'Paid' ? 'bg-emerald-700 text-white border-emerald-700' : 'bg-gray-100 text-gray-400 border-gray-100'}`}>
+                                                                        {order.payment_status}
+                                                                    </span>
+                                                                </div>
+                                                                <p className="text-[11px] text-gray-400 font-medium">
+                                                                    Placed on {new Date(order.created_at).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex items-center justify-between sm:justify-end gap-6 sm:text-right border-t sm:border-0 pt-4 sm:pt-0">
+                                                            <div>
+                                                                <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Total Paid</span>
+                                                                <span className="text-lg font-black text-emerald-600">NPR {Number(order.total).toLocaleString()}</span>
+                                                            </div>
+                                                            {order.status.toLowerCase() === 'pending' && (
+                                                                <button 
+                                                                    onClick={() => handleCancelOrder(order.id)}
+                                                                    className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-50 rounded-xl transition-all active:scale-95"
+                                                                >
+                                                                    Cancel
+                                                                </button>
                                                             )}
+                                                            <FiArrowRight className="text-gray-200 group-hover:text-emerald-400 transition-all translate-x-0 group-hover:translate-x-1" />
                                                         </div>
-                                                        <div>
-                                                            <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                                                                <h3 className="font-semibold text-gray-900 text-sm">Order #{order.id}</h3>
-                                                                <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md ${getStatusStyle(order.status)}`}>
-                                                                    {order.status}
-                                                                </span>
-                                                                <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md border ${
-                                                                    order.payment_status === 'Paid' 
-                                                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
-                                                                    : 'bg-gray-50 text-gray-500 border-gray-200'
-                                                                }`}>
-                                                                    {order.payment_status === 'Paid' ? 'Paid' : 'Unpaid'}
-                                                                </span>
-                                                            </div>
-                                                            <div className="flex items-center gap-3 text-[11px] text-gray-400">
-                                                                <span>{new Date(order.created_at).toLocaleDateString()}</span>
-                                                                <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                                                                <span className="font-medium text-gray-500">{order.payment_method}</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <div className="flex items-center justify-between sm:justify-end gap-6 border-t sm:border-t-0 pt-3 sm:pt-0">
-                                                        <span className="font-bold text-gray-900 text-base">
-                                                            NPR {Number(order.total).toLocaleString()}
-                                                        </span>
-                                                        
-                                                        {order.status === 'Pending' && (
-                                                            <button 
-                                                                onClick={() => handleCancelOrder(order.id)}
-                                                                className="text-xs font-medium text-red-500 hover:text-red-600 px-3 py-1 rounded-lg hover:bg-red-50 transition-colors"
-                                                            >
-                                                                Cancel
-                                                            </button>
-                                                        )}
                                                     </div>
                                                 </div>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <div className="py-12 text-center">
-                                        <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
-                                            <FiShoppingBag className="w-5 h-5 text-gray-300" />
+                                            ))}
                                         </div>
-                                        <h3 className="text-sm font-medium text-gray-900 mb-1">No orders yet</h3>
-                                        <p className="text-xs text-gray-400 mb-4">Start shopping to see your orders here</p>
-                                        <Link href="/product" className="text-xs text-emerald-600 font-medium hover:text-emerald-700">
-                                            Browse products →
-                                        </Link>
-                                    </div>
-                                )}
+                                    ) : (
+                                        <div className="py-20 text-center flex flex-col items-center">
+                                            <div className="w-16 h-16 bg-gray-50 rounded-3xl flex items-center justify-center text-gray-200 mb-4">
+                                                <FiShoppingBag className="w-8 h-8" />
+                                            </div>
+                                            <h3 className="text-lg font-bold text-gray-900">Your bag is empty</h3>
+                                            <p className="text-sm text-gray-500 max-w-xs mx-auto mb-8 mt-1">Looks like you haven't placed any orders yet. Explore our high-quality medical supplies.</p>
+                                            <Link href="/product" className="inline-flex items-center gap-2 px-8 py-3 bg-emerald-600 text-white text-sm font-bold rounded-2xl hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all active:scale-95">
+                                                Start Shopping
+                                                <FiArrowRight className="w-4 h-4" />
+                                            </Link>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
 

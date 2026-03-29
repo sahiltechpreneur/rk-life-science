@@ -15,29 +15,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const initAuth = async () => {
             const token = localStorage.getItem("token")
             
-            // Safety timeout to prevent infinite loading screens
-            const timeoutId = setTimeout(() => {
-                if (loading) {
-                    setLoading(false)
-                    setUser(null)
-                    console.warn("Auth check timed out after 10s. Defaulting to unauthenticated.")
-                }
-            }, 10000)
-
             if (token) {
                 try {
                     const res = await API.get("/user/profile", {
                         headers: { Authorization: `Bearer ${token}` }
                     })
+                    // Merge token with profile data
                     setUser({ token, ...res.data })
-                } catch (e) {
+                } catch (e: any) {
+                    console.error("Auth initialization failed:", e.message)
                     localStorage.removeItem("token")
                     setUser(null)
                 }
             } else {
                 setUser(null)
             }
-            clearTimeout(timeoutId)
+            
             setLoading(false)
         }
         initAuth()
