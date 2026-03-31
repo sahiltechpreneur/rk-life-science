@@ -50,28 +50,28 @@ export default function AdminContactsPage() {
             {/* Header */}
             <div>
                 <div className="flex items-center gap-2 mb-1">
-                    <FiMessageSquare className="w-5 h-5 text-emerald-600" />
-                    <h1 className="text-xl font-semibold text-gray-800">Inquiries</h1>
+                    <FiMessageSquare className="w-5 h-5 text-emerald-400" />
+                    <h1 className="text-xl font-semibold text-slate-100">Inquiries</h1>
                 </div>
-                <p className="text-sm text-gray-500">Manage customer messages and feedback</p>
+                <p className="text-sm text-slate-400">Manage customer messages and feedback</p>
             </div>
 
             {/* Search */}
             <div className="relative">
-                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
                 <input 
                     placeholder="Search by name, email or message..." 
                     value={search} 
                     onChange={(e) => setSearch(e.target.value)} 
-                    className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors" 
+                    className="w-full pl-9 pr-3 py-2 bg-slate-800 border border-slate-700 text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors placeholder:text-slate-500" 
                 />
             </div>
 
             {/* Contacts Table */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="bg-slate-800 rounded-xl border border-slate-700 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-gray-50 text-gray-500 text-xs font-medium border-b border-gray-100">
+                        <thead className="bg-slate-800/50 text-slate-400 text-xs font-medium border-b border-slate-700">
                             <tr>
                                 <th className="px-5 py-3">Customer</th>
                                 <th className="px-5 py-3">Message</th>
@@ -80,34 +80,34 @@ export default function AdminContactsPage() {
                                 <th className="px-5 py-3 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-50">
+                        <tbody className="divide-y divide-slate-700">
                             {isLoading ? (
                                 [...Array(4)].map((_, i) => (
                                     <tr key={i} className="animate-pulse">
                                         <td className="px-5 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 bg-gray-100 rounded-lg"></div>
-                                                <div className="h-4 bg-gray-100 rounded w-24"></div>
+                                                <div className="w-8 h-8 bg-slate-700/50 rounded-lg"></div>
+                                                <div className="h-4 bg-slate-700/50 rounded w-24"></div>
                                             </div>
                                         </td>
-                                        <td className="px-5 py-4"><div className="h-4 bg-gray-100 rounded w-48"></div></td>
-                                        <td className="px-5 py-4"><div className="h-5 bg-gray-100 rounded-full w-16"></div></td>
-                                        <td className="px-5 py-4"><div className="h-4 bg-gray-100 rounded w-20"></div></td>
+                                        <td className="px-5 py-4"><div className="h-4 bg-slate-700/50 rounded w-48"></div></td>
+                                        <td className="px-5 py-4"><div className="h-5 bg-slate-700/50 rounded-full w-16"></div></td>
+                                        <td className="px-5 py-4"><div className="h-4 bg-slate-700/50 rounded w-20"></div></td>
                                     </tr>
                                 ))
                             ) : filteredContacts.length > 0 ? (
                                 filteredContacts.map((contact: any) => (
-                                    <tr key={contact.id} className={`hover:bg-gray-50 transition-colors ${contact.status === 'unseen' ? 'bg-emerald-50/20' : ''}`}>
+                                    <tr key={contact.id} className={`hover:bg-slate-700/30 transition-colors ${contact.status === 'unseen' ? 'bg-emerald-500/5' : ''}`}>
                                         <td className="px-5 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 text-xs font-medium">
+                                                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-medium">
                                                     {contact.name?.charAt(0)}
                                                 </div>
                                                 <div>
-                                                    <div className="font-medium text-gray-800 text-sm">
+                                                    <div className="font-medium text-slate-200 text-sm">
                                                         {contact.name}
                                                     </div>
-                                                    <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
+                                                    <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
                                                         <FiMail className="w-3 h-3" />
                                                         <span>{contact.email}</span>
                                                     </div>
@@ -115,22 +115,22 @@ export default function AdminContactsPage() {
                                             </div>
                                         </td>
                                         <td className="px-5 py-4">
-                                            <p className="text-gray-600 max-w-xs truncate" title={contact.feedback}>
+                                            <p className="text-slate-300 max-w-xs truncate" title={contact.feedback}>
                                                 {contact.feedback}
                                             </p>
                                         </td>
                                         <td className="px-5 py-4">
                                             <span className={`inline-flex px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md ${
                                                 contact.status === 'seen' 
-                                                ? 'bg-gray-100 text-gray-500' 
-                                                : 'bg-emerald-100 text-emerald-700'
+                                                ? 'bg-slate-700 text-slate-400 border border-slate-600' 
+                                                : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                                             }`}>
                                                 {contact.status}
                                             </span>
                                         </td>
                                         <td className="px-5 py-4">
-                                            <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                                                <FiCalendar className="w-3 h-3 text-gray-400" />
+                                            <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                                                <FiCalendar className="w-3 h-3 text-slate-500" />
                                                 {new Date(contact.created_at).toLocaleDateString()}
                                             </div>
                                         </td>
@@ -139,8 +139,8 @@ export default function AdminContactsPage() {
                                                 onClick={() => handleStatusUpdate(contact.id, contact.status)}
                                                 className={`p-1.5 rounded-lg transition-colors ${
                                                     contact.status === 'seen' 
-                                                    ? 'text-gray-400 hover:bg-gray-100' 
-                                                    : 'text-emerald-600 hover:bg-emerald-50'
+                                                    ? 'text-slate-400 hover:bg-slate-700/50' 
+                                                    : 'text-emerald-500 hover:bg-emerald-500/10'
                                                 }`}
                                                 title={contact.status === 'seen' ? "Mark as unseen" : "Mark as seen"}
                                             >
@@ -153,10 +153,10 @@ export default function AdminContactsPage() {
                                 <tr>
                                     <td colSpan={5} className="px-5 py-12 text-center">
                                         <div className="flex flex-col items-center">
-                                            <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3">
-                                                <FiMessageSquare className="w-5 h-5 text-gray-300" />
+                                            <div className="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center mb-3">
+                                                <FiMessageSquare className="w-5 h-5 text-slate-500" />
                                             </div>
-                                            <p className="text-sm text-gray-500">
+                                            <p className="text-sm text-slate-400">
                                                 {search ? "No matching inquiries found" : "No customer messages received yet"}
                                             </p>
                                         </div>

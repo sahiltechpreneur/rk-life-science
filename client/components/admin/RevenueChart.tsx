@@ -4,21 +4,25 @@ import {
     Chart as ChartJS,
     CategoryScale,
     LinearScale,
-    BarElement,
+    PointElement,
+    LineElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
+    Filler
 } from "chart.js"
 
-import { Bar } from "react-chartjs-2"
+import { Line } from "react-chartjs-2"
 
 ChartJS.register(
     CategoryScale,
     LinearScale,
-    BarElement,
+    PointElement,
+    LineElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
+    Filler
 )
 
 interface RevenueChartProps {
@@ -34,10 +38,15 @@ export default function RevenueChart({ labels, dataset }: RevenueChartProps) {
             {
                 label: "Revenue (NPR)",
                 data: dataset,
-                backgroundColor: "#10b981",
-                borderRadius: 6,
-                barPercentage: 0.7,
-                categoryPercentage: 0.8
+                borderColor: "#10b981",
+                backgroundColor: "rgba(16, 185, 129, 0.1)",
+                borderWidth: 2,
+                pointBackgroundColor: "#10b981",
+                pointBorderColor: "#fff",
+                pointHoverBackgroundColor: "#fff",
+                pointHoverBorderColor: "#10b981",
+                tension: 0.4,
+                fill: true,
             }
         ]
     }
@@ -47,13 +56,7 @@ export default function RevenueChart({ labels, dataset }: RevenueChartProps) {
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                position: 'top' as const,
-                labels: {
-                    boxWidth: 10,
-                    font: {
-                        size: 11
-                    }
-                }
+                display: false
             },
             tooltip: {
                 callbacks: {
@@ -74,16 +77,8 @@ export default function RevenueChart({ labels, dataset }: RevenueChartProps) {
     }
 
     return (
-        <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-gray-800 mb-4">
-                Revenue Overview
-            </h3>
-            <div className="h-64">
-                <Bar 
-                    data={data} 
-                    options={options}
-                />
-            </div>
+        <div className="relative w-full h-full">
+            <Line data={data} options={options} />
         </div>
     )
-}
+}

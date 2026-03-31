@@ -43,37 +43,37 @@ export default function AdminLogin(){
     }
 
     return(
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4">
             
             <div className="w-full max-w-md">
-                <div className="bg-white rounded-xl border border-gray-100 p-8 shadow-sm">
+                <div className="bg-slate-800 rounded-xl border border-slate-700 p-8 shadow-2xl relative overflow-hidden">
                     
-                    <div className="text-center mb-8">
-                        <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mx-auto mb-4">
-                            <FiShield className="w-5 h-5 text-emerald-600" />
+                    <div className="text-center mb-8 relative z-10">
+                        <div className="w-12 h-12 bg-slate-900 border border-slate-700 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-inner">
+                            <FiShield className="w-5 h-5 text-emerald-400" />
                         </div>
-                        <h1 className="text-xl font-bold text-gray-800">Admin Portal</h1>
-                        <p className="text-xs text-gray-500 mt-1">Sign in to manage your store</p>
+                        <h1 className="text-xl font-bold text-slate-100">Admin Portal</h1>
+                        <p className="text-xs text-slate-400 mt-1">Sign in to manage your store</p>
                     </div>
 
                     {error && (
-                        <div className="bg-red-50 border border-red-100 text-red-600 p-3 rounded-lg text-sm text-center mb-5">
+                        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg text-sm text-center mb-5 relative z-10">
                             {error}
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
                         
                         <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                            <label className="block text-xs font-medium text-slate-300 mb-1.5">
                                 Admin email
                             </label>
                             <div className="relative">
-                                <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4" />
                                 <input 
                                     type="email" 
                                     placeholder="admin@rklifescience.com" 
-                                    className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors" 
+                                    className="w-full pl-9 pr-3 py-2.5 bg-slate-900 border border-slate-700 text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors placeholder:text-slate-600" 
                                     value={email} 
                                     onChange={(e)=>setEmail(e.target.value)} 
                                     required
@@ -82,15 +82,15 @@ export default function AdminLogin(){
                         </div>
                         
                         <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                            <label className="block text-xs font-medium text-slate-300 mb-1.5">
                                 Password
                             </label>
                             <div className="relative">
-                                <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4" />
                                 <input 
                                     type="password" 
                                     placeholder="••••••••" 
-                                    className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors" 
+                                    className="w-full pl-9 pr-3 py-2.5 bg-slate-900 border border-slate-700 text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors placeholder:text-slate-600" 
                                     value={password} 
                                     onChange={(e)=>setPassword(e.target.value)} 
                                     required
@@ -101,13 +101,13 @@ export default function AdminLogin(){
                         <button 
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed mt-2"
+                            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed mt-2 shadow-lg shadow-emerald-900/20"
                         >
                             {isLoading ? "Signing in..." : "Sign in"}
                         </button>
 
                         <div className="text-center pt-2">
-                            <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors">
+                            <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors">
                                 <FiArrowLeft className="w-3 h-3" />
                                 Return to storefront
                             </Link>

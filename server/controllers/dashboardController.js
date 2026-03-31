@@ -38,12 +38,26 @@ exports.getDashboardStats = async (req, res) => {
              ORDER BY week_start`
         )
 
+        // daily revenue aggregation
+        const dailyRevenue = await pool.query(
+            `SELECT 
+                TO_CHAR(DATE_TRUNC('day', created_at), 'Mon DD') as day,
+                SUM(total) as revenue,
+                DATE_TRUNC('day', created_at) as day_start
+             FROM orders
+             WHERE created_at >= NOW() - INTERVAL '30 days'
+             AND status != 'Cancelled'
+             GROUP BY DATE_TRUNC('day', created_at)
+             ORDER BY day_start`
+        )
+
         res.json({
             totalOrders: parseInt(orders.rows[0].count),
             totalRevenue: parseInt(revenue.rows[0].sum || 0),
             totalProducts: parseInt(products.rows[0].count),
             recentOrders: recentOrders.rows,
-            weeklyRevenue: weeklyRevenue.rows
+            weeklyRevenue: weeklyRevenue.rows,
+            dailyRevenue: dailyRevenue.rows
         })
 
     } catch (err) {
