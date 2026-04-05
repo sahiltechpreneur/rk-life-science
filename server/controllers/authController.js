@@ -120,17 +120,14 @@ exports.login = async (req,res)=>{
 // Get user info
 exports.getUser = async (req,res)=>{
  try{
-  const authHeader = req.headers.authorization
-  if(!authHeader) return res.status(401).json({error:"Unauthorized"})
-
-  const token = authHeader.split(" ")[1]
-
-  const decoded = jwt.verify(token,JWT_SECRET)
-
   const userResult = await pool.query(
    "SELECT id,fname,lname,email,phone,role FROM users WHERE id=$1",
-   [decoded.id]
+   [req.user.id]
   )
+
+  if (userResult.rows.length === 0) {
+    return res.status(404).json({ error: "User not found" });
+  }
 
   res.json({user:userResult.rows[0]})
 

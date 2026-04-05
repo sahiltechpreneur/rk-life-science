@@ -3,7 +3,9 @@
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { FiArrowLeft, FiUser, FiMapPin, FiMail, FiPhone, FiCreditCard, FiClock, FiCheckCircle, FiTruck, FiPackage, FiXCircle, FiSettings, FiShoppingCart, FiCalendar } from "react-icons/fi"
+import { FiArrowLeft, FiUser, FiMapPin, FiMail, FiPhone, FiCreditCard, FiClock, FiCheckCircle, FiTruck, FiPackage, FiXCircle, FiSettings, FiShoppingCart, FiCalendar, FiDownload } from "react-icons/fi"
+import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
 
 /**
  * OrderDetailsPage Component (Admin)
@@ -39,6 +41,85 @@ export default function OrderDetailsPage() {
      * Updates the order status in the database
      * Note: Setting status to 'Delivered' automatically marks the order as 'Paid' in the backend.
      */
+    /**
+     * Generates and downloads a PDF invoice for the current order
+     */
+    const downloadInvoice = () => {
+        if (!order) return
+
+        const doc = new jsPDF() as any
+        const { order: orderInfo, items } = order
+
+        // --- Company Branding ---
+        doc.setFillColor(46, 111, 64) // Emerald Green
+        doc.rect(0, 0, 210, 40, 'F')
+        
+        doc.setTextColor(255, 255, 255)
+        doc.setFontSize(24)
+        doc.setFont("helvetica", "bold")
+        doc.text("R. K. LIFE SCIENCE", 105, 20, { align: "center" })
+        
+        doc.setFontSize(10)
+        doc.setFont("helvetica", "normal")
+        doc.text("Healthcare Distribution Excellence", 105, 30, { align: "center" })
+
+        // --- Order Meta Info ---
+        doc.setTextColor(50, 50, 50)
+        doc.setFontSize(16)
+        doc.text("OFFICIAL INVOICE", 20, 60)
+        
+        doc.setFontSize(10)
+        doc.text(`Order ID: #${orderInfo.id}`, 20, 70)
+        doc.text(`Date: ${new Date(orderInfo.created_at).toLocaleDateString()}`, 20, 75)
+        doc.text(`Payment Status: ${orderInfo.payment_status?.toUpperCase() || 'UNPAID'}`, 20, 80)
+
+        // --- Customer Details ---
+        doc.setFont("helvetica", "bold")
+        doc.text("BILL TO:", 130, 60)
+        doc.setFont("helvetica", "normal")
+        doc.text(`${orderInfo.customer_name}`, 130, 65)
+        doc.text(`${orderInfo.phone}`, 130, 70)
+        doc.text(`${orderInfo.address}`, 130, 75)
+        doc.text(`${orderInfo.city}`, 130, 80)
+
+        // --- Item Table ---
+        const tableData = items.map((item: any) => [
+            item.name || "Unnamed Product",
+            (item.quantity || 0).toString(),
+            `NPR ${Number(item.price || 0).toLocaleString()}`,
+            `NPR ${((item.price || 0) * (item.quantity || 0)).toLocaleString()}`
+        ])
+
+        autoTable(doc, {
+            startY: 95,
+            head: [['Product Description', 'Qty', 'Unit Price', 'Total']],
+            body: tableData,
+            theme: 'striped',
+            headStyles: { fillColor: [46, 111, 64] },
+            styles: { fontSize: 9 }
+        })
+
+        // --- Summary ---
+        const finalY = (doc as any).lastAutoTable?.finalY || 150
+        doc.setFont("helvetica", "bold")
+        doc.text("Summary:", 130, finalY + 10)
+        doc.setFont("helvetica", "normal")
+        doc.text(`Subtotal: NPR ${(orderInfo.total - (orderInfo.shipping_charge || 0)).toLocaleString()}`, 130, finalY + 17)
+        doc.text(`Shipping: NPR ${Number(orderInfo.shipping_charge || 0).toLocaleString()}`, 130, finalY + 22)
+        
+        doc.setFontSize(14)
+        doc.setFont("helvetica", "bold")
+        doc.setTextColor(46, 111, 64)
+        doc.text(`Grand Total: NPR ${Number(orderInfo.total || 0).toLocaleString()}`, 130, finalY + 32)
+
+        // --- Footer ---
+        doc.setTextColor(150, 150, 150)
+        doc.setFontSize(8)
+        doc.text("Thank you for choosing R. K. Life Science. This is a computer-generated document.", 105, 285, { align: "center" })
+
+        doc.save(`Invoice_RK_${orderInfo.id}.pdf`)
+    }
+
     const updateStatus = async (status: string) => {
         setIsUpdating(true)
         try {
@@ -119,24 +200,36 @@ export default function OrderDetailsPage() {
                 </div>
 
                 {/* Status Updater Dropdown */}
-                <div className="flex items-center gap-2 bg-slate-800 border border-slate-700 rounded-lg p-1">
-                    <div className="flex items-center gap-1.5 px-2 text-xs text-slate-400">
-                        <FiSettings className="w-3.5 h-3.5" />
-                        <span>Status</span>
+                <div className="flex items-center gap-2">
+                    {order.order.status.toLowerCase() === 'delivered' && (
+                        <button 
+                            onClick={downloadInvoice}
+                            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-500/20 active:scale-95 mr-2"
+                        >
+                            <FiDownload className="w-3.5 h-3.5" />
+                            Download Invoice
+                        </button>
+                    )}
+
+                    <div className="flex items-center gap-2 bg-slate-800 border border-slate-700 rounded-lg p-1">
+                        <div className="flex items-center gap-1.5 px-2 text-xs text-slate-400">
+                            <FiSettings className="w-3.5 h-3.5" />
+                            <span>Status</span>
+                        </div>
+                        <div className="w-px h-4 bg-slate-700"></div>
+                        <select
+                            onChange={(e) => updateStatus(e.target.value)}
+                            value={order.order.status}
+                            disabled={isUpdating || order.order.status.toLowerCase() === 'delivered' || order.order.status.toLowerCase() === 'cancelled'}
+                            className="bg-transparent border-none text-xs font-medium text-slate-200 focus:ring-0 cursor-pointer py-1.5 pr-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <option value="Pending" className="bg-slate-800">Pending</option>
+                            <option value="Processing" className="bg-slate-800">Processing</option>
+                            <option value="Shipped" className="bg-slate-800">Shipped</option>
+                            <option value="Delivered" className="bg-slate-800" disabled>Delivered</option>
+                            <option value="Cancelled" className="bg-slate-800" disabled>Cancelled</option>
+                        </select>
                     </div>
-                    <div className="w-px h-4 bg-slate-700"></div>
-                    <select
-                        onChange={(e) => updateStatus(e.target.value)}
-                        value={order.order.status}
-                        disabled={isUpdating}
-                        className="bg-transparent border-none text-xs font-medium text-slate-200 focus:ring-0 cursor-pointer py-1.5 pr-6 disabled:opacity-50"
-                    >
-                        <option value="Pending" className="bg-slate-800">Pending</option>
-                        <option value="Processing" className="bg-slate-800">Processing</option>
-                        <option value="Shipped" className="bg-slate-800">Shipped</option>
-                        <option value="Delivered" className="bg-slate-800">Delivered</option>
-                        <option value="Cancelled" className="bg-slate-800">Cancelled</option>
-                    </select>
                 </div>
             </div>
 

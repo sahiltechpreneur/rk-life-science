@@ -183,7 +183,16 @@ export default function ProfilePage() {
         )
     }
 
-    if (!user) return null
+    if (!user) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-center">
+                <div className="w-12 h-12 border-4 border-emerald-100 border-t-emerald-600 rounded-full animate-spin mb-4" />
+                <h2 className="text-lg font-bold text-gray-900">Loading your profile</h2>
+                <p className="text-gray-500 text-sm max-w-xs mt-1">If this takes too long, please try logging in again.</p>
+                <button onClick={logout} className="mt-4 text-emerald-600 font-bold hover:underline">Return to Login</button>
+            </div>
+        )
+    }
 
     return (
         <ProtectedRoute>
@@ -312,9 +321,11 @@ export default function ProfilePage() {
                                                                     <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${getStatusTheme(order.status)}`}>
                                                                         {order.status}
                                                                     </span>
-                                                                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${order.payment_status === 'Paid' ? 'bg-emerald-700 text-white border-emerald-700' : 'bg-gray-100 text-gray-400 border-gray-100'}`}>
-                                                                        {order.payment_status}
-                                                                    </span>
+                                                                    {order.status.toLowerCase() !== 'cancelled' && (
+                                                                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${order.payment_status === 'Paid' ? 'bg-emerald-700 text-white border-emerald-700' : 'bg-gray-100 text-gray-400 border-gray-100'}`}>
+                                                                            {order.payment_status}
+                                                                        </span>
+                                                                    )}
                                                                 </div>
                                                                 <p className="text-[11px] text-gray-400 font-medium">
                                                                     Placed on {new Date(order.created_at).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
@@ -324,8 +335,10 @@ export default function ProfilePage() {
 
                                                         <div className="flex items-center justify-between sm:justify-end gap-6 sm:text-right border-t sm:border-0 pt-4 sm:pt-0">
                                                             <div>
-                                                                <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Total Paid</span>
-                                                                <span className="text-lg font-black text-emerald-600">NPR {Number(order.total).toLocaleString()}</span>
+                                                                <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">
+                                                                    {order.status.toLowerCase() === 'delivered' ? 'Total Paid' : (order.status.toLowerCase() === 'cancelled' ? 'Order Total' : 'Grand Total')}
+                                                                </span>
+                                                                <span className={`text-lg font-black ${order.status.toLowerCase() === 'cancelled' ? 'text-gray-400' : 'text-emerald-600'}`}>NPR {Number(order.total).toLocaleString()}</span>
                                                             </div>
                                                             {order.status.toLowerCase() === 'pending' && (
                                                                 <button 

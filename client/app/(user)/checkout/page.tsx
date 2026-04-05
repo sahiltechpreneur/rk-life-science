@@ -4,6 +4,8 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useCart } from "@/context/CartContext"
 import { useNotification } from "@/context/NotificationContext"
+import { AuthContext } from "@/context/AuthContext"
+import { useContext, useEffect } from "react"
 import { FiCheckCircle, FiCreditCard, FiMapPin, FiUser, FiMail, FiPhone, FiBox, FiTruck, FiAlertCircle } from "react-icons/fi"
 
 /**
@@ -18,6 +20,7 @@ export default function CheckoutPage(){
  const router = useRouter()
  const { cart, clearCart } = useCart()
  const { showNotification } = useNotification()
+ const { user, loading } = useContext(AuthContext)
 
  // Form state for delivery details
  const [form,setForm] = useState({
@@ -29,6 +32,26 @@ export default function CheckoutPage(){
  })
  const [paymentMethod, setPaymentMethod] = useState("COD")
  const [isSubmitting, setIsSubmitting] = useState(false)
+
+ // Redirect if not logged in
+ useEffect(() => {
+   if (!loading && !user) {
+       showNotification("Please login to place an order.", "warning")
+       router.push("/auth/login")
+   }
+ }, [user, loading, router])
+
+ // Pre-fill form if user is logged in
+ useEffect(() => {
+   if (user && !form.email) { // Only pre-fill if not already edited
+       setForm(prev => ({
+           ...prev,
+           customer_name: user.fname ? `${user.fname} ${user.lname || ''}`.trim() : prev.customer_name,
+           email: user.email || prev.email,
+           phone: user.phone || prev.phone
+       }))
+   }
+ }, [user])
 
  /**
   * Handles input changes for the shipping form
@@ -90,7 +113,8 @@ export default function CheckoutPage(){
        {
         method:"POST",
         headers:{
-         "Content-Type":"application/json"
+         "Content-Type":"application/json",
+         "Authorization": `Bearer ${user?.token}`
         },
         body:JSON.stringify({
          ...form,

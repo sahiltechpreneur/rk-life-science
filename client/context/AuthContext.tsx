@@ -37,9 +37,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                         setUser({ token, role: isAdminFlag ? 'admin' : 'user' })
                     }
                 }
-            } else if (isAdminFlag) {
-                // Legacy Portal support
-                setUser({ role: 'admin' })
             } else {
                 setUser(null)
             }

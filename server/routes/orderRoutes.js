@@ -9,10 +9,13 @@ const {
  cancelOrder
 } = require("../controllers/orderController")
 
-router.post("/",createOrder)
-router.get("/",getOrders)
-router.get("/:id",getOrderDetails)
-router.put("/:id/status",updateOrderStatus)
-router.put("/:id/cancel",cancelOrder)
+const auth = require("../middleware/authMiddleware")
+const admin = require("../middleware/adminMiddleware")
+
+router.post("/", auth, createOrder)
+router.get("/", [auth, admin], getOrders)
+router.get("/:id", auth, getOrderDetails) // User can see their own orders (check logic in controller later)
+router.put("/:id/status", [auth, admin], updateOrderStatus)
+router.put("/:id/cancel", auth, cancelOrder)
 
 module.exports = router

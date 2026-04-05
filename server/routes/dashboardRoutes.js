@@ -3,6 +3,9 @@ const router = express.Router()
 
 const { getDashboardStats } = require("../controllers/dashboardController")
 
-router.get("/", getDashboardStats)
+const auth = require("../middleware/authMiddleware")
+const admin = require("../middleware/adminMiddleware")
+
+router.get("/", [auth, admin], getDashboardStats)
 
 module.exports = router

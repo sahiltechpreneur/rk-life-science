@@ -36,7 +36,7 @@ exports.getUserProfile = async (req, res) => {
 
   } catch (err) {
     console.error("Profile Fetch Error:", err);
-    res.status(500).json({ error: "Internal server error while fetching profile. Please try again later." });
+    res.status(500).json({ error: `Internal server error: ${err.message}` });
   }
 }
 
