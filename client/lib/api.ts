@@ -4,6 +4,20 @@ const API = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL
 })
 
+// Request interceptor to add token to headers
+API.interceptors.request.use(
+  (config) => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token")
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+      }
+    }
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
 // Detailed logging for debugging fetch errors
 API.interceptors.response.use(
   (response) => response,

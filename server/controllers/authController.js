@@ -12,8 +12,12 @@ const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString()
 // Send Registration OTP
 exports.sendRegisterOtp = async (req, res) => {
   try {
-    const { email, fname } = req.body;
-    const existing = await pool.query("SELECT * FROM users WHERE email=$1", [email]);
+    const { email: rawEmail, fname } = req.body;
+    const email = rawEmail?.toLowerCase().trim();
+
+    if (!email) return res.status(400).json({ error: "Email is required" });
+
+    const existing = await pool.query("SELECT * FROM users WHERE LOWER(email)=$1", [email]);
     if (existing.rows.length > 0) return res.status(400).json({error: "Email already in use"});
 
     const otp = generateOtp();
@@ -39,21 +43,22 @@ exports.sendRegisterOtp = async (req, res) => {
 
     res.json({ success: true, message: "OTP sent" });
   } catch (err) {
-    console.error("Register OTP Error:", err);
-    res.status(500).json({ error: err.message || "An unexpected error occurred while sending OTP." });
+    console.error("Register OTP Flow Error:", err);
+    res.status(500).json({ error: `Server error: ${err.message}` });
   }
 }
 
 // Register
 exports.register = async (req,res)=>{
  try{
-  const {fname,lname,email,phone,password,otp} = req.body
+  const {fname,lname,email: rawEmail,phone,password,otp} = req.body
+  const email = rawEmail?.toLowerCase().trim();
 
   // Verify OTP
   if (!otp) return res.status(400).json({error: "OTP is required"});
   
   const otpRes = await pool.query(
-    "SELECT * FROM otps WHERE email=$1 AND otp=$2 AND type='register' AND expires_at > NOW()", 
+    "SELECT * FROM otps WHERE LOWER(email)=$1 AND otp=$2 AND type='register' AND expires_at > NOW()", 
     [email, otp]
   );
   if (otpRes.rows.length === 0) return res.status(400).json({error: "Invalid or expired OTP"});
@@ -139,9 +144,16 @@ exports.getUser = async (req,res)=>{
 // Forgot Password
 exports.forgotPassword = async (req, res) => {
   try {
-    const { email } = req.body;
-    const userRes = await pool.query("SELECT * FROM users WHERE email=$1", [email]);
+    const { email: rawEmail } = req.body;
+    const email = rawEmail?.toLowerCase().trim();
+
+    if (!email) return res.status(400).json({ error: "Email is required" });
+
+    const userRes = await pool.query("SELECT * FROM users WHERE LOWER(email)=$1", [email]);
     if(userRes.rows.length === 0) return res.status(400).json({error: "User not found"});
+
+    // Clean up any existing reset OTPs for this email before creating a new one
+    await pool.query("DELETE FROM otps WHERE LOWER(email)=$1 AND type='reset'", [email]);
 
     const otp = generateOtp();
     const expiresAt = new Date(Date.now() + 10 * 60000);
@@ -174,15 +186,25 @@ exports.forgotPassword = async (req, res) => {
 // Reset Password
 exports.resetPassword = async (req, res) => {
   try {
-    const { email, otp, newPassword } = req.body;
+    const { email: rawEmail, otp, newPassword } = req.body;
+    const email = rawEmail?.toLowerCase().trim();
+
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({ error: "Email, OTP, and new password are required" });
+    }
+
     const otpRes = await pool.query(
-      "SELECT * FROM otps WHERE email=$1 AND otp=$2 AND type='reset' AND expires_at > NOW()", 
+      "SELECT * FROM otps WHERE LOWER(email)=$1 AND otp=$2 AND type='reset' AND expires_at > NOW()", 
       [email, otp]
     );
     if (otpRes.rows.length === 0) return res.status(400).json({error: "Invalid or expired OTP"});
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await pool.query("UPDATE users SET password=$1 WHERE email=$2", [hashedPassword, email]);
+    const updateRes = await pool.query("UPDATE users SET password=$1 WHERE LOWER(email)=$2", [hashedPassword, email]);
+
+    if (updateRes.rowCount === 0) {
+      return res.status(404).json({ error: "Failed to update password. User may no longer exist." });
+    }
 
     await pool.query("DELETE FROM otps WHERE email=$1 AND type='reset'", [email]);
 

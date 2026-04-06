@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import RevenueChart from "@/components/admin/RevenueChart"
 import { FaMoneyBillWave, FaShoppingCart, FaBoxOpen, FaChartLine, FaSync } from "react-icons/fa"
 import { useSocket } from "@/context/SocketContext"
+import API from "@/lib/api"
 
 type Order = {
     id: number
@@ -21,16 +22,11 @@ export default function DashboardPage() {
     const fetchStats = async () => {
         setIsLoading(true)
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`);
-            const data = await res.json();
-            if (!res.ok) {
-                setStats({ error: data.error || "Failed to fetch statistics" });
-            } else {
-                setStats(data);
-            }
-        } catch (err) {
+            const res = await API.get("/dashboard");
+            setStats(res.data);
+        } catch (err: any) {
             console.error("Error fetching dashboard stats", err);
-            setStats({ error: "Network error. Please check your connection." });
+            setStats({ error: err.response?.data?.error || "Network error. Please check your connection." });
         } finally {
             setIsLoading(false)
         }

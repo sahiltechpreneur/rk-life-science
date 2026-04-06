@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { FiSearch, FiFileText, FiDownload, FiEye, FiClock, FiCheckCircle, FiTruck, FiXCircle, FiPackage, FiCalendar } from "react-icons/fi"
+import API from "@/lib/api"
 import * as XLSX from "xlsx"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
@@ -44,16 +45,15 @@ export default function AdminOrdersPage() {
         setIsLoading(true)
         setError(null)
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders`)
-            const data = await res.json()
-            if (Array.isArray(data)) {
-                setOrders(data)
+            const res = await API.get("/orders")
+            if (Array.isArray(res.data)) {
+                setOrders(res.data)
             } else {
-                setError(data.error || "Failed to fetch orders")
+                setError("Failed to fetch orders")
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to fetch orders", error)
-            setError("Network error. Please try again.")
+            setError(error.response?.data?.error || "Network error. Please try again.")
         } finally {
             setIsLoading(false)
         }

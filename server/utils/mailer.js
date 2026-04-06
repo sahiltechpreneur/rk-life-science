@@ -2,11 +2,17 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // Standardizing on Gmail for ease of use
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // Use STARTTLS
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    }
+    },
+    // Set explicit timeouts to prevent "Infinite Loading"
+    connectionTimeout: 10000, // 10 seconds
+    greetingTimeout: 10000,
+    socketTimeout: 15000
 });
 
 const sendEmail = async (to, subject, htmlContent) => {
@@ -22,7 +28,14 @@ const sendEmail = async (to, subject, htmlContent) => {
         console.log('Email sent: ' + info.response);
         return true;
     } catch (error) {
-        console.error('Error sending email:', error);
+        console.error('CRITICAL: Email delivery failed:', {
+            to,
+            subject,
+            error: error.message,
+            stack: error.stack,
+            code: error.code,
+            command: error.command
+        });
         return false;
     }
 };

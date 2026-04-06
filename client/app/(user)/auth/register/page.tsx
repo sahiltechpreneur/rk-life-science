@@ -52,12 +52,13 @@ export default function RegisterPage() {
                 return
             }
 
+            const email = form.email.toLowerCase().trim()
             setIsLoading(true)
             try {
                 const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/send-register-otp`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email: form.email, fname: form.fname })
+                    body: JSON.stringify({ email, fname: form.fname })
                 })
                 const data = await res.json()
                 if (data.success) {
@@ -79,12 +80,13 @@ export default function RegisterPage() {
             return
         }
 
+        const email = form.email.toLowerCase().trim()
         setIsLoading(true)
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...form, otp })
+                body: JSON.stringify({ ...form, email, otp })
             })
             const data = await res.json()
             if (data.success) {

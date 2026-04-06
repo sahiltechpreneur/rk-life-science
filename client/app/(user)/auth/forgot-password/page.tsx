@@ -32,12 +32,13 @@ export default function ForgotPasswordPage() {
                 return
             }
 
+            const email = form.email.toLowerCase().trim()
             setIsLoading(true)
             try {
                 const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/forgot-password`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email: form.email })
+                    body: JSON.stringify({ email })
                 })
                 const data = await res.json()
                 if (data.success) {
@@ -71,12 +72,13 @@ export default function ForgotPasswordPage() {
             return
         }
 
+        const email = form.email.toLowerCase().trim()
         setIsLoading(true)
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/reset-password`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: form.email, otp, newPassword: form.newPassword })
+                body: JSON.stringify({ email, otp, newPassword: form.newPassword })
             })
             const data = await res.json()
             if (data.success) {
